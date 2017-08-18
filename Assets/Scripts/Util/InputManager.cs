@@ -10,7 +10,7 @@ public class InputManager
 
     public void GetInput()
     {
-        for (int i = 0; i < Services.GameManager.numPlayers; i++)
+        for (int i = 0; i < 1; i++)
         {
             int playerNum = i + 1;
             foreach (string button in buttons)

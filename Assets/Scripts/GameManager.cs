@@ -4,13 +4,12 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
-{
-
+{ 
     public GameObject sceneRoot;
 
-    public int numPlayers;
-    public List<Player> players { get; private set; }
-    public Vector3[] playerSpawns;
+    public Player player { get; private set; }
+
+    public bool mouseDown;
 
     void Awake()
     {
@@ -20,7 +19,7 @@ public class GameManager : MonoBehaviour
     // Use this for initialization
     void Start()
     {
-        InitializePlayers();
+        InitializePlayer();
         Services.EventManager.Register<Reset>(Reset);
         Services.SceneStackManager.PushScene<TitleScreen>();
     }
@@ -40,20 +39,12 @@ public class GameManager : MonoBehaviour
         Services.Prefabs = Resources.Load<PrefabDB>("Prefabs/Prefabs");
         Services.SceneStackManager = new SceneStackManager<TransitionData>(sceneRoot, Services.Prefabs.Scenes);
         Services.InputManager = new InputManager();
+        Services.CardConfig = Resources.Load<CardConfig>("Config/CardConfig");
     }
 
-    void InitializePlayers()
+    void InitializePlayer()
     {
-        players = new List<Player>();
-        for (int i = 0; i < numPlayers; i++) players.Add(InitializePlayer(i + 1));
-    }
-
-    Player InitializePlayer(int playerNum)
-    {
-        GameObject playerObj = Instantiate(Services.Prefabs.Player, playerSpawns[playerNum - 1], Quaternion.identity);
-        Player player = playerObj.GetComponent<Player>();
-        player.playerNum = playerNum;
-        return player;
+        player = new Player();
     }
 
     void Reset(Reset e)

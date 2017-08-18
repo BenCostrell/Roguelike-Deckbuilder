@@ -2,10 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Player : MonoBehaviour {
-
-    public int playerNum;
-
+public class BackgroundController : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
@@ -16,4 +13,10 @@ public class Player : MonoBehaviour {
 	void Update () {
 		
 	}
+    
+    private void OnMouseEnter()
+    {
+        Services.GameManager.player.HideArrow();
+    }
+
 }
