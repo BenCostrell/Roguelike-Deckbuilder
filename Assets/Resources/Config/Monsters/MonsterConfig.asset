@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c6f457d53ec920d40843e8efe6b383cc, type: 3}
+  m_Name: MonsterConfig
+  m_EditorClassIdentifier: 
+  monsters:
+  - {fileID: 11400000, guid: 9f64ad507fa16c645982317615ddbc5e, type: 2}
+  minDistFromMonsters: 4
+  minDistFromCards: 3
+  minDistFromPlayer: 3
+  spawnRange: 4

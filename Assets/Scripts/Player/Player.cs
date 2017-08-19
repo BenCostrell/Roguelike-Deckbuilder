@@ -19,16 +19,7 @@ public class Player {
     }
     private List<Card> fullDeck;
     private List<Card> remainingDeck;
-    private List<Card> hand_;
-    private List<Card> hand
-    {
-        get { return hand_; }
-        set
-        {
-            hand_ = value;
-            if (hand_.Count == 0 && movesAvailable == 0) Services.Main.EndTurn();
-        }
-    }
+    private List<Card> hand;
     private List<Card> discardPile;
 
     public void InitializeSprite(Tile tile)
@@ -46,7 +37,7 @@ public class Player {
         discardPile = new List<Card>();
         foreach(CardInfo cardInfo in Services.CardConfig.StartingDeck)
         {
-            Card card = Services.CardConfig.CreateCardOfType(cardInfo.Type);
+            Card card = Services.CardConfig.CreateCardOfType(cardInfo.CardType);
             fullDeck.Add(card);
         }
 
@@ -59,6 +50,7 @@ public class Player {
         {
             AddCardToHand(DrawRandomCardFromDeck());
         }
+        Services.UIManager.UpdateDeckCounter(remainingDeck.Count);
     }
 
     Card DrawRandomCardFromDeck()
@@ -79,6 +71,7 @@ public class Player {
         if (hand != null) hand.Add(card);
         else hand = new List<Card>() { card };
         card.CreatePhysicalCard();
+        card.OnDraw();
         SortHand();
     }
 
@@ -88,6 +81,7 @@ public class Player {
         discardPile.Add(card);
         card.DestroyPhysicalCard();
         SortHand();
+        if (hand.Count == 0 && movesAvailable == 0) Services.Main.EndTurn();
     }
 
     void SortHand()

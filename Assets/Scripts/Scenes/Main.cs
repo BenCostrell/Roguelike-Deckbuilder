@@ -26,6 +26,7 @@ public class Main : Scene<TransitionData> {
         Services.Main = this;
         Services.MapManager = GetComponentInChildren<MapManager>();
         Services.UIManager = GetComponentInChildren<UIManager>();
+        Services.MonsterManager = new MonsterManager();
     }
 
     public void EndTurn()

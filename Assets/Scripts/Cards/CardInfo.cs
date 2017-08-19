@@ -5,16 +5,17 @@ using System.Collections;
 public class CardInfo : ScriptableObject
 {
     [SerializeField]
-    private Card.Type type;
-    public Card.Type Type { get { return type; } }
+    private Card.CardType cardType;
+    public Card.CardType CardType { get { return cardType; } }
 
     [SerializeField]
     private string name_;
     public string Name { get { return name_; } }
 
     [SerializeField]
+    [TextArea]
     private string cardText;
-    public string CardText { get { return cardText; } }
+    public string CardText { get { return cardText.Replace("\\n", "\n"); } }
 
     [SerializeField]
     private Sprite sprite;

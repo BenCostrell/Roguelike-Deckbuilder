@@ -37,11 +37,11 @@ public class CardConfig : ScriptableObject
     public Color PlayableColor { get { return playableColor; } }
 
 
-    public CardInfo GetCardOfType(Card.Type cardType)
+    public CardInfo GetCardOfType(Card.CardType cardType)
     {
         foreach(CardInfo cardInfo in cards)
         {
-            if (cardInfo.Type == cardType)
+            if (cardInfo.CardType == cardType)
             {
                 return cardInfo;
             }
@@ -50,12 +50,14 @@ public class CardConfig : ScriptableObject
         return null;
     }
 
-    public Card CreateCardOfType(Card.Type type)
+    public Card CreateCardOfType(Card.CardType type)
     {
         switch (type)
         {
-            case Card.Type.Step:
+            case Card.CardType.Step:
                 return new Step();
+            case Card.CardType.Goblin:
+                return new GoblinCard();
             default:
                 return null;
         }

@@ -13,6 +13,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cards:
   - {fileID: 11400000, guid: 43e29ec8a0fc55147bda0a193b407264, type: 2}
+  - {fileID: 11400000, guid: ca27c1ba9738cea45a913e260caced79, type: 2}
   startingDeck:
   - {fileID: 11400000, guid: 43e29ec8a0fc55147bda0a193b407264, type: 2}
   - {fileID: 11400000, guid: 43e29ec8a0fc55147bda0a193b407264, type: 2}
@@ -22,8 +23,8 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 43e29ec8a0fc55147bda0a193b407264, type: 2}
   - {fileID: 11400000, guid: 43e29ec8a0fc55147bda0a193b407264, type: 2}
   - {fileID: 11400000, guid: 43e29ec8a0fc55147bda0a193b407264, type: 2}
-  - {fileID: 11400000, guid: 43e29ec8a0fc55147bda0a193b407264, type: 2}
-  - {fileID: 11400000, guid: 43e29ec8a0fc55147bda0a193b407264, type: 2}
+  - {fileID: 11400000, guid: ca27c1ba9738cea45a913e260caced79, type: 2}
+  - {fileID: 11400000, guid: ca27c1ba9738cea45a913e260caced79, type: 2}
   handCardSpacing: 2.5
   handStartPos: {x: -4, y: -3, z: -5}
   onHoverScaleUp: 1.3

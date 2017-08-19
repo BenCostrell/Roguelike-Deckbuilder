@@ -9,6 +9,8 @@ public class Tile
     public List<Tile> neighbors;
     public int movementCost { get; private set; }
     public bool hovered { get; private set; }
+    public Monster containedMonster;
+    public Card containedCard;
 
     public Tile(Coord coord_)
     {

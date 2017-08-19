@@ -11,7 +11,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3cc5731ddd8a4bb47a2fe91b425e254d, type: 3}
   m_Name: Step
   m_EditorClassIdentifier: 
-  type: 0
+  cardType: 0
   name_: Step
   cardText: Move 1 space.
   sprite: {fileID: 0}

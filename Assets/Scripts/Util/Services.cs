@@ -13,4 +13,6 @@ public static class Services {
     public static MapManager MapManager { get; set; }
     public static UIManager UIManager { get; set; }
     public static CardConfig CardConfig { get; set; }
+    public static MonsterConfig MonsterConfig { get; set; }
+    public static MonsterManager MonsterManager { get; set; }
 }

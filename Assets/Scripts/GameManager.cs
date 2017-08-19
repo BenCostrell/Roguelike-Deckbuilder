@@ -39,7 +39,8 @@ public class GameManager : MonoBehaviour
         Services.Prefabs = Resources.Load<PrefabDB>("Prefabs/Prefabs");
         Services.SceneStackManager = new SceneStackManager<TransitionData>(sceneRoot, Services.Prefabs.Scenes);
         Services.InputManager = new InputManager();
-        Services.CardConfig = Resources.Load<CardConfig>("Config/CardConfig");
+        Services.CardConfig = Resources.Load<CardConfig>("Config/Cards/CardConfig");
+        Services.MonsterConfig = Resources.Load<MonsterConfig>("Config/Monsters/MonsterConfig");
     }
 
     void InitializePlayer()

@@ -5,10 +5,11 @@ using UnityEngine;
 public abstract class Card {
     private CardController controller;
     public CardInfo info { get; protected set; }
-    protected Type type;
-    public enum Type
+    protected CardType cardType;
+    public enum CardType
     {
-        Step
+        Step,
+        Goblin
     }
 
     public void CreatePhysicalCard()
@@ -23,6 +24,8 @@ public abstract class Card {
         GameObject.Destroy(controller.gameObject);
         controller = null;
     }
+
+    public virtual void OnDraw() { }
 
     public virtual void OnPlay() {
         DestroyPhysicalCard();
