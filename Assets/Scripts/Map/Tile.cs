@@ -35,6 +35,10 @@ public class Tile
 
     public void OnSelect()
     {
-        Services.GameManager.player.MoveToTile(this);
+        if (Services.GameManager.player.targeting)
+        {
+            Services.EventManager.Fire(new TileSelected(this));
+        }
+        else Services.GameManager.player.MoveToTile(this);
     }
 }

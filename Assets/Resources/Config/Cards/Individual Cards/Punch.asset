@@ -8,10 +8,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3cc5731ddd8a4bb47a2fe91b425e254d, type: 3}
-  m_Name: Goblin
+  m_Script: {fileID: 11500000, guid: 8ef68567371cd2b41976357608c31e08, type: 3}
+  m_Name: Punch
   m_EditorClassIdentifier: 
-  cardType: 2
-  name_: Goblin
-  cardText: Spawns a \ngoblin when \ndrawn.
+  cardType: 1
+  name_: Punch
+  cardText: Deal 1 Damage\n to a Monster \nwithin 1 range.
   sprite: {fileID: 0}
+  range: 1
+  damage: 1

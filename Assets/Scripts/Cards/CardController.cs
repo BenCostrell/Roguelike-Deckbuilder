@@ -23,6 +23,7 @@ public class CardController : MonoBehaviour
         foreach(TextMesh mesh in textMeshes)
         {
             mesh.gameObject.GetComponent<MeshRenderer>().sortingLayerID = sr.sortingLayerID;
+            mesh.gameObject.GetComponent<MeshRenderer>().sortingOrder = sr.sortingOrder + 1;
         }
     }
 
@@ -32,64 +33,93 @@ public class CardController : MonoBehaviour
 
     }
 
-    public void Reposition(Vector3 pos)
+    public void Reposition(Vector3 pos, bool changeBasePos)
     {
         transform.position = pos;
-        basePos = pos;
+        if (changeBasePos) basePos = pos;
+        sr.sortingOrder = baseSortingOrder - Mathf.CeilToInt(pos.z/2);
+        foreach (TextMesh mesh in textMeshes)
+        {
+            mesh.gameObject.GetComponent<MeshRenderer>().sortingOrder = sr.sortingOrder + 1;
+        }
     }
 
     private void OnMouseEnter()
     {
-        if (!Services.GameManager.mouseDown)
+        if (card.playable)
         {
-            transform.localScale = Services.CardConfig.OnHoverScaleUp * baseScale;
-            transform.position = basePos + Services.CardConfig.OnHoverOffset;
-            sr.sortingOrder += 1;
+            if (!Services.GameManager.mouseDown)
+            {
+                transform.localScale = Services.CardConfig.OnHoverScaleUp * baseScale;
+                Reposition(basePos + Services.CardConfig.OnHoverOffset, false);
+            }
         }
     }
 
     private void OnMouseExit()
     {
-        transform.localScale = baseScale;
-        transform.position = basePos;
-        sr.sortingOrder = baseSortingOrder;
+        if (card.playable)
+        {
+            DisplayInHand();
+        }
     }
 
     private void OnMouseDown()
     {
-        Services.GameManager.mouseDown = true;
-        Vector3 mousePos = Services.Main.mainCamera.ScreenToWorldPoint(Input.mousePosition);
-        mouseRelativePos = new Vector3(
-            mousePos.x - transform.position.x, 
-            mousePos.y - transform.position.y, 
-            0);
+        if (card.playable)
+        {
+            Services.GameManager.mouseDown = true;
+            Vector3 mousePos = Services.Main.mainCamera.ScreenToWorldPoint(Input.mousePosition);
+            mouseRelativePos = new Vector3(
+                mousePos.x - transform.position.x,
+                mousePos.y - transform.position.y,
+                0);
+        }
     }
 
     private void OnMouseDrag()
     {
-        Vector3 mousePos = Services.Main.mainCamera.ScreenToWorldPoint(Input.mousePosition);
-        Vector3 newPos = new Vector3(
-            mousePos.x - mouseRelativePos.x, 
-            mousePos.y - mouseRelativePos.y, 
-            basePos.z + Services.CardConfig.OnHoverOffset.z);
-        transform.position = newPos;
-        if (transform.position.y >= Services.CardConfig.CardPlayThresholdYPos)
+        if (card.playable)
         {
-            sr.color = Services.CardConfig.PlayableColor;
-        }
-        else
-        {
-            sr.color = Color.white;
+            Vector3 mousePos = Services.Main.mainCamera.ScreenToWorldPoint(Input.mousePosition);
+            Vector3 newPos = new Vector3(
+                mousePos.x - mouseRelativePos.x,
+                mousePos.y - mouseRelativePos.y,
+                basePos.z + Services.CardConfig.OnHoverOffset.z);
+            Reposition(newPos, false);
+            if (transform.position.y >= Services.CardConfig.CardPlayThresholdYPos
+                && card.CanPlay())
+            {
+                sr.color = Services.CardConfig.PlayableColor;
+            }
+            else
+            {
+                sr.color = Color.white;
+            }
         }
     }
 
     private void OnMouseUp()
     {
         Services.GameManager.mouseDown = false;
-        if (transform.position.y >= Services.CardConfig.CardPlayThresholdYPos)
+        if (card.playable && card.CanPlay() &&
+            transform.position.y >= Services.CardConfig.CardPlayThresholdYPos)
         {
             Services.GameManager.player.PlayCard(card);
         }
-        transform.position = basePos;
+        else DisplayInHand();
+    }
+
+    public void DisplayInPlay()
+    {
+        sr.color = Color.white;
+        transform.localScale = baseScale;
+    }
+
+    public void DisplayInHand()
+    {
+        sr.color = Color.white;
+        transform.localScale = baseScale;
+        Reposition(basePos, false);
     }
 }

@@ -17,6 +17,15 @@ public class ButtonPressed : Event {
 
 public class Reset : Event { }
 
+public class TileSelected : Event
+{
+    public Tile tile;
+    public TileSelected(Tile tile_)
+    {
+        tile = tile_;
+    }
+}
+
 public class EventManager {
 
 	public delegate void EventDelegate<T>(T e) where T: Event;

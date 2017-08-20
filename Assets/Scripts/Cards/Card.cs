@@ -5,10 +5,12 @@ using UnityEngine;
 public abstract class Card {
     private CardController controller;
     public CardInfo info { get; protected set; }
+    public bool playable { get; private set; }
     protected CardType cardType;
     public enum CardType
     {
         Step,
+        Punch,
         Goblin
     }
 
@@ -25,14 +27,44 @@ public abstract class Card {
         controller = null;
     }
 
-    public virtual void OnDraw() { }
+    public virtual void OnDraw() {
+        playable = true;
+        CreatePhysicalCard();
+    }
 
     public virtual void OnPlay() {
+        playable = false;
+        controller.DisplayInPlay();
+    }
+
+    public virtual void OnDiscard()
+    {
+        playable = false;
         DestroyPhysicalCard();
     }
 
-    public void Reposition(Vector3 pos)
+    public virtual bool CanPlay()
     {
-        controller.Reposition(pos);
+        return true;
+    }
+
+    public void Reposition(Vector3 pos, bool changeBasPos)
+    {
+        controller.Reposition(pos, changeBasPos);
+    }
+
+    public void Disable()
+    {
+        playable = false;
+    }
+
+    public void Enable()
+    {
+        playable = true;
+    }
+
+    protected virtual void InitValues()
+    {
+        info = Services.CardConfig.GetCardOfType(cardType);
     }
 }

@@ -7,5 +7,6 @@ public class Goblin : Monster
     {
         monsterType = MonsterType.Goblin;
         info = Services.MonsterConfig.GetMonsterOfType(monsterType);
+        InitValues();
     }
 }

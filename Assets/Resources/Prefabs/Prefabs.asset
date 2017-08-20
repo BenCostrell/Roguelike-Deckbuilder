@@ -18,3 +18,5 @@ MonoBehaviour:
   tile: {fileID: 1418186617509754, guid: 0ac33e504a8d3ae4ba53680c23f7544a, type: 2}
   card: {fileID: 1307522234372050, guid: c12b03564c4656d4e92599da3a795dce, type: 2}
   monster: {fileID: 1739216198130446, guid: 84128e5663257b942904e4b4a4763635, type: 2}
+  targetReticle: {fileID: 1539334066238208, guid: 2a04fc6cb115eaa439097209409d57bd,
+    type: 2}

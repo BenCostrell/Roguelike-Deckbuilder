@@ -9,6 +9,12 @@ public class Main : Scene<TransitionData> {
     [SerializeField]
     private int spawnPointY;
     public Camera mainCamera { get; private set; }
+    public TaskManager taskManager { get; private set; }
+
+    private void Awake()
+    {
+        taskManager = new TaskManager();
+    }
 
     internal override void Init()
     {
@@ -19,6 +25,11 @@ public class Main : Scene<TransitionData> {
             Services.MapManager.map[spawnPointX, spawnPointY]);
         Services.GameManager.player.InitializeDeck();
         Services.GameManager.player.DrawCards(5);
+    }
+
+    private void Update()
+    {
+        taskManager.Update();
     }
 
     void InitializeMainServices()

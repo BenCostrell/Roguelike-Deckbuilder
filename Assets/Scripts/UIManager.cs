@@ -9,6 +9,10 @@ public class UIManager : MonoBehaviour {
     private GameObject moveCounter;
     [SerializeField]
     private GameObject deckCounter;
+    [SerializeField]
+    private GameObject inPlayZone;
+    [SerializeField]
+    private GameObject handZone;
 
 	// Use this for initialization
 	void Start () {
@@ -28,6 +32,25 @@ public class UIManager : MonoBehaviour {
     public void UpdateDeckCounter(int cardsInDeck)
     {
         deckCounter.GetComponent<Text>().text = cardsInDeck.ToString();
-        Debug.Log(cardsInDeck);
+    }
+
+    public void SortHand(List<Card> cardsInHand)
+    {
+        for (int i = 0; i < cardsInHand.Count; i++)
+        {
+            cardsInHand[i].Reposition(
+                handZone.transform.position + (Services.CardConfig.HandCardSpacing * i),
+                true);
+        }
+    }
+
+    public void SortInPlayZone(List<Card> cardsInPlay)
+    {
+        for (int i = 0; i < cardsInPlay.Count; i++)
+        {
+            cardsInPlay[i].Reposition(
+                inPlayZone.transform.position + (Services.CardConfig.InPlaySpacing * i),
+                true);
+        }
     }
 }

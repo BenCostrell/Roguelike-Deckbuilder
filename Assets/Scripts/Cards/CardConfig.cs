@@ -13,12 +13,12 @@ public class CardConfig : ScriptableObject
     public CardInfo[] StartingDeck { get { return startingDeck; } }
 
     [SerializeField]
-    private float handCardSpacing;
-    public float HandCardSpacing { get { return handCardSpacing; } }
+    private Vector3 handCardSpacing;
+    public Vector3 HandCardSpacing { get { return handCardSpacing; } }
 
     [SerializeField]
-    private Vector3 handStartPos;
-    public Vector3 HandStartPos { get { return handStartPos; } }
+    private Vector3 inPlaySpacing;
+    public Vector3 InPlaySpacing { get { return inPlaySpacing; } }
 
     [SerializeField]
     private float onHoverScaleUp;
@@ -58,6 +58,8 @@ public class CardConfig : ScriptableObject
                 return new Step();
             case Card.CardType.Goblin:
                 return new GoblinCard();
+            case Card.CardType.Punch:
+                return new Punch();
             default:
                 return null;
         }

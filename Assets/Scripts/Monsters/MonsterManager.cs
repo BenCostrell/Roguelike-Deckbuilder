@@ -10,13 +10,19 @@ public class MonsterManager
     {
         Monster monster = CreateMonsterOfType(monsterType);
         monsters.Add(monster);
-        int minCol = Services.MonsterConfig.MinDistFromPlayer + Services.GameManager.player.currentTile.coord.x;
+        int minCol = Services.MonsterConfig.MinDistFromPlayer 
+            + Services.GameManager.player.currentTile.coord.x;
         Tile tile = Services.MapManager.GenerateValidTile(
             Services.MonsterConfig.MinDistFromMonsters,
             Services.MonsterConfig.MinDistFromCards,
             minCol,
             minCol + Services.MonsterConfig.SpawnRange);
-        monster.CreatePhysicalMonster(tile);
+        if (tile != null) monster.CreatePhysicalMonster(tile);
+    }
+
+    public void KillMonster(Monster monster)
+    {
+        monsters.Remove(monster);
     }
 
     Monster CreateMonsterOfType(Monster.MonsterType type)
@@ -29,4 +35,18 @@ public class MonsterManager
                 return null;
         }
     }    
+
+    public List<Monster> MonstersWithinRange(int range)
+    {
+        List<Monster> monstersInRange = new List<Monster>();
+        for (int i = 0; i < monsters.Count; i++)
+        {
+            if (monsters[i].currentTile.coord.Distance(
+                Services.GameManager.player.currentTile.coord) <= range)
+            {
+                monstersInRange.Add(monsters[i]);
+            }
+        }
+        return monstersInRange;
+    }
 }

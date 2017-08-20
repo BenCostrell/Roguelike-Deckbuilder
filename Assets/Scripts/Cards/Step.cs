@@ -6,7 +6,7 @@ public class Step : Card {
     public Step()
     {
         cardType = CardType.Step;
-        info = Services.CardConfig.GetCardOfType(cardType);
+        InitValues();
     }
 
     public override void OnPlay()
