@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Player {
 
-    private PlayerController controller;
+    public PlayerController controller { get; private set; }
     public Tile currentTile { get; private set; }
     private int movesAvailable_;
     public int movesAvailable
@@ -125,7 +125,6 @@ public class Player {
             movesAvailable -= MovementCost(shortestPath);
             PlaceOnTile(tile);
             if (tile.hovered) OnTileHover(tile);
-            if (movesAvailable == 0 && hand.Count == 0) Services.Main.EndTurn();
         }
     }
 
@@ -148,12 +147,15 @@ public class Player {
 
     public void OnTileHover(Tile hoveredTile)
     {
-        List<Tile> pathToTile = GetShortestPath(hoveredTile);
-        if (CanMoveAlongPath(pathToTile))
+        if (!targeting)
         {
-            controller.ShowPathArrow(pathToTile);
+            List<Tile> pathToTile = GetShortestPath(hoveredTile);
+            if (CanMoveAlongPath(pathToTile))
+            {
+                controller.ShowPathArrow(pathToTile);
+            }
+            else HideArrow();
         }
-        else HideArrow();
     }
 
     public void HideArrow()
@@ -172,6 +174,7 @@ public class Player {
     void PutCardInPlay(Card card)
     {
         cardsInPlay.Add(card);
+        card.controller.DisplayInPlay();
         Services.UIManager.SortInPlayZone(cardsInPlay);
     }
 
@@ -198,6 +201,7 @@ public class Player {
             }
         }
         DrawCards(5);
+        movesAvailable = 0;
     }
 
     public void DisableCardsWhileTargeting()

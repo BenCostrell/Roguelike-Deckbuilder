@@ -9,10 +9,8 @@ public class UIManager : MonoBehaviour {
     private GameObject moveCounter;
     [SerializeField]
     private GameObject deckCounter;
-    [SerializeField]
-    private GameObject inPlayZone;
-    [SerializeField]
-    private GameObject handZone;
+    public GameObject inPlayZone;
+    public GameObject handZone;
 
 	// Use this for initialization
 	void Start () {
@@ -38,9 +36,7 @@ public class UIManager : MonoBehaviour {
     {
         for (int i = 0; i < cardsInHand.Count; i++)
         {
-            cardsInHand[i].Reposition(
-                handZone.transform.position + (Services.CardConfig.HandCardSpacing * i),
-                true);
+            cardsInHand[i].Reposition(Services.CardConfig.HandCardSpacing * i, true);
         }
     }
 
@@ -48,9 +44,7 @@ public class UIManager : MonoBehaviour {
     {
         for (int i = 0; i < cardsInPlay.Count; i++)
         {
-            cardsInPlay[i].Reposition(
-                inPlayZone.transform.position + (Services.CardConfig.InPlaySpacing * i),
-                true);
+            cardsInPlay[i].Reposition(Services.CardConfig.InPlaySpacing * i, true);
         }
     }
 }

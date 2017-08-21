@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public abstract class Card {
-    private CardController controller;
+    public CardController controller { get; private set; }
     public CardInfo info { get; protected set; }
     public bool playable { get; private set; }
     protected CardType cardType;
@@ -16,7 +16,8 @@ public abstract class Card {
 
     public void CreatePhysicalCard()
     {
-        GameObject obj = GameObject.Instantiate(Services.Prefabs.Card, Services.Main.transform);
+        GameObject obj = GameObject.Instantiate(Services.Prefabs.Card, 
+            Services.UIManager.handZone.transform);
         controller = obj.GetComponent<CardController>();
         controller.Init(this);
     }

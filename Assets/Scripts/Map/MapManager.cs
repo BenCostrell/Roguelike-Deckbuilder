@@ -62,7 +62,9 @@ public class MapManager : MonoBehaviour {
 
     Tile GenerateRandomTile(int minColumn, int maxColumn)
     {
-        int x = Random.Range(minColumn, Mathf.Min(maxColumn, levelLength));
+        int x = Random.Range(
+            Mathf.Min(minColumn, levelLength - 1),
+            Mathf.Min(maxColumn, levelLength));
         int y = Random.Range(0, levelHeight);
         return map[x, y];
     }

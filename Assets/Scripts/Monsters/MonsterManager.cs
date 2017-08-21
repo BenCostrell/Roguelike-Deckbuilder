@@ -9,7 +9,6 @@ public class MonsterManager
     public void SpawnMonster(Monster.MonsterType monsterType)
     {
         Monster monster = CreateMonsterOfType(monsterType);
-        monsters.Add(monster);
         int minCol = Services.MonsterConfig.MinDistFromPlayer 
             + Services.GameManager.player.currentTile.coord.x;
         Tile tile = Services.MapManager.GenerateValidTile(
@@ -17,7 +16,13 @@ public class MonsterManager
             Services.MonsterConfig.MinDistFromCards,
             minCol,
             minCol + Services.MonsterConfig.SpawnRange);
-        if (tile != null) monster.CreatePhysicalMonster(tile);
+        if (tile != null) CreateMonster(monster, tile);
+    }
+
+    void CreateMonster(Monster monster, Tile tile)
+    {
+        monsters.Add(monster);
+        monster.CreatePhysicalMonster(tile);
     }
 
     public void KillMonster(Monster monster)

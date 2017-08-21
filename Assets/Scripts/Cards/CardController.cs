@@ -35,9 +35,9 @@ public class CardController : MonoBehaviour
 
     public void Reposition(Vector3 pos, bool changeBasePos)
     {
-        transform.position = pos;
+        transform.localPosition = pos;
         if (changeBasePos) basePos = pos;
-        sr.sortingOrder = baseSortingOrder - Mathf.CeilToInt(pos.z/2);
+        sr.sortingOrder = baseSortingOrder - Mathf.CeilToInt(transform.position.z/2);
         foreach (TextMesh mesh in textMeshes)
         {
             mesh.gameObject.GetComponent<MeshRenderer>().sortingOrder = sr.sortingOrder + 1;
@@ -71,8 +71,8 @@ public class CardController : MonoBehaviour
             Services.GameManager.mouseDown = true;
             Vector3 mousePos = Services.Main.mainCamera.ScreenToWorldPoint(Input.mousePosition);
             mouseRelativePos = new Vector3(
-                mousePos.x - transform.position.x,
-                mousePos.y - transform.position.y,
+                mousePos.x - transform.localPosition.x,
+                mousePos.y - transform.localPosition.y,
                 0);
         }
     }
@@ -113,6 +113,7 @@ public class CardController : MonoBehaviour
     public void DisplayInPlay()
     {
         sr.color = Color.white;
+        transform.parent = Services.UIManager.inPlayZone.transform;
         transform.localScale = baseScale;
     }
 

@@ -27,7 +27,7 @@ public abstract class Monster {
     {
         currentTile.containedMonster = null;
         currentTile = null;
-        GameObject.Destroy(controller);
+        GameObject.Destroy(controller.gameObject);
     }
 
     protected void PlaceOnTile(Tile tile)
