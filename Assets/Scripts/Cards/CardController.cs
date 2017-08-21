@@ -58,7 +58,7 @@ public class CardController : MonoBehaviour
 
     private void OnMouseExit()
     {
-        if (card.playable)
+        if (card.playable && !Services.GameManager.mouseDown)
         {
             DisplayInHand();
         }

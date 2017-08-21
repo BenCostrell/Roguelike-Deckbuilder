@@ -41,4 +41,10 @@ public class Tile
         }
         else Services.GameManager.player.MoveToTile(this);
     }
+
+    public bool IsImpassable()
+    {
+        if (containedMonster != null) return true;
+        return false;
+    }
 }

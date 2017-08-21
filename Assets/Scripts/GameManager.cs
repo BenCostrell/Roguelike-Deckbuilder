@@ -7,6 +7,8 @@ public class GameManager : MonoBehaviour
 { 
     public GameObject sceneRoot;
 
+    public int playerStartingHealth;
+
     public Player player { get; private set; }
 
     public bool mouseDown;
@@ -37,7 +39,7 @@ public class GameManager : MonoBehaviour
         Services.EventManager = new EventManager();
         Services.TaskManager = new TaskManager();
         Services.Prefabs = Resources.Load<PrefabDB>("Prefabs/Prefabs");
-        Services.SceneStackManager = new SceneStackManager<TransitionData>(sceneRoot, Services.Prefabs.Scenes);
+        Services.SceneStackManager = new SceneStackManager<MainTransitionData>(sceneRoot, Services.Prefabs.Scenes);
         Services.InputManager = new InputManager();
         Services.CardConfig = Resources.Load<CardConfig>("Config/Cards/CardConfig");
         Services.MonsterConfig = Resources.Load<MonsterConfig>("Config/Monsters/MonsterConfig");

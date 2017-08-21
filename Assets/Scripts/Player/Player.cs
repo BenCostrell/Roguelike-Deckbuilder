@@ -29,12 +29,24 @@ public class Player {
         }
     }
     private List<Card> remainingDeck;
-    private List<Card> hand;
+    public List<Card> hand;
     private List<Card> discardPile;
     private List<Card> cardsInPlay;
     public bool targeting;
+    public int maxHealth { get; private set; }
+    public int currentHealth { get; private set; }
 
-    public void InitializeSprite(Tile tile)
+    public void Initialize(Tile tile, MainTransitionData data)
+    {
+        InitializeSprite(tile);
+        InitializeDeck(data.deck);
+        Services.Main.taskManager.AddTask(DrawCards(5));
+        maxHealth = data.maxHealth;
+        currentHealth = maxHealth;
+        controller.UpdateHealthUI();
+    }
+
+    void InitializeSprite(Tile tile)
     {
         GameObject obj = GameObject.Instantiate(Services.Prefabs.Player, Services.Main.transform);
         controller = obj.GetComponent<PlayerController>();
@@ -43,26 +55,23 @@ public class Player {
         movesAvailable = 0;
     }
 
-    public void InitializeDeck()
+    void InitializeDeck(List<Card> deck)
     {
         discardPile = new List<Card>();
         cardsInPlay = new List<Card>();
-        remainingDeck = new List<Card>();
+        remainingDeck = new List<Card>(deck);
         hand = new List<Card>();
-        foreach(CardInfo cardInfo in Services.CardConfig.StartingDeck)
-        {
-            Card card = Services.CardConfig.CreateCardOfType(cardInfo.CardType);
-            remainingDeck.Add(card);
-        }
     }
 
-    public void DrawCards(int numCardsToDraw)
+    public TaskTree DrawCards(int numCardsToDraw)
     {
+        TaskTree cardDrawTasks = new TaskTree(new EmptyTask());
         for (int i = 0; i < numCardsToDraw; i++)
         {
-            DrawCard(GetRandomCardFromDeck());
+            cardDrawTasks.Then(DrawCard(GetRandomCardFromDeck()));
         }
         Services.UIManager.UpdateDeckCounter(remainingDeck.Count);
+        return cardDrawTasks;
     }
 
     Card GetRandomCardFromDeck()
@@ -78,11 +87,9 @@ public class Player {
         return card;
     }
 
-    void DrawCard(Card card)
+    TaskTree DrawCard(Card card)
     {
-        hand.Add(card);
-        card.OnDraw();
-        Services.UIManager.SortHand(hand);
+        return card.OnDraw();
     }
 
     void DiscardCardFromHand(Card card)
@@ -119,19 +126,22 @@ public class Player {
 
     public void MoveToTile(Tile tile)
     {
-        List<Tile> shortestPath = GetShortestPath(tile);
-        if (CanMoveAlongPath(shortestPath))
+        if (!tile.IsImpassable())
         {
-            movesAvailable -= MovementCost(shortestPath);
-            PlaceOnTile(tile);
-            if (tile.hovered) OnTileHover(tile);
+            List<Tile> shortestPath = GetShortestPath(tile);
+            if (CanMoveAlongPath(shortestPath))
+            {
+                movesAvailable -= MovementCost(shortestPath);
+                PlaceOnTile(tile);
+                if (tile.hovered) OnTileHover(tile);
+            }
         }
     }
 
     List<Tile> GetShortestPath(Tile tile)
     {
         List<Tile> shortestPathToTile =
-            AStarSearch.ShortestPath(currentTile, tile, this, false);
+            AStarSearch.ShortestPath(currentTile, tile, false);
         return shortestPathToTile;
     }
 
@@ -147,7 +157,7 @@ public class Player {
 
     public void OnTileHover(Tile hoveredTile)
     {
-        if (!targeting)
+        if (!targeting && !hoveredTile.IsImpassable())
         {
             List<Tile> pathToTile = GetShortestPath(hoveredTile);
             if (CanMoveAlongPath(pathToTile))
@@ -200,7 +210,7 @@ public class Player {
                 DiscardCardFromPlay(cardsInPlay[i]);
             }
         }
-        DrawCards(5);
+        Services.Main.taskManager.AddTask(DrawCards(5));
         movesAvailable = 0;
     }
 
@@ -220,5 +230,20 @@ public class Player {
         {
             hand[i].Enable();
         }
+    }
+
+    public void TakeDamage(int damage)
+    {
+        currentHealth = Mathf.Max(0, currentHealth - damage);
+        controller.UpdateHealthUI();
+        if (currentHealth == 0)
+        {
+            Die();
+        }
+    }
+
+    void Die()
+    {
+        Debug.Log("dead");
     }
 }

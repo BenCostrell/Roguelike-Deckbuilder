@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class TitleScreen : Scene<TransitionData> {
+public class TitleScreen : Scene<MainTransitionData> {
 
 	// Use this for initialization
 	void Start () {
@@ -17,6 +17,14 @@ public class TitleScreen : Scene<TransitionData> {
     void StartGame(ButtonPressed e)
     {
         Services.EventManager.Unregister<ButtonPressed>(StartGame);
-        Services.SceneStackManager.Swap<Main>();
+        List<Card> startingDeck = new List<Card>();
+        foreach (CardInfo cardInfo in Services.CardConfig.StartingDeck)
+        {
+            Card card = Services.CardConfig.CreateCardOfType(cardInfo.CardType);
+            startingDeck.Add(card);
+        }
+        Services.SceneStackManager.Swap<Main>(
+            new MainTransitionData(startingDeck,
+            Services.GameManager.playerStartingHealth));
     }
 }

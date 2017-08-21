@@ -7,8 +7,8 @@ public class UIManager : MonoBehaviour {
 
     [SerializeField]
     private GameObject moveCounter;
-    [SerializeField]
-    private GameObject deckCounter;
+    public GameObject deckCounter;
+    public GameObject deckZone;
     public GameObject inPlayZone;
     public GameObject handZone;
 
@@ -36,8 +36,13 @@ public class UIManager : MonoBehaviour {
     {
         for (int i = 0; i < cardsInHand.Count; i++)
         {
-            cardsInHand[i].Reposition(Services.CardConfig.HandCardSpacing * i, true);
+            cardsInHand[i].Reposition(GetCardHandPosition(i), true);
         }
+    }
+
+    public Vector3 GetCardHandPosition(int handCountNum)
+    {
+        return Services.CardConfig.HandCardSpacing * handCountNum;
     }
 
     public void SortInPlayZone(List<Card> cardsInPlay)

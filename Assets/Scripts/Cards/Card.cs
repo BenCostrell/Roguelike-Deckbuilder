@@ -28,9 +28,9 @@ public abstract class Card {
         controller = null;
     }
 
-    public virtual void OnDraw() {
-        playable = true;
-        CreatePhysicalCard();
+    public virtual TaskTree OnDraw() {
+        TaskTree onDrawTasks = new TaskTree(new DrawCardTask(this));
+        return onDrawTasks;
     }
 
     public virtual void OnPlay() {

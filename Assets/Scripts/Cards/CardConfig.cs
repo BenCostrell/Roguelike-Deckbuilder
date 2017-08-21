@@ -36,6 +36,22 @@ public class CardConfig : ScriptableObject
     private Color playableColor;
     public Color PlayableColor { get { return playableColor; } }
 
+    [SerializeField]
+    private float drawAnimDur;
+    public float DrawAnimDur { get { return drawAnimDur; } }
+
+    [SerializeField]
+    private float drawAnimTimeToMidpoint;
+    public float DrawAnimTimeToMidpoint { get { return drawAnimTimeToMidpoint; } }
+
+    [SerializeField]
+    private float drawAnimScale;
+    public float DrawAnimScale { get { return drawAnimScale; } }
+
+    [SerializeField]
+    private Vector3 drawAnimMidpointOffset;
+    public Vector3 DrawAnimMidpointOffset { get { return drawAnimMidpointOffset; } }
+
 
     public CardInfo GetCardOfType(Card.CardType cardType)
     {

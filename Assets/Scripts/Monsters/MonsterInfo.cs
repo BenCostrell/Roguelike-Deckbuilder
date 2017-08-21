@@ -19,4 +19,16 @@ public class MonsterInfo : ScriptableObject
     [SerializeField]
     private int startingHealth;
     public int StartingHealth { get { return startingHealth; } }
+
+    [SerializeField]
+    private int attackRange;
+    public int AttackRange { get { return attackRange; } }
+
+    [SerializeField]
+    private int attackDamage;
+    public int AttackDamage { get { return attackDamage; } }
+
+    [SerializeField]
+    private int movementSpeed;
+    public int MovementSpeed { get { return movementSpeed; } }
 }

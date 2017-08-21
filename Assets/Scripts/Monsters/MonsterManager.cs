@@ -54,4 +54,20 @@ public class MonsterManager
         }
         return monstersInRange;
     }
+
+    public void MonstersAttack()
+    {
+        for (int i = 0; i < monsters.Count; i++)
+        {
+            if (monsters[i].IsPlayerInRange()) monsters[i].AttackPlayer();
+        }
+    }
+
+    public void MonstersMove()
+    {
+        for (int i = 0; i < monsters.Count; i++)
+        {
+            if (!monsters[i].IsPlayerInRange()) monsters[i].Move();
+        }
+    }
 }

@@ -13,6 +13,9 @@ public abstract class Monster {
     public Tile currentTile { get; protected set; }
     public int currentHealth { get; protected set; }
     public int maxHealth { get; protected set; }
+    protected int movementSpeed;
+    protected int attackRange;
+    protected int attackDamage;
 
     public void CreatePhysicalMonster(Tile tile)
     {
@@ -42,19 +45,52 @@ public abstract class Monster {
     {
         maxHealth = info.StartingHealth;
         currentHealth = maxHealth;
+        attackDamage = info.AttackDamage;
+        attackRange = info.AttackRange;
+        movementSpeed = info.MovementSpeed;
     }
 
     public void TakeDamage(int damage)
     {
-        currentHealth -= damage;
+        currentHealth = Mathf.Max(0, currentHealth - damage);
         controller.UpdateHealthUI();
-        if (currentHealth <= 0) Die();
+        if (currentHealth == 0) Die();
     }
 
     void Die()
     {
         Services.MonsterManager.KillMonster(this);
         DestroyPhysicalMonster();
+    }
+
+    public bool IsPlayerInRange()
+    {
+        return Services.GameManager.player.currentTile.coord.Distance(currentTile.coord) 
+            <= attackRange;
+    }
+
+    public virtual void AttackPlayer()
+    {
+        Services.GameManager.player.TakeDamage(attackDamage);
+    }
+
+    public virtual void Move()
+    {
+        List<Tile> shortestPathToPlayer =
+            AStarSearch.ShortestPath(currentTile,
+            Services.GameManager.player.currentTile, false);
+        List<Tile> pathToMoveAlong = new List<Tile>();
+        int movesLeft = movementSpeed;
+        for (int i = shortestPathToPlayer.Count - 1; i >= 1; i--)
+        {
+            if (movesLeft == 0) break;
+            pathToMoveAlong.Add(shortestPathToPlayer[i]);
+            movesLeft -= 1;
+        }
+        if (pathToMoveAlong.Count > 0)
+        {
+            PlaceOnTile(pathToMoveAlong[pathToMoveAlong.Count - 1]);
+        }
     }
 
 }

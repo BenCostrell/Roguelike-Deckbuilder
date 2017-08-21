@@ -11,11 +11,12 @@ public static class AStarSearch
         return Coord.Distance(a.coord, b.coord);
     }
 
-    public static List<Tile> ShortestPath(Tile start, Tile goal, Player player, bool raw)
+    public static List<Tile> ShortestPath(Tile start, Tile goal, bool raw)
     {
         List<Tile> path = new List<Tile>();
         Dictionary<Tile, Tile> cameFrom = new Dictionary<Tile, Tile>();
         Dictionary<Tile, float> costSoFar = new Dictionary<Tile, float>();
+        Tile estimatedClosestTile = start;
 
         PriorityQueue<Tile> frontier = new PriorityQueue<Tile>();
         frontier.Enqueue(start, 0);
@@ -25,31 +26,37 @@ public static class AStarSearch
         while (frontier.Count > 0)
         {
             Tile current = frontier.Dequeue();
+            if (Heuristic(current, goal) < Heuristic(estimatedClosestTile, goal))
+            {
+                estimatedClosestTile = current;
+            }
             if (current == goal) break;
             foreach (Tile next in current.neighbors)
             {
-                float newCost;
-                if (raw)
+                if (!next.IsImpassable())
                 {
-                    newCost = costSoFar[current] + 1;
-                }
-                else
-                {
-                    newCost = costSoFar[current] + next.movementCost;
-                }
+                    float newCost;
+                    if (raw)
+                    {
+                        newCost = costSoFar[current] + 1;
+                    }
+                    else
+                    {
+                        newCost = costSoFar[current] + next.movementCost;
+                    }
 
-                if (!costSoFar.ContainsKey(next) || newCost < costSoFar[next])
-                {
-                    costSoFar[next] = newCost;
-                    float priority = newCost + Heuristic(next, goal);
-                    frontier.Enqueue(next, priority);
-                    cameFrom[next] = current;
+                    if (!costSoFar.ContainsKey(next) || newCost < costSoFar[next])
+                    {
+                        costSoFar[next] = newCost;
+                        float priority = newCost + Heuristic(next, goal);
+                        frontier.Enqueue(next, priority);
+                        cameFrom[next] = current;
+                    }
                 }
             }
 
         }
-
-        Tile pathNode = goal;
+        Tile pathNode = estimatedClosestTile;
         while(pathNode != start)
         {
             path.Add(pathNode);
@@ -59,7 +66,7 @@ public static class AStarSearch
         return path;
     }
 
-    public static List<Tile> FindAllAvailableGoals(Tile start, int movesAvailable, Player player, bool raw)
+    public static List<Tile> FindAllAvailableGoals(Tile start, int movesAvailable, bool raw)
     {
         List<Tile> availableGoals = new List<Tile>();
         if (movesAvailable == 0) return availableGoals;
@@ -79,20 +86,23 @@ public static class AStarSearch
                 if (current != start) availableGoals.Add(current);
                 foreach (Tile next in current.neighbors)
                 {
-                    int newCost;
-                    if (raw)
+                    if (!next.IsImpassable())
                     {
-                        newCost = costSoFar[current] + 1;
-                    }
-                    else
-                    {
-                        newCost = costSoFar[current] + next.movementCost;
-                    }
-                    if (!costSoFar.ContainsKey(next) || newCost < costSoFar[next])
-                    {
-                        costSoFar[next] = newCost;
-                        frontier.Enqueue(next);
-                        cameFrom[next] = current;
+                        int newCost;
+                        if (raw)
+                        {
+                            newCost = costSoFar[current] + 1;
+                        }
+                        else
+                        {
+                            newCost = costSoFar[current] + next.movementCost;
+                        }
+                        if (!costSoFar.ContainsKey(next) || newCost < costSoFar[next])
+                        {
+                            costSoFar[next] = newCost;
+                            frontier.Enqueue(next);
+                            cameFrom[next] = current;
+                        }
                     }
                 }
             }

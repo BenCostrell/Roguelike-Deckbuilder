@@ -32,5 +32,8 @@ MonoBehaviour:
   inPlaySpacing: {x: 1, y: 0, z: -2}
   onHoverScaleUp: 2
   onHoverOffset: {x: 0, y: 2.5, z: -2}
-  cardPlayThresholdYPos: -1.5
+  cardPlayThresholdYPos: -2
   playableColor: {r: 0.44766432, g: 1, b: 0.30590397, a: 1}
+  drawAnimDur: 1
+  drawAnimTimeToMidpoint: 0.5
+  drawAnimMidpointOffset: {x: -2, y: 1, z: 0}

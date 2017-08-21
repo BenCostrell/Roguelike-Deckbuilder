@@ -7,6 +7,10 @@ public class PlayerController : MonoBehaviour {
     private Player player;
     private LineRenderer lr;
     private GameObject arrowhead;
+    [SerializeField]
+    private GameObject healthUIobj;
+    private TextMesh healthUI;
+    private SpriteRenderer sr;
 
 	// Use this for initialization
 	void Start () {
@@ -22,8 +26,18 @@ public class PlayerController : MonoBehaviour {
     {
         player = player_;
         lr = GetComponentInChildren<LineRenderer>();
+        sr = GetComponent<SpriteRenderer>();
         arrowhead = lr.gameObject;
         arrowhead.SetActive(false);
+        healthUI = healthUIobj.GetComponent<TextMesh>();
+        MeshRenderer mr = healthUIobj.GetComponent<MeshRenderer>();
+        mr.sortingLayerID = sr.sortingLayerID;
+        mr.sortingOrder = sr.sortingOrder;
+    }
+
+    public void UpdateHealthUI()
+    {
+        healthUI.text = player.currentHealth + "/" + player.maxHealth;
     }
 
 
