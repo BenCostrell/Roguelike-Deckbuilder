@@ -5,9 +5,9 @@ public class CardController : MonoBehaviour
 {
     private Card card;
     private Vector3 basePos;
-    private Vector3 baseScale;
+    public Vector3 baseScale { get; private set; }
     private int baseSortingOrder;
-    private SpriteRenderer sr;
+    public SpriteRenderer sr { get; private set; }
     private TextMesh[] textMeshes;
     private Vector3 mouseRelativePos;
     // Use this for initialization

@@ -45,11 +45,16 @@ public class UIManager : MonoBehaviour {
         return Services.CardConfig.HandCardSpacing * handCountNum;
     }
 
+    public Vector3 GetInPlayCardPosition(int inPlayZoneCountNum)
+    {
+        return Services.CardConfig.InPlaySpacing * inPlayZoneCountNum;
+    }
+
     public void SortInPlayZone(List<Card> cardsInPlay)
     {
         for (int i = 0; i < cardsInPlay.Count; i++)
         {
-            cardsInPlay[i].Reposition(Services.CardConfig.InPlaySpacing * i, true);
+            cardsInPlay[i].Reposition(GetInPlayCardPosition(i), true);
         }
     }
 }

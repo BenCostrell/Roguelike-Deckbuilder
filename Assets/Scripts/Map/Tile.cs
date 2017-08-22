@@ -5,7 +5,7 @@ using System.Collections.Generic;
 public class Tile
 {
     public readonly Coord coord;
-    private readonly TileController controller;
+    public readonly TileController controller;
     public List<Tile> neighbors;
     public int movementCost { get; private set; }
     public bool hovered { get; private set; }

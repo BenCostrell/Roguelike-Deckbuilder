@@ -39,4 +39,16 @@ public class TileController : MonoBehaviour {
     {
         tile.OnSelect();
     }
+
+    public void ShowAsAvailable()
+    {
+        defColor = Color.green;
+        sr.color = defColor;
+    }
+
+    public void ShowAsUnavailable()
+    {
+        defColor = Color.white;
+        sr.color = defColor;
+    }
 }

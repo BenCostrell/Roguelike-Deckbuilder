@@ -61,6 +61,7 @@ public abstract class Monster {
     {
         Services.MonsterManager.KillMonster(this);
         DestroyPhysicalMonster();
+        Services.GameManager.player.ShowAvailableMoves();
     }
 
     public bool IsPlayerInRange()

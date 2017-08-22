@@ -52,6 +52,10 @@ public class CardConfig : ScriptableObject
     private Vector3 drawAnimMidpointOffset;
     public Vector3 DrawAnimMidpointOffset { get { return drawAnimMidpointOffset; } }
 
+    [SerializeField]
+    private float playAnimDur;
+    public float PlayAnimDur { get { return playAnimDur; } }
+
 
     public CardInfo GetCardOfType(Card.CardType cardType)
     {

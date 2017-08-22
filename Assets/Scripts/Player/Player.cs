@@ -14,6 +14,7 @@ public class Player {
         {
             movesAvailable_ = value;
             Services.UIManager.UpdateMoveCounter(movesAvailable_);
+            ShowAvailableMoves();
         }
     }
     private List<Card> fullDeck
@@ -31,7 +32,7 @@ public class Player {
     private List<Card> remainingDeck;
     public List<Card> hand;
     private List<Card> discardPile;
-    private List<Card> cardsInPlay;
+    public List<Card> cardsInPlay;
     public bool targeting;
     public int maxHealth { get; private set; }
     public int currentHealth { get; private set; }
@@ -116,6 +117,7 @@ public class Player {
     {
         controller.PlaceOnTile(tile);
         currentTile = tile;
+        ShowAvailableMoves();
     }
 
     public bool CanMoveAlongPath(List<Tile> path)
@@ -143,6 +145,17 @@ public class Player {
         List<Tile> shortestPathToTile =
             AStarSearch.ShortestPath(currentTile, tile, false);
         return shortestPathToTile;
+    }
+
+    public void ShowAvailableMoves()
+    {
+        List<Tile> availableTiles = 
+            AStarSearch.FindAllAvailableGoals(currentTile, movesAvailable, false);
+        foreach(Tile tile in Services.MapManager.map)
+        {
+            if (availableTiles.Contains(tile)) tile.controller.ShowAsAvailable();
+            else tile.controller.ShowAsUnavailable();
+        }
     }
 
     int MovementCost(List<Tile> path)
@@ -176,16 +189,9 @@ public class Player {
     public void PlayCard(Card card)
     {
         Debug.Assert(hand.Contains(card));
-        card.OnPlay();
         hand.Remove(card);
-        PutCardInPlay(card);
-    }
-
-    void PutCardInPlay(Card card)
-    {
         cardsInPlay.Add(card);
-        card.controller.DisplayInPlay();
-        Services.UIManager.SortInPlayZone(cardsInPlay);
+        Services.TaskManager.AddTask(new PlayCardTask(card));
     }
 
     void RemoveCardFromPlay(Card card)
