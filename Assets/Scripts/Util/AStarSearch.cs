@@ -86,7 +86,7 @@ public static class AStarSearch
                 if (current != start) availableGoals.Add(current);
                 foreach (Tile next in current.neighbors)
                 {
-                    if (!next.IsImpassable())
+                    if (!next.IsImpassable() || raw)
                     {
                         int newCost;
                         if (raw)

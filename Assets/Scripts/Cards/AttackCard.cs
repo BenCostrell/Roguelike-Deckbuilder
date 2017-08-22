@@ -1,10 +1,10 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System;
+using System.Collections.Generic;
 
 public abstract class AttackCard : TargetedCard
 {
-    protected int range;
     protected int damage;
 
     public override bool CanPlay()
@@ -28,11 +28,12 @@ public abstract class AttackCard : TargetedCard
         OnHit(tile.containedMonster);
     }
 
+    
+
     protected override void InitValues()
     {
         base.InitValues();
         AttackCardInfo attackInfo = info as AttackCardInfo;
-        range = attackInfo.Range;
         damage = attackInfo.Damage;
     }
 }

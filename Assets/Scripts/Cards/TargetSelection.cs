@@ -17,6 +17,8 @@ public class TargetSelection : Task
         Services.GameManager.player.DisableCardsWhileTargeting();
         targetReticle = 
             GameObject.Instantiate(Services.Prefabs.TargetReticle, Services.Main.transform);
+        card.OnSelect();
+
     }
 
     internal override void Update()
@@ -43,5 +45,6 @@ public class TargetSelection : Task
         Services.EventManager.Unregister<TileSelected>(OnSelection);
         Services.GameManager.player.ReenableCardsWhenDoneTargeting();
         GameObject.Destroy(targetReticle);
+        card.OnUnselect();
     }
 }

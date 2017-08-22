@@ -51,4 +51,16 @@ public class TileController : MonoBehaviour {
         defColor = Color.white;
         sr.color = defColor;
     }
+
+    public void ShowAsTargetable()
+    {
+        defColor = (Color.red + Color.white)/2;
+        sr.color = defColor;
+    }
+
+    public void ShowAsUntargetable()
+    {
+        defColor = Color.white;
+        sr.color = defColor;
+    }
 }

@@ -85,6 +85,7 @@ public class CardController : MonoBehaviour
                 mousePos.x - transform.localPosition.x,
                 mousePos.y - transform.localPosition.y,
                 0);
+            card.OnSelect();
         }
         if (card.currentTile != null)
         {
@@ -117,6 +118,7 @@ public class CardController : MonoBehaviour
     private void OnMouseUp()
     {
         Services.GameManager.mouseDown = false;
+        card.OnUnselect();
         if (card.playable && card.CanPlay() &&
             transform.position.y >= Services.CardConfig.CardPlayThresholdYPos)
         {

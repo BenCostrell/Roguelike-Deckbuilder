@@ -66,6 +66,10 @@ public abstract class Card {
         return true;
     }
 
+    public virtual void OnSelect() { }
+
+    public virtual void OnUnselect() { }
+
     public void Reposition(Vector3 pos, bool changeBasPos)
     {
         controller.Reposition(pos, changeBasPos);
