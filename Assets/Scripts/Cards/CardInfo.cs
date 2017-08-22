@@ -21,4 +21,8 @@ public class CardInfo : ScriptableObject
     private Sprite sprite;
     public Sprite Sprite { get { return sprite; } }
 
+    [SerializeField]
+    private int tier;
+    public int Tier { get { return tier; } }
+
 }

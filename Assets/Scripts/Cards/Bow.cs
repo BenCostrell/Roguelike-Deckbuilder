@@ -1,11 +1,11 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class Punch : AttackCard
+public class Bow : AttackCard
 {
-    public Punch()
+    public Bow()
     {
-        cardType = CardType.Punch;
+        cardType = CardType.Bow;
         InitValues();
     }
 }

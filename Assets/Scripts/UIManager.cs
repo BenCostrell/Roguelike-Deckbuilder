@@ -11,6 +11,8 @@ public class UIManager : MonoBehaviour {
     public GameObject deckZone;
     public GameObject inPlayZone;
     public GameObject handZone;
+    public GameObject discardCounter;
+    public GameObject discardZone;
 
 	// Use this for initialization
 	void Start () {
@@ -30,6 +32,11 @@ public class UIManager : MonoBehaviour {
     public void UpdateDeckCounter(int cardsInDeck)
     {
         deckCounter.GetComponent<Text>().text = cardsInDeck.ToString();
+    }
+
+    public void UpdateDiscardCounter(int cardsInDiscard)
+    {
+        discardCounter.GetComponent<Text>().text = cardsInDiscard.ToString();
     }
 
     public void SortHand(List<Card> cardsInHand)

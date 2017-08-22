@@ -56,6 +56,30 @@ public class CardConfig : ScriptableObject
     private float playAnimDur;
     public float PlayAnimDur { get { return playAnimDur; } }
 
+    [SerializeField]
+    private float acquireAnimDur;
+    public float AcquireAnimDur { get { return acquireAnimDur; } }
+
+    [SerializeField]
+    private int minSpawnDistFromMonsters;
+    public int MinSpawnDistFromMonsters { get { return minSpawnDistFromMonsters; } }
+
+    [SerializeField]
+    private int minSpawnDistFromItems;
+    public int MinSpawnDistFromItems { get { return minSpawnDistFromItems; } }
+
+    [SerializeField]
+    private int minSpawnCol;
+    public int MinSpawnCol { get { return minSpawnCol; } }
+
+    [SerializeField]
+    private Vector3 cardOnBoardOffset;
+    public Vector3 CardOnBoardOffset { get { return cardOnBoardOffset; } }
+
+    [SerializeField]
+    private Vector3 cardOnBoardHoverOffset;
+    public Vector3 CardOnBoardHoverOffset { get { return cardOnBoardHoverOffset; } }
+
 
     public CardInfo GetCardOfType(Card.CardType cardType)
     {
@@ -80,6 +104,12 @@ public class CardConfig : ScriptableObject
                 return new GoblinCard();
             case Card.CardType.Punch:
                 return new Punch();
+            case Card.CardType.Tome:
+                return new Tome();
+            case Card.CardType.Bow:
+                return new Bow();
+            case Card.CardType.Run:
+                return new Run();
             default:
                 return null;
         }

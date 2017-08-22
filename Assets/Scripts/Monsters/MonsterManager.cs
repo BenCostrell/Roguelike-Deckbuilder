@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 public class MonsterManager
 {
-    private List<Monster> monsters = new List<Monster>();
+    public List<Monster> monsters = new List<Monster>();
 
     public void SpawnMonster(Monster.MonsterType monsterType)
     {

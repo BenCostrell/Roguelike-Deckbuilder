@@ -72,6 +72,7 @@ public class Player {
             cardDrawTasks.Then(DrawCard(GetRandomCardFromDeck()));
         }
         Services.UIManager.UpdateDeckCounter(remainingDeck.Count);
+        Services.UIManager.UpdateDiscardCounter(discardPile.Count);
         return cardDrawTasks;
     }
 
@@ -111,6 +112,7 @@ public class Player {
     {
         discardPile.Add(card);
         card.OnDiscard();
+        Services.UIManager.UpdateDiscardCounter(discardPile.Count);
     }
 
     public void PlaceOnTile(Tile tile)
@@ -118,6 +120,10 @@ public class Player {
         controller.PlaceOnTile(tile);
         currentTile = tile;
         ShowAvailableMoves();
+        if (currentTile.containedCard != null)
+        {
+            AcquireCard(currentTile.containedCard);
+        }
     }
 
     public bool CanMoveAlongPath(List<Tile> path)
@@ -191,6 +197,7 @@ public class Player {
         Debug.Assert(hand.Contains(card));
         hand.Remove(card);
         cardsInPlay.Add(card);
+        Services.UIManager.SortHand(hand);
         Services.TaskManager.AddTask(new PlayCardTask(card));
     }
 
@@ -251,5 +258,12 @@ public class Player {
     void Die()
     {
         Debug.Log("dead");
+    }
+
+    public void AcquireCard(Card card)
+    {
+        discardPile.Add(card);
+        Services.UIManager.UpdateDiscardCounter(discardPile.Count);
+        Services.Main.taskManager.AddTask(new AcquireCardTask(card));
     }
 }

@@ -11,8 +11,14 @@ public abstract class Card {
     {
         Step,
         Punch,
-        Goblin
+        Goblin,
+        Tome,
+        Bow,
+        Run
     }
+    public int tier { get; protected set; }
+    public Sprite sprite { get; protected set; }
+    public Tile currentTile { get; private set; }
 
     public void CreatePhysicalCard()
     {
@@ -20,6 +26,17 @@ public abstract class Card {
             Services.UIManager.handZone.transform);
         controller = obj.GetComponent<CardController>();
         controller.Init(this);
+    }
+
+    public void CreatePhysicalCard(Tile tile)
+    {
+        CreatePhysicalCard();
+        controller.transform.parent = Services.Main.transform;
+        currentTile = tile;
+        tile.containedCard = this;
+        controller.DisplayCardOnBoard();
+        Reposition(tile.controller.transform.position + Services.CardConfig.CardOnBoardOffset, 
+            true);
     }
 
     public void DestroyPhysicalCard()
@@ -67,5 +84,14 @@ public abstract class Card {
     protected virtual void InitValues()
     {
         info = Services.CardConfig.GetCardOfType(cardType);
+        tier = info.Tier;
+        sprite = info.Sprite;
+    }
+
+    public void GetPickedUp()
+    {
+        currentTile.containedCard = null;
+        currentTile = null;
+        Services.MapManager.cardsOnBoard.Remove(this);
     }
 }

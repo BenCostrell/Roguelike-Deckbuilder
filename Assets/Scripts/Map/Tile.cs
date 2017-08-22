@@ -35,6 +35,7 @@ public class Tile
 
     public void OnSelect()
     {
+        if (containedCard != null) containedCard.controller.ShowBoardCardOnHover();
         if (Services.GameManager.player.targeting)
         {
             Services.EventManager.Fire(new TileSelected(this));

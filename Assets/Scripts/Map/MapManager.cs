@@ -11,6 +11,7 @@ public class MapManager : MonoBehaviour {
     public Tile[,] map { get; private set; }
     [SerializeField]
     private int maxTriesProcGen;
+    public List<Card> cardsOnBoard;
 
 	// Use this for initialization
 	void Start () {
@@ -33,6 +34,7 @@ public class MapManager : MonoBehaviour {
             }
         }
         FindAllNeighbors();
+        GenerateCardsOnBoard(3, 1);
     }
 
     void FindAllNeighbors()
@@ -71,21 +73,18 @@ public class MapManager : MonoBehaviour {
 
     bool ValidateTile(Tile tile, int minDistFromMonster, int minDistFromCard)
     {
-        for (int x = 0; x < levelLength; x++)
+        if (Services.GameManager.player.currentTile == tile) return false;
+        for (int i = 0; i < Services.MonsterManager.monsters.Count; i++)
         {
-            for (int y = 0; y < levelHeight; y++)
-            {
-                if(map[x,y].containedCard != null)
-                {
-                    if (map[x, y].coord.Distance(tile.coord) < minDistFromCard)
-                        return false;
-                }
-                if (map[x,y].containedMonster != null)
-                {
-                    if (map[x, y].coord.Distance(tile.coord) < minDistFromMonster)
-                        return false;
-                }
-            }
+            if (Services.MonsterManager.monsters[i].currentTile != null &&
+                Services.MonsterManager.monsters[i].currentTile.coord.Distance(tile.coord) 
+                < minDistFromMonster)
+                return false;
+        }
+        for (int j = 0; j < cardsOnBoard.Count; j++)
+        {
+            if (cardsOnBoard[j].currentTile.coord.Distance(tile.coord) < minDistFromCard)
+                return false;
         }
         return true;
     }
@@ -103,5 +102,40 @@ public class MapManager : MonoBehaviour {
         return null;
     }
 
+    void GenerateCardsOnBoard(int numCards, int tier)
+    {
+        cardsOnBoard = new List<Card>();
+        for (int i = 0; i < numCards; i++)
+        {
+            Card.CardType cardType = GenerateTypeOfTier(tier);
+            Tile cardTile = GenerateValidTile(
+                Services.CardConfig.MinSpawnDistFromMonsters,
+                Services.CardConfig.MinSpawnDistFromItems, 
+                Services.CardConfig.MinSpawnCol, 
+                levelLength - 1);
+            if (cardTile != null)
+            {
+                cardsOnBoard.Add(GenerateCard(cardType, cardTile));
+            }
+            else break;
+        }
+    }
 
+    Card GenerateCard(Card.CardType cardType, Tile tile)
+    {
+        Card card = Services.CardConfig.CreateCardOfType(cardType);
+        card.CreatePhysicalCard(tile);
+        return card;
+    }
+
+    Card.CardType GenerateTypeOfTier(int tier)
+    {
+        List<Card.CardType> potentialTypes = new List<Card.CardType>();
+        foreach(CardInfo cardInfo in Services.CardConfig.Cards)
+        {
+            if (cardInfo.Tier == tier) potentialTypes.Add(cardInfo.CardType);
+        }
+        int randomIndex = Random.Range(0, potentialTypes.Count);
+        return potentialTypes[randomIndex];
+    }
 }
