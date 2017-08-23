@@ -17,3 +17,5 @@ MonoBehaviour:
   minDistFromCards: 3
   minDistFromPlayer: 3
   spawnRange: 4
+  moveAnimTime: 0.15
+  maxMoveAnimDur: 0.5

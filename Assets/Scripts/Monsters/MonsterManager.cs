@@ -63,11 +63,14 @@ public class MonsterManager
         }
     }
 
-    public void MonstersMove()
+    public TaskTree MonstersMove()
     {
+        TaskTree moveTree = new TaskTree(new EmptyTask());
+        moveTree.AddChild(new WaitTask(Services.MonsterConfig.MaxMoveAnimDur));
         for (int i = 0; i < monsters.Count; i++)
         {
-            if (!monsters[i].IsPlayerInRange()) monsters[i].Move();
+            if (!monsters[i].IsPlayerInRange()) moveTree.AddChild(monsters[i].Move());
         }
+        return moveTree;
     }
 }

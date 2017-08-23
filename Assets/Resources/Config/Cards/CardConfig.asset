@@ -43,8 +43,9 @@ MonoBehaviour:
   drawAnimScale: 2
   drawAnimMidpointOffset: {x: -7, y: 2, z: 0}
   playAnimDur: 0.3
+  acquireAnimDur: 1
   minSpawnDistFromMonsters: 1
   minSpawnDistFromItems: 10
   minSpawnCol: 5
-  cardOnBoardOffset: {x: 0, y: -0.3, z: 0}
-  cardOnBoardHoverOffset: {x: 0, y: -1.5, z: -2}
+  cardOnBoardOffset: {x: -0, y: -0.3, z: 0}
+  cardOnBoardHoverOffset: {x: -1, y: -1.5, z: -2}

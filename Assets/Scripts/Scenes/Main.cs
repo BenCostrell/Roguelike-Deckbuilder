@@ -45,8 +45,12 @@ public class Main : Scene<MainTransitionData> {
 
     public void EndTurn()
     {
-        Services.MonsterManager.MonstersMove();
-        Services.MonsterManager.MonstersAttack();
-        Services.GameManager.player.OnTurnEnd();
+        TaskTree endTurnTasks = new TaskTree(new EmptyTask());
+        endTurnTasks
+            .Then(Services.MonsterManager.MonstersMove())
+            .Then(new ActionTask(Services.MonsterManager.MonstersAttack))
+            .Then(new ActionTask(Services.GameManager.player.OnTurnEnd));
+
+        taskManager.AddTask(endTurnTasks);
     }
 }

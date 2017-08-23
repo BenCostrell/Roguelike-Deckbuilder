@@ -140,8 +140,8 @@ public class Player {
             if (CanMoveAlongPath(shortestPath))
             {
                 movesAvailable -= MovementCost(shortestPath);
-                PlaceOnTile(tile);
-                if (tile.hovered) OnTileHover(tile);
+                Services.Main.taskManager.AddTask(
+                    new MoveObjectAlongPath(controller.gameObject, shortestPath));
             }
         }
     }

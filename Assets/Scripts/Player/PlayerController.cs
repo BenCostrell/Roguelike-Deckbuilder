@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour {
 
-    private Player player;
+    public Player player { get; private set; }
     private LineRenderer lr;
     private GameObject arrowhead;
     [SerializeField]

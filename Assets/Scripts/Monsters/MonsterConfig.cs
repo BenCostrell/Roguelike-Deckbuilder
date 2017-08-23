@@ -24,6 +24,14 @@ public class MonsterConfig : ScriptableObject
     private int spawnRange;
     public int SpawnRange { get { return spawnRange; } }
 
+    [SerializeField]
+    private float moveAnimTime;
+    public float MoveAnimTime { get { return moveAnimTime; } }
+
+    [SerializeField]
+    private float maxMoveAnimDur;
+    public float MaxMoveAnimDur { get { return maxMoveAnimDur; } }
+
     public MonsterInfo GetMonsterOfType(Monster.MonsterType monsterType)
     {
         foreach (MonsterInfo monsterInfo in monsters)

@@ -22,6 +22,12 @@ public class Tile
         movementCost = 1;
     }
 
+    public void SetSprite(Sprite sprite, Quaternion rot)
+    {
+        controller.GetComponent<SpriteRenderer>().sprite = sprite;
+        controller.transform.localRotation = rot;
+    }
+
     public void OnHoverEnter()
     {
         hovered = true;
@@ -35,7 +41,6 @@ public class Tile
 
     public void OnSelect()
     {
-        if (containedCard != null) containedCard.controller.ShowBoardCardOnHover();
         if (Services.GameManager.player.targeting)
         {
             Services.EventManager.Fire(new TileSelected(this));

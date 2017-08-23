@@ -3,7 +3,7 @@ using System.Collections;
 
 public class MonsterController : MonoBehaviour
 {
-    private Monster monster;
+    public Monster monster { get; private set; }
     [SerializeField]
     private GameObject healthUIobj;
     private TextMesh healthUI;

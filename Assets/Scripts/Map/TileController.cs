@@ -27,12 +27,32 @@ public class TileController : MonoBehaviour {
     {
         tile.OnHoverEnter();
         sr.color = onHoverColor;
+        Player player = Services.GameManager.player;
+        if (player.currentTile == tile)
+        {
+            Services.UIManager.ShowUnitUI(
+                "PLAYER", 
+                player.currentHealth, 
+                player.maxHealth,
+                player.controller.GetComponent<SpriteRenderer>().sprite);
+        }
+        if (tile.containedMonster != null)
+        {
+            Services.UIManager.ShowUnitUI(
+                tile.containedMonster.info.Name,
+                tile.containedMonster.currentHealth,
+                tile.containedMonster.maxHealth,
+                tile.containedMonster.info.Sprite);
+        }
+        if (tile.containedCard != null) tile.containedCard.controller.ShowBoardCardOnHover();
     }
 
     private void OnMouseExit()
     {
         tile.OnHoverExit();
         sr.color = defColor;
+        Services.UIManager.HideUnitUI();
+        if (tile.containedCard != null) tile.containedCard.controller.DisplayCardOnBoard();
     }
 
     private void OnMouseDown()

@@ -12,6 +12,18 @@ public class MapManager : MonoBehaviour {
     [SerializeField]
     private int maxTriesProcGen;
     public List<Card> cardsOnBoard;
+    [SerializeField]
+    private Sprite botLeftCornerSprite;
+    [SerializeField]
+    private Sprite botRightCornerSprite;
+    [SerializeField]
+    private Sprite botSprite;
+    [SerializeField]
+    private Sprite leftSprite;
+    [SerializeField]
+    private Sprite rightSprite;
+    [SerializeField]
+    private Sprite[] centerSprites;
 
 	// Use this for initialization
 	void Start () {
@@ -34,7 +46,67 @@ public class MapManager : MonoBehaviour {
             }
         }
         FindAllNeighbors();
+        SetSprites();
         GenerateCardsOnBoard(3, 1);
+    }
+
+    void SetSprites()
+    {
+        foreach(Tile tile in map) SetSprite(tile);
+    }
+
+    void SetSprite(Tile tile)
+    {
+        Sprite sprite;
+        Quaternion rot = Quaternion.identity;
+        bool hasUpNeighbor = false;
+        bool hasDownNeighbor = false;
+        bool hasLeftNeighbor = false;
+        bool hasRightNeighbor = false;
+        foreach (Tile neighbor in tile.neighbors)
+        {
+            Coord diff = neighbor.coord.Subtract(tile.coord);
+            if (diff == new Coord(0, 1))
+            {
+                hasUpNeighbor = true;
+            }
+            if (diff == new Coord(0, -1))
+            {
+                hasDownNeighbor = true;
+            }
+            if (diff == new Coord(1, 0))
+            {
+                hasRightNeighbor = true;
+            }
+            if (diff == new Coord(-1, 0))
+            {
+                hasLeftNeighbor = true;
+            }
+        }
+        if (hasUpNeighbor && hasDownNeighbor && hasLeftNeighbor && hasRightNeighbor)
+            sprite = centerSprites[Random.Range(0, centerSprites.Length)];
+        else if (hasUpNeighbor && hasDownNeighbor && hasRightNeighbor) sprite = leftSprite;
+        else if (hasUpNeighbor && hasDownNeighbor && hasLeftNeighbor) sprite = rightSprite;
+        else if (hasUpNeighbor && hasRightNeighbor && hasLeftNeighbor) sprite = botSprite;
+        else if (hasDownNeighbor && hasRightNeighbor && hasLeftNeighbor)
+        {
+            sprite = botSprite;
+            rot = Quaternion.Euler(new Vector3(0, 0, 180));
+        }
+        else if (hasUpNeighbor && hasLeftNeighbor) sprite = botRightCornerSprite;
+        else if (hasUpNeighbor && hasRightNeighbor) sprite = botLeftCornerSprite;
+        else if (hasDownNeighbor && hasLeftNeighbor)
+        {
+            sprite = botLeftCornerSprite;
+            rot = Quaternion.Euler(new Vector3(0, 0, 180));
+        }
+        else if (hasDownNeighbor && hasRightNeighbor)
+        {
+            sprite = botRightCornerSprite;
+            rot = Quaternion.Euler(new Vector3(0, 0, 180));
+        }
+        else sprite = centerSprites[Random.Range(0, centerSprites.Length)];
+        tile.SetSprite(sprite, rot);
     }
 
     void FindAllNeighbors()

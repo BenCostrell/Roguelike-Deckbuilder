@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.UI;
 
 public class CardController : MonoBehaviour
 {
@@ -162,7 +163,14 @@ public class CardController : MonoBehaviour
             mesh.gameObject.SetActive(true);
         }
         transform.localScale = Services.CardConfig.OnHoverScaleUp * baseScale;
-        Reposition(basePos + Services.CardConfig.CardOnBoardHoverOffset, false);
-        colliders[0].enabled = true;
+        Vector3 offset = Services.CardConfig.CardOnBoardHoverOffset;
+        Vector3 uiPos = Services.Main.mainCamera.ScreenToWorldPoint(
+            Services.UIManager.moveCounter.GetComponent<RectTransform>().position);
+        if (sr.bounds.min.y - 1 < uiPos.y)
+        {
+            offset = new Vector3(offset.x, -offset.y + 0.5f, offset.z);
+        }
+        Reposition(basePos + offset, false);
+        colliders[0].enabled = false;
     }
 }

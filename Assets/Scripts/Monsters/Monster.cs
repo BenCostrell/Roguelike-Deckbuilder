@@ -33,7 +33,7 @@ public abstract class Monster {
         GameObject.Destroy(controller.gameObject);
     }
 
-    protected void PlaceOnTile(Tile tile)
+    public void PlaceOnTile(Tile tile)
     {
         if (currentTile != null) currentTile.containedMonster = null;
         currentTile = tile;
@@ -75,7 +75,7 @@ public abstract class Monster {
         Services.GameManager.player.TakeDamage(attackDamage);
     }
 
-    public virtual void Move()
+    public virtual TaskTree Move()
     {
         List<Tile> shortestPathToPlayer =
             AStarSearch.ShortestPath(currentTile,
@@ -88,10 +88,13 @@ public abstract class Monster {
             pathToMoveAlong.Add(shortestPathToPlayer[i]);
             movesLeft -= 1;
         }
+        pathToMoveAlong.Reverse();
         if (pathToMoveAlong.Count > 0)
         {
-            PlaceOnTile(pathToMoveAlong[pathToMoveAlong.Count - 1]);
+            return new TaskTree(new MoveObjectAlongPath(controller.gameObject,
+                pathToMoveAlong));
         }
+        else return new TaskTree(new EmptyTask());
     }
 
 }
