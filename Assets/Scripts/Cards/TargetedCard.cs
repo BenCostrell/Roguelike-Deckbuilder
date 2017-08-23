@@ -43,5 +43,6 @@ public abstract class TargetedCard : Card
         {
             tile.controller.ShowAsUntargetable();
         }
+        Services.GameManager.player.ShowAvailableMoves();
     }
 }

@@ -34,6 +34,7 @@ public class Player {
     private List<Card> discardPile;
     public List<Card> cardsInPlay;
     public bool targeting;
+    public bool moving;
     public int maxHealth { get; private set; }
     public int currentHealth { get; private set; }
 
@@ -176,7 +177,7 @@ public class Player {
 
     public void OnTileHover(Tile hoveredTile)
     {
-        if (!targeting && !hoveredTile.IsImpassable())
+        if (!targeting && !moving && !hoveredTile.IsImpassable())
         {
             List<Tile> pathToTile = GetShortestPath(hoveredTile);
             if (CanMoveAlongPath(pathToTile))
@@ -185,6 +186,8 @@ public class Player {
             }
             else HideArrow();
         }
+        else HideArrow();
+
     }
 
     public void HideArrow()

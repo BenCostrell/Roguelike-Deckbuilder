@@ -32,6 +32,11 @@ public class MoveObjectAlongPath : Task
                 duration = Services.MonsterConfig.MaxMoveAnimDur / path.Count;
             }
         }
+        else
+        {
+            obj.GetComponent<PlayerController>().player.moving = true;
+            obj.GetComponent<PlayerController>().player.HideArrow();
+        }
     }
 
     internal override void Update()
@@ -68,6 +73,7 @@ public class MoveObjectAlongPath : Task
         {
             Player player = obj.GetComponent<PlayerController>().player;
             player.PlaceOnTile(finalTile);
+            obj.GetComponent<PlayerController>().player.moving = false;
             if (finalTile.hovered) player.OnTileHover(finalTile);
         }
     }
