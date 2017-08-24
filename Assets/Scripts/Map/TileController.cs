@@ -27,15 +27,6 @@ public class TileController : MonoBehaviour {
     {
         tile.OnHoverEnter();
         sr.color = onHoverColor;
-        Player player = Services.GameManager.player;
-        if (player.currentTile == tile)
-        {
-            Services.UIManager.ShowUnitUI(
-                "PLAYER", 
-                player.currentHealth, 
-                player.maxHealth,
-                player.controller.GetComponent<SpriteRenderer>().sprite);
-        }
         if (tile.containedMonster != null)
         {
             Services.UIManager.ShowUnitUI(

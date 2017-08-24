@@ -11,8 +11,9 @@ public class Tile
     public bool hovered { get; private set; }
     public Monster containedMonster;
     public Card containedCard;
+    public readonly bool isExit;
 
-    public Tile(Coord coord_)
+    public Tile(Coord coord_, bool isExit_)
     {
         coord = coord_;
         GameObject obj = 
@@ -20,6 +21,7 @@ public class Tile
         controller = obj.GetComponent<TileController>();
         controller.Init(this);
         movementCost = 1;
+        isExit = isExit_;
     }
 
     public void SetSprite(Sprite sprite, Quaternion rot)
@@ -45,7 +47,8 @@ public class Tile
         {
             Services.EventManager.Fire(new TileSelected(this));
         }
-        else Services.GameManager.player.MoveToTile(this);
+        else if (this != Services.GameManager.player.currentTile)
+            Services.GameManager.player.MoveToTile(this);
     }
 
     public bool IsImpassable()

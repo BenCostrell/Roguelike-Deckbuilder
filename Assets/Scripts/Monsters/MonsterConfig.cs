@@ -32,6 +32,18 @@ public class MonsterConfig : ScriptableObject
     private float maxMoveAnimDur;
     public float MaxMoveAnimDur { get { return maxMoveAnimDur; } }
 
+    [SerializeField]
+    private float attackAnimTime;
+    public float AttackAnimTime { get { return attackAnimTime; } }
+
+    [SerializeField]
+    private float recoveryAnimTime;
+    public float RecoveryAnimTime { get { return recoveryAnimTime; } }
+
+    [SerializeField]
+    private float attackAnimDist;
+    public float AttackAnimDist { get { return attackAnimDist; } }
+
     public MonsterInfo GetMonsterOfType(Monster.MonsterType monsterType)
     {
         foreach (MonsterInfo monsterInfo in monsters)

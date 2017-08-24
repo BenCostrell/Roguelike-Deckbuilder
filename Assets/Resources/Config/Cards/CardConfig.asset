@@ -48,4 +48,4 @@ MonoBehaviour:
   minSpawnDistFromItems: 10
   minSpawnCol: 5
   cardOnBoardOffset: {x: -0, y: -0.3, z: 0}
-  cardOnBoardHoverOffset: {x: -1, y: -1.5, z: -2}
+  cardOnBoardHoverOffset: {x: 1, y: -1.5, z: -2}

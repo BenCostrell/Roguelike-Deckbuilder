@@ -35,8 +35,26 @@ public class Player {
     public List<Card> cardsInPlay;
     public bool targeting;
     public bool moving;
-    public int maxHealth { get; private set; }
-    public int currentHealth { get; private set; }
+    private int maxHealth_;
+    public int maxHealth
+    {
+        get { return maxHealth_; }
+        private set
+        {
+            maxHealth_ = value;
+            Services.UIManager.UpdatePlayerUI(currentHealth, maxHealth);
+        }
+    }
+    private int currentHealth_;
+    public int currentHealth
+    {
+        get { return currentHealth_; }
+        private set
+        {
+            currentHealth_ = value;
+            Services.UIManager.UpdatePlayerUI(currentHealth, maxHealth);
+        }
+    }
 
     public void Initialize(Tile tile, MainTransitionData data)
     {
@@ -67,11 +85,15 @@ public class Player {
 
     public TaskTree DrawCards(int numCardsToDraw)
     {
+        int lockID = Services.UIManager.nextLockID;
+        Services.UIManager.DisableEndTurn(lockID);
         TaskTree cardDrawTasks = new TaskTree(new EmptyTask());
         for (int i = 0; i < numCardsToDraw; i++)
         {
             cardDrawTasks.Then(DrawCard(GetRandomCardFromDeck()));
         }
+        cardDrawTasks.Then(new ParameterizedActionTask<int>(
+            Services.UIManager.EnableEndTurn, lockID));
         Services.UIManager.UpdateDeckCounter(remainingDeck.Count);
         Services.UIManager.UpdateDiscardCounter(discardPile.Count);
         return cardDrawTasks;
@@ -210,7 +232,7 @@ public class Player {
         Services.UIManager.SortInPlayZone(cardsInPlay);
     }
 
-    public void OnTurnEnd()
+    public TaskTree OnTurnEnd()
     {
         if(hand.Count > 0)
         {
@@ -226,8 +248,8 @@ public class Player {
                 DiscardCardFromPlay(cardsInPlay[i]);
             }
         }
-        Services.Main.taskManager.AddTask(DrawCards(5));
         movesAvailable = 0;
+        return DrawCards(5);
     }
 
     public void DisableCardsWhileTargeting()

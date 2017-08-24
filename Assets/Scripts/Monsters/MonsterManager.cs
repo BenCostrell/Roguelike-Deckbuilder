@@ -55,12 +55,14 @@ public class MonsterManager
         return monstersInRange;
     }
 
-    public void MonstersAttack()
+    public TaskTree MonstersAttack()
     {
+        TaskTree attackTree = new TaskTree(new EmptyTask());
         for (int i = 0; i < monsters.Count; i++)
         {
-            if (monsters[i].IsPlayerInRange()) monsters[i].AttackPlayer();
+            if (monsters[i].IsPlayerInRange()) attackTree.Then(monsters[i].AttackPlayer());
         }
+        return attackTree;
     }
 
     public TaskTree MonstersMove()

@@ -13,9 +13,14 @@ public class UIManager : MonoBehaviour {
     public GameObject discardCounter;
     public GameObject discardZone;
     [SerializeField]
+    private GameObject endTurnButtonObj;
+    private Button endTurnButton;
+    [SerializeField]
     private GameObject unitUI;
     [SerializeField]
     private GameObject unitUIRemainingHealthObj;
+    [SerializeField]
+    private GameObject unitUIRemainingHealthBody;
     [SerializeField]
     private GameObject unitUISpriteObj;
     private Image unitUISprite;
@@ -31,10 +36,39 @@ public class UIManager : MonoBehaviour {
     private GameObject unitUIHealthCounterObj;
     private Text unitUIHealthCounter;
     private Vector2 unitUIHealthBarBaseSize;
+    [SerializeField]
+    private GameObject playerUI;
+    [SerializeField]
+    private GameObject playerUIRemainingHealthObj;
+    [SerializeField]
+    private GameObject playerUIRemainingHealthBody;
+    [SerializeField]
+    private GameObject playerUISpriteObj;
+    private Image playerUISprite;
+    [SerializeField]
+    private GameObject playerUIHealthContainer;
+    [SerializeField]
+    private GameObject playerUIHealthObj;
+    private Image playerUIHealth;
+    [SerializeField]
+    private GameObject playerUIHealthCounterObj;
+    private Text playerUIHealthCounter;
+    private Vector2 playerUIHealthBarBaseSize;
+    private int nextLockID_;
+    public int nextLockID
+    {
+        get
+        {
+            nextLockID_ += 1;
+            return nextLockID_;
+        }
+    }
+    private int endTurnLockID;
+    private bool endTurnLocked;
 
-	// Use this for initialization
-	void Awake() {
-        InitUnitUI();
+    // Use this for initialization
+    void Awake() {
+        InitUI();
 	}
 	
 	// Update is called once per frame
@@ -42,14 +76,23 @@ public class UIManager : MonoBehaviour {
 		
 	}
     
-    void InitUnitUI()
+    void InitUI()
     {
         unitUISprite = unitUISpriteObj.GetComponent<Image>();
         unitUIHealth = unitUIHealthObj.GetComponent<Image>();
         unitUIHealthCounter = unitUIHealthCounterObj.GetComponent<Text>();
         unitUIName = unitUINameObj.GetComponent<Text>();
         unitUI.SetActive(false);
-        unitUIHealthBarBaseSize = unitUIHealth.GetComponent<RectTransform>().sizeDelta;
+        unitUIHealthBarBaseSize = 
+            unitUIRemainingHealthBody.GetComponent<RectTransform>().sizeDelta;
+
+        playerUISprite = playerUISpriteObj.GetComponent<Image>();
+        playerUIHealth = playerUIHealthObj.GetComponent<Image>();
+        playerUIHealthCounter = playerUIHealthCounterObj.GetComponent<Text>();
+        playerUIHealthBarBaseSize = 
+            playerUIRemainingHealthBody.GetComponent<RectTransform>().sizeDelta;
+
+        endTurnButton = endTurnButtonObj.GetComponent<Button>();
     }
 
     public void UpdateMoveCounter(int movesAvailable)
@@ -99,14 +142,44 @@ public class UIManager : MonoBehaviour {
         unitUIName.text = name;
         unitUIHealthCounter.text = curHP + "/" + maxHP;
         unitUISprite.sprite = sprite;
-        unitUIHealth.GetComponent<RectTransform>().sizeDelta = new Vector2(
+        unitUIRemainingHealthBody.GetComponent<RectTransform>().sizeDelta = new Vector2(
             unitUIHealthBarBaseSize.x * (float)curHP / maxHP,
             unitUIHealthBarBaseSize.y);
         if (curHP == 0) unitUIRemainingHealthObj.SetActive(false);
     }
 
+    public void UpdatePlayerUI(int curHP, int maxHP)
+    {
+        playerUIHealthCounter.text = curHP + "/" + maxHP;
+        playerUIRemainingHealthBody.GetComponent<RectTransform>().sizeDelta = new Vector2(
+            playerUIHealthBarBaseSize.x * (float)curHP / maxHP,
+            playerUIHealthBarBaseSize.y);
+        if (curHP == 0) playerUIRemainingHealthObj.SetActive(false);
+        else playerUIRemainingHealthObj.SetActive(true);
+        playerUISprite.sprite = Services.GameManager.player.controller.GetComponent<SpriteRenderer>().sprite;
+    }
+
     public void HideUnitUI()
     {
         unitUI.SetActive(false);
+    }
+
+    public void DisableEndTurn(int lockID)
+    {
+        if (!endTurnLocked)
+        {
+            endTurnLocked = true;
+            endTurnLockID = lockID;
+            endTurnButton.enabled = false;
+        }
+    }
+
+    public void EnableEndTurn(int lockID)
+    {
+        if (lockID == endTurnLockID && endTurnLocked)
+        {
+            endTurnLocked = false;
+            endTurnButton.enabled = true;
+        }
     }
 }

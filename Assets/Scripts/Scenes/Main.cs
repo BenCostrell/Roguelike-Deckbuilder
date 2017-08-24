@@ -45,12 +45,21 @@ public class Main : Scene<MainTransitionData> {
 
     public void EndTurn()
     {
+        int lockID = Services.UIManager.nextLockID;
+        Services.UIManager.DisableEndTurn(lockID);
         TaskTree endTurnTasks = new TaskTree(new EmptyTask());
         endTurnTasks
             .Then(Services.MonsterManager.MonstersMove())
-            .Then(new ActionTask(Services.MonsterManager.MonstersAttack))
-            .Then(new ActionTask(Services.GameManager.player.OnTurnEnd));
+            .Then(Services.MonsterManager.MonstersAttack())
+            .Then(Services.GameManager.player.OnTurnEnd())
+            .Then(new ParameterizedActionTask<int>(
+                Services.UIManager.EnableEndTurn, lockID));
 
         taskManager.AddTask(endTurnTasks);
+    }
+
+    public void ExitLevel()
+    {
+        Debug.Log("exiting level");
     }
 }

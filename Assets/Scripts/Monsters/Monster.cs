@@ -70,7 +70,15 @@ public abstract class Monster {
             <= attackRange;
     }
 
-    public virtual void AttackPlayer()
+    public virtual TaskTree AttackPlayer()
+    {
+        TaskTree attackTasks = new TaskTree(new AttackAnimation(controller.gameObject,
+            Services.GameManager.player.controller.gameObject));
+        attackTasks.Then(new ActionTask(OnAttackHit));
+        return attackTasks;
+    }
+
+    protected virtual void OnAttackHit()
     {
         Services.GameManager.player.TakeDamage(attackDamage);
     }

@@ -4,10 +4,12 @@ using System.Collections;
 public class CameraController : MonoBehaviour
 {
     private Camera mainCamera;
+    private float basePosX;
     // Use this for initialization
     void Start()
     {
         mainCamera = GetComponent<Camera>();
+        basePosX = transform.position.x;
     }
 
     // Update is called once per frame
@@ -20,7 +22,7 @@ public class CameraController : MonoBehaviour
     {
         Vector3 playerPos = Services.GameManager.player.controller.transform.position;
         Vector3 targetPos = new Vector3(
-            playerPos.x + 5,
+            playerPos.x + basePosX,
             transform.position.y,
             transform.position.z);
         Vector3 newPos = Vector3.Lerp(transform.position, targetPos, 0.05f);

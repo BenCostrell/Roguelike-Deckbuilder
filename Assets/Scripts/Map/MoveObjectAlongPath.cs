@@ -16,6 +16,12 @@ public class MoveObjectAlongPath : Task
     {
         obj = obj_;
         path = path_;
+        if (obj.GetComponent<MonsterController>() != null)
+        {
+            curPos = obj.transform.position;
+            obj.GetComponent<MonsterController>().monster.PlaceOnTile(path[0]);
+            obj.transform.position = curPos;
+        }
     }
 
     protected override void Init()
@@ -73,8 +79,9 @@ public class MoveObjectAlongPath : Task
         {
             Player player = obj.GetComponent<PlayerController>().player;
             player.PlaceOnTile(finalTile);
-            obj.GetComponent<PlayerController>().player.moving = false;
+            player.moving = false;
             if (finalTile.hovered) player.OnTileHover(finalTile);
+            if (finalTile.isExit) Services.Main.ExitLevel();
         }
     }
 }

@@ -8,6 +8,8 @@ public class MapManager : MonoBehaviour {
     private int levelLength;
     [SerializeField]
     private int levelHeight;
+    [SerializeField]
+    private int rowsPerCard;
     public Tile[,] map { get; private set; }
     [SerializeField]
     private int maxTriesProcGen;
@@ -42,12 +44,17 @@ public class MapManager : MonoBehaviour {
         {
             for (int y = 0; y < levelHeight; y++)
             {
-                map[x, y] = new Tile(new Coord(x, y));
+                if(x == levelLength-1 && y == levelHeight - 1)
+                {
+                    map[x, y] = new Tile(new Coord(x, y), true);
+                }
+                else map[x, y] = new Tile(new Coord(x, y), false);
             }
         }
         FindAllNeighbors();
         SetSprites();
-        GenerateCardsOnBoard(3, 1);
+        int cardsToGenerate = levelLength / rowsPerCard;
+        GenerateCardsOnBoard(cardsToGenerate, 1);
     }
 
     void SetSprites()
@@ -57,6 +64,13 @@ public class MapManager : MonoBehaviour {
 
     void SetSprite(Tile tile)
     {
+        if (tile.isExit)
+        {
+            GameObject door = 
+                Instantiate(Services.Prefabs.ExitDoor, tile.controller.transform);
+            door.transform.localPosition = Vector3.zero;
+            return;
+        }
         Sprite sprite;
         Quaternion rot = Quaternion.identity;
         bool hasUpNeighbor = false;
