@@ -60,6 +60,8 @@ public class Main : Scene<MainTransitionData> {
 
     public void ExitLevel()
     {
-        Debug.Log("exiting level");
+        Services.SceneStackManager.Swap<Main>(new MainTransitionData(
+            Services.GameManager.player.fullDeck,
+            Services.GameManager.player.maxHealth));
     }
 }

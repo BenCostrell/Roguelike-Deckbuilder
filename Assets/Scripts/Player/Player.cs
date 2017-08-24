@@ -17,7 +17,7 @@ public class Player {
             ShowAvailableMoves();
         }
     }
-    private List<Card> fullDeck
+    public List<Card> fullDeck
     {
         get
         {
