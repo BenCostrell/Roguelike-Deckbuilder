@@ -32,17 +32,15 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 43e29ec8a0fc55147bda0a193b407264, type: 2}
   - {fileID: 11400000, guid: b7cffbf5124cb0f479a4b2b5ddbf7f72, type: 2}
   - {fileID: 11400000, guid: b7cffbf5124cb0f479a4b2b5ddbf7f72, type: 2}
-  - {fileID: 11400000, guid: ca27c1ba9738cea45a913e260caced79, type: 2}
-  - {fileID: 11400000, guid: ca27c1ba9738cea45a913e260caced79, type: 2}
-  - {fileID: 11400000, guid: ca27c1ba9738cea45a913e260caced79, type: 2}
   handCardSpacing: {x: 1.8, y: 0, z: 0}
   inPlaySpacing: {x: 1, y: 0, z: -2}
   onHoverScaleUp: 2
   onHoverOffset: {x: 0, y: 2.5, z: -2}
+  onHoverOffsetDeckViewMode: {x: 0, y: 0, z: -100}
   cardPlayThresholdYPos: -2.5
   playableColor: {r: 0.44766432, g: 1, b: 0.30590397, a: 1}
-  drawAnimDur: 0.5
-  drawAnimTimeToMidpoint: 0.35
+  drawAnimDur: 0.3
+  drawAnimTimeToMidpoint: 0.2
   drawAnimScale: 2
   drawAnimMidpointOffset: {x: -7, y: 2, z: 0}
   playAnimDur: 0.3

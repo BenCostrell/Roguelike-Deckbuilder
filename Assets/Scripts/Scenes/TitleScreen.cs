@@ -23,8 +23,8 @@ public class TitleScreen : Scene<MainTransitionData> {
             Card card = Services.CardConfig.CreateCardOfType(cardInfo.CardType);
             startingDeck.Add(card);
         }
-        Services.SceneStackManager.Swap<Main>(
+        Services.SceneStackManager.Swap<LevelTransition>(
             new MainTransitionData(startingDeck,
-            Services.GameManager.playerStartingHealth, 1));
+            Services.GameManager.playerStartingHealth, 1, false));
     }
 }

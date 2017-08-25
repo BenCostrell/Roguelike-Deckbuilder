@@ -15,6 +15,7 @@ MonoBehaviour:
   scenes:
   - {fileID: 1769207381073088, guid: 3e64be3a118b7d2488facd7f98dcca57, type: 2}
   - {fileID: 1858779636021200, guid: 66aa4335767392c409182ce05110d90d, type: 2}
+  - {fileID: 1678201852669964, guid: 24ae5b06045ba314497c33d0faf38eb5, type: 2}
   tile: {fileID: 1418186617509754, guid: 0ac33e504a8d3ae4ba53680c23f7544a, type: 2}
   card: {fileID: 1307522234372050, guid: c12b03564c4656d4e92599da3a795dce, type: 2}
   monster: {fileID: 1739216198130446, guid: 84128e5663257b942904e4b4a4763635, type: 2}

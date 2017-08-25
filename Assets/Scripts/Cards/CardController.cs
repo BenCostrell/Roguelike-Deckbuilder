@@ -62,6 +62,14 @@ public class CardController : MonoBehaviour
                 Reposition(basePos + Services.CardConfig.OnHoverOffset, false);
             }
         }
+        if (card.deckViewMode)
+        {
+            if (!Services.GameManager.mouseDown)
+            {
+                transform.localScale = Services.CardConfig.OnHoverScaleUp * baseScale;
+                Reposition(basePos + Services.CardConfig.OnHoverOffsetDeckViewMode, false);
+            }
+        }
     }
 
     private void OnMouseExit()
@@ -74,13 +82,17 @@ public class CardController : MonoBehaviour
         {
             DisplayCardOnBoard();
         }
+        if (card.deckViewMode && !Services.GameManager.mouseDown)
+        {
+            DisplayInDeckViewMode();
+        }
     }
 
     private void OnMouseDown()
     {
+        Services.GameManager.mouseDown = true;
         if (card.playable)
         {
-            Services.GameManager.mouseDown = true;
             Vector3 mousePos = Services.Main.mainCamera.ScreenToWorldPoint(Input.mousePosition);
             mouseRelativePos = new Vector3(
                 mousePos.x - transform.localPosition.x,
@@ -138,6 +150,12 @@ public class CardController : MonoBehaviour
     public void DisplayInHand()
     {
         sr.color = Color.white;
+        transform.localScale = baseScale;
+        Reposition(basePos, false);
+    }
+
+    void DisplayInDeckViewMode()
+    {
         transform.localScale = baseScale;
         Reposition(basePos, false);
     }

@@ -198,7 +198,8 @@ public class MapManager : MonoBehaviour {
     {
         cardsOnBoard = new List<Card>();
         int highEndTier = 1 + ((levelNum - 1) / levelsPerCardTierIncrease);
-        highEndTier = Mathf.Min(highEndTier, HighestTierOfCardsAvailable(false));
+        highEndTier = Mathf.Min(highEndTier, 
+            Services.CardConfig.HighestTierOfCardsAvailable(false));
         int lowEndTier = Mathf.Max(highEndTier - 1, 1);
 
         float ratioOfLowTierCards =
@@ -212,24 +213,11 @@ public class MapManager : MonoBehaviour {
         GenerateCardsOnBoardOfTier(numHighTierCards, highEndTier);
     }
 
-    int HighestTierOfCardsAvailable(bool ofMonsters)
-    {
-        int highestTier = 0;
-        foreach (CardInfo cardInfo in Services.CardConfig.Cards)
-        {
-            if (cardInfo.IsMonster == ofMonsters && cardInfo.Tier > highestTier)
-            {
-                highestTier = cardInfo.Tier;
-            }
-        }
-        return highestTier;
-    }
-
     void GenerateCardsOnBoardOfTier(int numCards, int tier)
     {
         for (int i = 0; i < numCards; i++)
         {
-            Card.CardType cardType = GenerateTypeOfTier(tier, false);
+            Card.CardType cardType = Services.CardConfig.GenerateTypeOfTier(tier, false);
             Tile cardTile = GenerateValidTile(
                 Services.CardConfig.MinSpawnDistFromMonsters,
                 Services.CardConfig.MinSpawnDistFromItems, 
@@ -237,29 +225,10 @@ public class MapManager : MonoBehaviour {
                 levelLength - 1);
             if (cardTile != null)
             {
-                cardsOnBoard.Add(GenerateCard(cardType, cardTile));
+                cardsOnBoard.Add(Services.CardConfig.GenerateCard(cardType, cardTile));
             }
             else break;
         }
         Debug.Log("generated " + numCards + " cards of tier " + tier);
-    }
-
-    Card GenerateCard(Card.CardType cardType, Tile tile)
-    {
-        Card card = Services.CardConfig.CreateCardOfType(cardType);
-        card.CreatePhysicalCard(tile);
-        return card;
-    }
-
-    Card.CardType GenerateTypeOfTier(int tier, bool generateMonsters)
-    {
-        List<Card.CardType> potentialTypes = new List<Card.CardType>();
-        foreach(CardInfo cardInfo in Services.CardConfig.Cards)
-        {
-            if (cardInfo.Tier == tier && (cardInfo.IsMonster == generateMonsters))
-                potentialTypes.Add(cardInfo.CardType);
-        }
-        int randomIndex = Random.Range(0, potentialTypes.Count);
-        return potentialTypes[randomIndex];
     }
 }

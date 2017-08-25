@@ -13,6 +13,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   monsters:
   - {fileID: 11400000, guid: 9f64ad507fa16c645982317615ddbc5e, type: 2}
+  - {fileID: 11400000, guid: 5b28d8ef206b1154cb5d8a4220a58a81, type: 2}
   minDistFromMonsters: 4
   minDistFromCards: 3
   minDistFromPlayer: 3

@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 [CreateAssetMenu(menuName = "Card Config")]
 public class CardConfig : ScriptableObject
@@ -27,6 +28,10 @@ public class CardConfig : ScriptableObject
     [SerializeField]
     private Vector3 onHoverOffset;
     public Vector3 OnHoverOffset { get { return onHoverOffset; } }
+
+    [SerializeField]
+    private Vector3 onHoverOffsetDeckViewMode;
+    public Vector3 OnHoverOffsetDeckViewMode { get { return onHoverOffsetDeckViewMode; } }
 
     [SerializeField]
     private float cardPlayThresholdYPos;
@@ -119,5 +124,48 @@ public class CardConfig : ScriptableObject
             default:
                 return null;
         }
+    }
+
+    public int HighestTierOfCardsAvailable(bool ofMonsters)
+    {
+        int highestTier = 0;
+        foreach (CardInfo cardInfo in Services.CardConfig.Cards)
+        {
+            if (cardInfo.IsMonster == ofMonsters && cardInfo.Tier > highestTier)
+            {
+                highestTier = cardInfo.Tier;
+            }
+        }
+        return highestTier;
+    }
+
+    public Card GenerateCard(Card.CardType cardType)
+    {
+        Card card = CreateCardOfType(cardType);
+        return card;
+    }
+
+    public Card GenerateCard(Card.CardType cardType, Tile tile)
+    {
+        Card card = CreateCardOfType(cardType);
+        card.CreatePhysicalCard(tile);
+        return card;
+    }
+
+    public Card.CardType GenerateTypeOfTier(int tier, bool generateMonsters)
+    {
+        List<Card.CardType> potentialTypes = new List<Card.CardType>();
+        foreach (CardInfo cardInfo in Cards)
+        {
+            if (cardInfo.Tier == tier && (cardInfo.IsMonster == generateMonsters))
+                potentialTypes.Add(cardInfo.CardType);
+        }
+        int randomIndex = Random.Range(0, potentialTypes.Count);
+        return potentialTypes[randomIndex];
+    }
+
+    public Card GenerateCardOfTier(int tier, bool generateMonster)
+    {
+        return GenerateCard(GenerateTypeOfTier(tier, generateMonster));
     }
 }

@@ -22,19 +22,18 @@ public abstract class Card {
     public int tier { get; protected set; }
     public Sprite sprite { get; protected set; }
     public Tile currentTile { get; private set; }
+    public bool deckViewMode;
 
-    public void CreatePhysicalCard()
+    public void CreatePhysicalCard(Transform tform)
     {
-        GameObject obj = GameObject.Instantiate(Services.Prefabs.Card, 
-            Services.UIManager.handZone.transform);
+        GameObject obj = GameObject.Instantiate(Services.Prefabs.Card, tform);
         controller = obj.GetComponent<CardController>();
         controller.Init(this);
     }
 
     public void CreatePhysicalCard(Tile tile)
     {
-        CreatePhysicalCard();
-        controller.transform.parent = Services.Main.transform;
+        CreatePhysicalCard(Services.Main.transform);
         currentTile = tile;
         tile.containedCard = this;
         controller.DisplayCardOnBoard();

@@ -25,7 +25,7 @@ public class DrawCardTask : Task
         timeToMidpoint = Services.CardConfig.DrawAnimTimeToMidpoint;
         targetPos = Services.UIManager.GetCardHandPosition(
             Services.GameManager.player.hand.Count);
-        card.CreatePhysicalCard();
+        card.CreatePhysicalCard(Services.UIManager.handZone.transform);
         initialScale = card.controller.transform.localScale;
         zoomScale = Services.CardConfig.DrawAnimScale * initialScale;
         Vector3 rawDiff = Services.UIManager.deckZone.transform.position - 

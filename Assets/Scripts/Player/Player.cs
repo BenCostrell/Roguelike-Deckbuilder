@@ -283,6 +283,11 @@ public class Player {
     void Die()
     {
         Debug.Log("dead");
+        Services.SceneStackManager.Swap<LevelTransition>(new MainTransitionData(
+            fullDeck,
+            maxHealth,
+            Services.Main.levelNum,
+            true));
     }
 
     public void AcquireCard(Card card)

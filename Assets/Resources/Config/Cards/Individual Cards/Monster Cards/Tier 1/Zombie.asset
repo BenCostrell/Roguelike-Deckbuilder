@@ -13,7 +13,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cardType: 8
   name_: Zombie
-  cardText: Spawns a Zombie when drawn.
-  sprite: {fileID: 21300264, guid: 6a9c5f9589d3371428eba46bbb187e6e, type: 3}
+  cardText: Spawns a \nZombie when \ndrawn.
+  sprite: {fileID: 21300000, guid: dc2602e7456fc1044b3421c0e7e4acdb, type: 3}
   tier: 1
   isMonster: 1

@@ -56,5 +56,4 @@ public class MonsterConfig : ScriptableObject
         Debug.Assert(false); // we should never be here if monsters are properly configured
         return null;
     }
-
 }
