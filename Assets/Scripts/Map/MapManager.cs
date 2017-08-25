@@ -26,6 +26,10 @@ public class MapManager : MonoBehaviour {
     private Sprite rightSprite;
     [SerializeField]
     private Sprite[] centerSprites;
+    [SerializeField]
+    private float extraLevelLengthPerLevel;
+    [SerializeField]
+    private int levelsPerCardTierIncrease;
 
 	// Use this for initialization
 	void Start () {
@@ -37,8 +41,10 @@ public class MapManager : MonoBehaviour {
 		
 	}
 
-    public void GenerateLevel()
+    public void GenerateLevel(int levelNum)
     {
+        int extraLevelLength = Mathf.RoundToInt(levelNum * extraLevelLengthPerLevel);
+        levelLength += extraLevelLength;
         map = new Tile[levelLength, levelHeight];
         for (int x = 0; x < levelLength; x++)
         {
@@ -54,7 +60,7 @@ public class MapManager : MonoBehaviour {
         FindAllNeighbors();
         SetSprites();
         int cardsToGenerate = levelLength / rowsPerCard;
-        GenerateCardsOnBoard(cardsToGenerate, 1);
+        GenerateBoardCards(levelNum, cardsToGenerate);
     }
 
     void SetSprites()
@@ -188,12 +194,42 @@ public class MapManager : MonoBehaviour {
         return null;
     }
 
-    void GenerateCardsOnBoard(int numCards, int tier)
+    void GenerateBoardCards(int levelNum, int numCards)
     {
         cardsOnBoard = new List<Card>();
+        int highEndTier = 1 + ((levelNum - 1) / levelsPerCardTierIncrease);
+        highEndTier = Mathf.Min(highEndTier, HighestTierOfCardsAvailable(false));
+        int lowEndTier = Mathf.Max(highEndTier - 1, 1);
+
+        float ratioOfLowTierCards =
+            ((levelsPerCardTierIncrease - ((levelNum - 1) % levelsPerCardTierIncrease)) /
+            (float)(levelsPerCardTierIncrease + 1));
+        int numLowTierCards = Mathf.RoundToInt(ratioOfLowTierCards * numCards);
+        int numHighTierCards = numCards - numLowTierCards;
+
+        Debug.Log(ratioOfLowTierCards);
+        GenerateCardsOnBoardOfTier(numLowTierCards, lowEndTier);
+        GenerateCardsOnBoardOfTier(numHighTierCards, highEndTier);
+    }
+
+    int HighestTierOfCardsAvailable(bool ofMonsters)
+    {
+        int highestTier = 0;
+        foreach (CardInfo cardInfo in Services.CardConfig.Cards)
+        {
+            if (cardInfo.IsMonster == ofMonsters && cardInfo.Tier > highestTier)
+            {
+                highestTier = cardInfo.Tier;
+            }
+        }
+        return highestTier;
+    }
+
+    void GenerateCardsOnBoardOfTier(int numCards, int tier)
+    {
         for (int i = 0; i < numCards; i++)
         {
-            Card.CardType cardType = GenerateTypeOfTier(tier);
+            Card.CardType cardType = GenerateTypeOfTier(tier, false);
             Tile cardTile = GenerateValidTile(
                 Services.CardConfig.MinSpawnDistFromMonsters,
                 Services.CardConfig.MinSpawnDistFromItems, 
@@ -205,6 +241,7 @@ public class MapManager : MonoBehaviour {
             }
             else break;
         }
+        Debug.Log("generated " + numCards + " cards of tier " + tier);
     }
 
     Card GenerateCard(Card.CardType cardType, Tile tile)
@@ -214,12 +251,13 @@ public class MapManager : MonoBehaviour {
         return card;
     }
 
-    Card.CardType GenerateTypeOfTier(int tier)
+    Card.CardType GenerateTypeOfTier(int tier, bool generateMonsters)
     {
         List<Card.CardType> potentialTypes = new List<Card.CardType>();
         foreach(CardInfo cardInfo in Services.CardConfig.Cards)
         {
-            if (cardInfo.Tier == tier) potentialTypes.Add(cardInfo.CardType);
+            if (cardInfo.Tier == tier && (cardInfo.IsMonster == generateMonsters))
+                potentialTypes.Add(cardInfo.CardType);
         }
         int randomIndex = Random.Range(0, potentialTypes.Count);
         return potentialTypes[randomIndex];

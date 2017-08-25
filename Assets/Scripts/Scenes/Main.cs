@@ -10,6 +10,7 @@ public class Main : Scene<MainTransitionData> {
     private int spawnPointY;
     public Camera mainCamera { get; private set; }
     public TaskManager taskManager { get; private set; }
+    private int levelNum;
 
     private void Awake()
     {
@@ -25,7 +26,8 @@ public class Main : Scene<MainTransitionData> {
 
     internal override void OnEnter(MainTransitionData data)
     {
-        Services.MapManager.GenerateLevel();
+        levelNum = data.levelNum;
+        Services.MapManager.GenerateLevel(levelNum);
         Services.GameManager.player.Initialize(
             Services.MapManager.map[spawnPointX, spawnPointY], data);
     }
@@ -62,6 +64,7 @@ public class Main : Scene<MainTransitionData> {
     {
         Services.SceneStackManager.Swap<Main>(new MainTransitionData(
             Services.GameManager.player.fullDeck,
-            Services.GameManager.player.maxHealth));
+            Services.GameManager.player.maxHealth,
+            levelNum + 1));
     }
 }

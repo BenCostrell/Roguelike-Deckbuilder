@@ -110,6 +110,12 @@ public class CardConfig : ScriptableObject
                 return new Bow();
             case Card.CardType.Run:
                 return new Run();
+            case Card.CardType.Sprint:
+                return new Sprint();
+            case Card.CardType.Crossbow:
+                return new Crossbow();
+            case Card.CardType.Zombie:
+                return new ZombieCard();
             default:
                 return null;
         }

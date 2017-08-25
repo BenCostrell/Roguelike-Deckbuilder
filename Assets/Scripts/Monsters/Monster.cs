@@ -5,7 +5,8 @@ using UnityEngine;
 public abstract class Monster {
     public enum MonsterType
     {
-        Goblin
+        Goblin,
+        Zombie
     }
     protected MonsterType monsterType;
     protected MonsterController controller;
@@ -22,6 +23,7 @@ public abstract class Monster {
         GameObject obj = GameObject.Instantiate(Services.Prefabs.Monster, Services.Main.transform);
         controller = obj.GetComponent<MonsterController>();
         controller.Init(this);
+        controller.GetComponent<SpriteRenderer>().sprite = info.Sprite;
         PlaceOnTile(tile);
         controller.UpdateHealthUI();
     }
@@ -43,6 +45,7 @@ public abstract class Monster {
 
     protected void InitValues()
     {
+        info = Services.MonsterConfig.GetMonsterOfType(monsterType);
         maxHealth = info.StartingHealth;
         currentHealth = maxHealth;
         attackDamage = info.AttackDamage;

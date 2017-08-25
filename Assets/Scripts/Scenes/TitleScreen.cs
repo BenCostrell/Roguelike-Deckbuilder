@@ -25,6 +25,6 @@ public class TitleScreen : Scene<MainTransitionData> {
         }
         Services.SceneStackManager.Swap<Main>(
             new MainTransitionData(startingDeck,
-            Services.GameManager.playerStartingHealth));
+            Services.GameManager.playerStartingHealth, 1));
     }
 }

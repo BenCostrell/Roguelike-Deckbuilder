@@ -25,4 +25,8 @@ public class CardInfo : ScriptableObject
     private int tier;
     public int Tier { get { return tier; } }
 
+    [SerializeField]
+    private bool isMonster;
+    public bool IsMonster { get { return isMonster; } }
+
 }

@@ -1,11 +1,11 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class Goblin : Monster
+public class Zombie : Monster
 {
-    public Goblin()
+    public Zombie()
     {
-        monsterType = MonsterType.Goblin;
+        monsterType = MonsterType.Zombie;
         InitValues();
     }
 }

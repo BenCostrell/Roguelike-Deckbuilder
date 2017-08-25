@@ -36,6 +36,8 @@ public class MonsterManager
         {
             case Monster.MonsterType.Goblin:
                 return new Goblin();
+            case Monster.MonsterType.Zombie:
+                return new Zombie();
             default:
                 return null;
         }

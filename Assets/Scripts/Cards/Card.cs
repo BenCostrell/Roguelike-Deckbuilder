@@ -14,7 +14,10 @@ public abstract class Card {
         Goblin,
         Tome,
         Bow,
-        Run
+        Run,
+        Sprint,
+        Crossbow,
+        Zombie
     }
     public int tier { get; protected set; }
     public Sprite sprite { get; protected set; }
