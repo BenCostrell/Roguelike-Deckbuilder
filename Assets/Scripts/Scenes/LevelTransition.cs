@@ -114,7 +114,12 @@ public class LevelTransition : Scene<MainTransitionData> {
         int numMonsters = data.levelNum + 2;
         int highestTier = Mathf.Min(data.levelNum / levelsPerMonsterTierIncrease, 
             Services.CardConfig.HighestTierOfCardsAvailable(true));
-        int lowestTier = Mathf.Max(highestTier - 1, 0);
+        int lowestTier;
+        if (data.levelNum / levelsPerMonsterTierIncrease > highestTier)
+        {
+            lowestTier = highestTier;
+        }
+        else lowestTier = Mathf.Max(highestTier - 1, 0);
         float proportionOfLowTier =
             ((levelsPerMonsterTierIncrease - (data.levelNum % levelsPerMonsterTierIncrease)) /
             (float)(levelsPerMonsterTierIncrease + 1));

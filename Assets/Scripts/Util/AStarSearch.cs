@@ -8,7 +8,9 @@ public static class AStarSearch
 {
     public static float Heuristic(Tile a, Tile b)
     {
-        return Coord.Distance(a.coord, b.coord);
+        return Vector2.Distance(
+            new Vector2(a.coord.x, a.coord.y),
+            new Vector2(b.coord.x, b.coord.y));
     }
 
     public static List<Tile> ShortestPath(Tile start, Tile goal, bool raw)

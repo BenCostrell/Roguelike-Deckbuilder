@@ -57,6 +57,7 @@ public abstract class Monster {
     {
         currentHealth = Mathf.Max(0, currentHealth - damage);
         controller.UpdateHealthUI();
+        Services.UIManager.ShowUnitUI(info.Name, currentHealth, maxHealth, info.Sprite);
         if (currentHealth == 0) Die();
     }
 

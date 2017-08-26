@@ -167,6 +167,7 @@ public class Player {
             if (CanMoveAlongPath(shortestPath))
             {
                 movesAvailable -= MovementCost(shortestPath);
+                HideAvailableMoves();
                 Services.Main.taskManager.AddTask(
                     new MoveObjectAlongPath(controller.gameObject, shortestPath));
             }
@@ -188,6 +189,14 @@ public class Player {
         {
             if (availableTiles.Contains(tile)) tile.controller.ShowAsAvailable();
             else tile.controller.ShowAsUnavailable();
+        }
+    }
+
+    public void HideAvailableMoves()
+    {
+        foreach(Tile tile in Services.MapManager.map)
+        {
+            tile.controller.ShowAsUnavailable();
         }
     }
 
