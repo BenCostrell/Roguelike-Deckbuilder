@@ -67,6 +67,7 @@ public class DrawCardTask : Task
     {
         card.Reposition(targetPos, true);
         card.Enable();
+        Services.GameManager.player.cardsInFlux.Remove(card);
         Services.GameManager.player.hand.Add(card);
     }
 

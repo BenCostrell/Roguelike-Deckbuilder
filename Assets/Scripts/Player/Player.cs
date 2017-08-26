@@ -26,6 +26,7 @@ public class Player {
             deck.AddRange(discardPile);
             deck.AddRange(hand);
             deck.AddRange(cardsInPlay);
+            deck.AddRange(cardsInFlux);
             return deck;
         }
     }
@@ -33,6 +34,7 @@ public class Player {
     public List<Card> hand;
     private List<Card> discardPile;
     public List<Card> cardsInPlay;
+    public List<Card> cardsInFlux;
     public bool targeting;
     public bool moving;
     private int maxHealth_;
@@ -81,6 +83,7 @@ public class Player {
         cardsInPlay = new List<Card>();
         remainingDeck = new List<Card>(deck);
         hand = new List<Card>();
+        cardsInFlux = new List<Card>();
     }
 
     public TaskTree DrawCards(int numCardsToDraw)
@@ -109,6 +112,7 @@ public class Player {
         int index = Random.Range(0, remainingDeck.Count);
         Card card = remainingDeck[index];
         remainingDeck.Remove(card);
+        cardsInFlux.Add(card);
         return card;
     }
 
@@ -270,14 +274,16 @@ public class Player {
         }
     }
 
-    public void TakeDamage(int damage)
+    public bool TakeDamage(int damage)
     {
         currentHealth = Mathf.Max(0, currentHealth - damage);
         controller.UpdateHealthUI();
         if (currentHealth == 0)
         {
             Die();
+            return true;
         }
+        return false;
     }
 
     void Die()

@@ -77,13 +77,13 @@ public abstract class Monster {
     {
         TaskTree attackTasks = new TaskTree(new AttackAnimation(controller.gameObject,
             Services.GameManager.player.controller.gameObject));
-        attackTasks.Then(new ActionTask(OnAttackHit));
+        attackTasks.Then(new ResolveHit(this));
         return attackTasks;
     }
 
-    protected virtual void OnAttackHit()
+    public virtual bool OnAttackHit()
     {
-        Services.GameManager.player.TakeDamage(attackDamage);
+        return Services.GameManager.player.TakeDamage(attackDamage);
     }
 
     public virtual TaskTree Move()

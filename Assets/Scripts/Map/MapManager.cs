@@ -208,7 +208,6 @@ public class MapManager : MonoBehaviour {
         int numLowTierCards = Mathf.RoundToInt(ratioOfLowTierCards * numCards);
         int numHighTierCards = numCards - numLowTierCards;
 
-        Debug.Log(ratioOfLowTierCards);
         GenerateCardsOnBoardOfTier(numLowTierCards, lowEndTier);
         GenerateCardsOnBoardOfTier(numHighTierCards, highEndTier);
     }
