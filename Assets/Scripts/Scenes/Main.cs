@@ -20,7 +20,7 @@ public class Main : Scene<MainTransitionData> {
     internal override void Init()
     {
         InitializeMainServices();
-        mainCamera = GetComponentInChildren<Camera>();
+        Services.GameManager.currentCamera = GetComponentInChildren<Camera>();
     }
 
     internal override void OnEnter(MainTransitionData data)

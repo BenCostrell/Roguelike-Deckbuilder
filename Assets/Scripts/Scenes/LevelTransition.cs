@@ -12,6 +12,8 @@ public class LevelTransition : Scene<MainTransitionData> {
     [SerializeField]
     private GameObject monsterArea;
     [SerializeField]
+    private GameObject trashLabel;
+    [SerializeField]
     private GameObject playerUIHPCounter;
     [SerializeField]
     private GameObject startButton;
@@ -25,7 +27,8 @@ public class LevelTransition : Scene<MainTransitionData> {
     private Vector3 deckDisplaySpacingPerRow;
     [SerializeField]
     private int maxCardsPerRow;
-    private MainTransitionData data;
+    public MainTransitionData data { get; private set; }
+    private TrashController trashController;
 
     internal override void OnEnter(MainTransitionData data_)
     {
@@ -62,6 +65,13 @@ public class LevelTransition : Scene<MainTransitionData> {
         else
         {
             startButton.GetComponentInChildren<Text>().text = "RESTART";
+            trashController.gameObject.SetActive(false);
+            trashLabel.SetActive(false);
+        }
+        if(data.levelNum == 1)
+        {
+            trashController.gameObject.SetActive(false);
+            trashLabel.SetActive(false);
         }
     }
 
@@ -69,6 +79,7 @@ public class LevelTransition : Scene<MainTransitionData> {
     {
         if (!data.gameOver)
         {
+            data.deck.Remove(trashController.cardToTrash);
             foreach (Card card in data.deck)
             {
                 card.deckViewMode = false;
@@ -83,6 +94,8 @@ public class LevelTransition : Scene<MainTransitionData> {
 
     void InitializeScene()
     {
+        trashController = GetComponentInChildren<TrashController>();
+        Services.GameManager.currentCamera = GetComponentInChildren<Camera>();
         if (!data.gameOver)
         {
             levelTitle.GetComponent<Text>().text = "LEVEL " + data.levelNum;

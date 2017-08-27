@@ -23,7 +23,7 @@ public class TargetSelection : Task
 
     internal override void Update()
     {
-        Vector3 mousePos = Services.Main.mainCamera.ScreenToWorldPoint(Input.mousePosition);
+        Vector3 mousePos = Services.GameManager.currentCamera.ScreenToWorldPoint(Input.mousePosition);
         targetReticle.transform.position = new Vector3(
             mousePos.x,
             mousePos.y,

@@ -53,6 +53,8 @@ public class UIManager : MonoBehaviour {
     [SerializeField]
     private GameObject playerUIHealthCounterObj;
     private Text playerUIHealthCounter;
+    [SerializeField]
+    private GameObject playerUIKeyIcon;
     private Vector2 playerUIHealthBarBaseSize;
     private int nextLockID_;
     public int nextLockID
@@ -91,6 +93,7 @@ public class UIManager : MonoBehaviour {
         playerUIHealthCounter = playerUIHealthCounterObj.GetComponent<Text>();
         playerUIHealthBarBaseSize = 
             playerUIRemainingHealthBody.GetComponent<RectTransform>().sizeDelta;
+        playerUIKeyIcon.SetActive(false);
 
         endTurnButton = endTurnButtonObj.GetComponent<Button>();
     }
@@ -156,7 +159,9 @@ public class UIManager : MonoBehaviour {
             playerUIHealthBarBaseSize.y);
         if (curHP == 0) playerUIRemainingHealthObj.SetActive(false);
         else playerUIRemainingHealthObj.SetActive(true);
-        playerUISprite.sprite = Services.GameManager.player.controller.GetComponent<SpriteRenderer>().sprite;
+        playerUISprite.sprite = 
+            Services.GameManager.player.controller.GetComponent<SpriteRenderer>().sprite;
+        if (Services.GameManager.player.hasKey) playerUIKeyIcon.SetActive(true);
     }
 
     public void HideUnitUI()

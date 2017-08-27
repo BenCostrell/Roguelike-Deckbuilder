@@ -16,8 +16,8 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 5b28d8ef206b1154cb5d8a4220a58a81, type: 2}
   minDistFromMonsters: 4
   minDistFromCards: 3
-  minDistFromPlayer: 3
-  spawnRange: 4
+  minDistFromPlayer: 5
+  spawnRange: 3
   moveAnimTime: 0.15
   maxMoveAnimDur: 0.5
   attackAnimTime: 0.3

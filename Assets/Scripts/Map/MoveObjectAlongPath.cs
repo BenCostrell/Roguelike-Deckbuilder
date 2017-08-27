@@ -81,7 +81,7 @@ public class MoveObjectAlongPath : Task
             player.PlaceOnTile(finalTile);
             player.moving = false;
             if (finalTile.hovered) player.OnTileHover(finalTile);
-            if (finalTile.isExit) Services.Main.ExitLevel();
+            if (finalTile.isExit && player.hasKey) Services.Main.ExitLevel();
         }
     }
 }

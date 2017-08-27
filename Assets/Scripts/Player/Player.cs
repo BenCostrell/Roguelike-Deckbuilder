@@ -57,6 +57,7 @@ public class Player {
             Services.UIManager.UpdatePlayerUI(currentHealth, maxHealth);
         }
     }
+    public bool hasKey { get; private set; }
 
     public void Initialize(Tile tile, MainTransitionData data)
     {
@@ -150,6 +151,10 @@ public class Player {
         if (currentTile.containedCard != null)
         {
             AcquireCard(currentTile.containedCard);
+        }
+        if (currentTile.containedKey != null)
+        {
+            PickUpKey(currentTile);
         }
     }
 
@@ -310,5 +315,14 @@ public class Player {
         discardPile.Add(card);
         Services.UIManager.UpdateDiscardCounter(discardPile.Count);
         Services.Main.taskManager.AddTask(new AcquireCardTask(card));
+    }
+
+    void PickUpKey(Tile tile)
+    {
+        DoorKey key = tile.containedKey;
+        tile.containedKey = null;
+        hasKey = true;
+        GameObject.Destroy(key.gameObject);
+        Services.UIManager.UpdatePlayerUI(currentHealth, maxHealth);
     }
 }

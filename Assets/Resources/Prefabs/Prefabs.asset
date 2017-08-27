@@ -21,4 +21,5 @@ MonoBehaviour:
   monster: {fileID: 1739216198130446, guid: 84128e5663257b942904e4b4a4763635, type: 2}
   targetReticle: {fileID: 1539334066238208, guid: 2a04fc6cb115eaa439097209409d57bd,
     type: 2}
-  exitDoor: {fileID: 1378521395066938, guid: 85682ea3873dfd74a909325c0714ee14, type: 2}
+  exitDoor: {fileID: 1373383559772500, guid: 85682ea3873dfd74a909325c0714ee14, type: 2}
+  key: {fileID: 1135521771267632, guid: 00c5870ee1cf26a40b04b8c4ecd6a305, type: 2}

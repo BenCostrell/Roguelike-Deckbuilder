@@ -13,6 +13,8 @@ public class GameManager : MonoBehaviour
 
     public bool mouseDown;
 
+    public Camera currentCamera;
+
     void Awake()
     {
         InitializeServices();

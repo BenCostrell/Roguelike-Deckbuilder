@@ -11,7 +11,9 @@ public class Tile
     public bool hovered { get; private set; }
     public Monster containedMonster;
     public Card containedCard;
+    public DoorKey containedKey;
     public readonly bool isExit;
+    public bool locked;
 
     public Tile(Coord coord_, bool isExit_)
     {
@@ -22,6 +24,7 @@ public class Tile
         controller.Init(this);
         movementCost = 1;
         isExit = isExit_;
+        if (isExit) locked = true;
     }
 
     public void SetSprite(Sprite sprite, Quaternion rot)

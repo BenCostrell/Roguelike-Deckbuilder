@@ -9,15 +9,28 @@ public class MonsterManager
     public void SpawnMonster(Monster.MonsterType monsterType)
     {
         Monster monster = CreateMonsterOfType(monsterType);
-        int minCol = Services.MonsterConfig.MinDistFromPlayer 
-            + Services.GameManager.player.currentTile.coord.x;
+        int originCol;
+        if (!Services.GameManager.player.hasKey)
+        {
+            originCol = Mathf.Min(Services.MapManager.levelLength - 1,
+            Services.GameManager.player.currentTile.coord.x +
+            Services.MonsterConfig.MinDistFromPlayer);
+        }
+        else
+        {
+            originCol = Mathf.Max(0,
+                Services.GameManager.player.currentTile.coord.x -
+                Services.MonsterConfig.MinDistFromPlayer);
+        }
+        Tile originTile = Services.MapManager.map[originCol, 
+            Services.GameManager.player.currentTile.coord.y];
         for (int i = Services.MonsterConfig.MinDistFromMonsters; i >= 1; i--)
         {
             Tile tile = Services.MapManager.GenerateValidTile(
+            originTile,
+            Services.MonsterConfig.SpawnRange,
             i,
-            Services.MonsterConfig.MinDistFromCards,
-            minCol,
-            minCol + Services.MonsterConfig.SpawnRange);
+            Services.MonsterConfig.MinDistFromCards);
             if (tile != null)
             {
                 CreateMonster(monster, tile);

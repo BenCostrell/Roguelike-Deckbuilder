@@ -29,6 +29,6 @@ public class PrefabDB : ScriptableObject {
     public GameObject TargetReticle { get { return targetReticle; } }
 
     [SerializeField]
-    private GameObject exitDoor;
-    public GameObject ExitDoor { get { return exitDoor; } }
+    private GameObject key;
+    public GameObject Key { get { return key; } }
 }

@@ -4,8 +4,7 @@ using UnityEngine;
 
 public class MapManager : MonoBehaviour {
 
-    [SerializeField]
-    private int levelLength;
+    public int levelLength;
     [SerializeField]
     private int levelHeight;
     [SerializeField]
@@ -26,6 +25,8 @@ public class MapManager : MonoBehaviour {
     private Sprite rightSprite;
     [SerializeField]
     private Sprite[] centerSprites;
+    [SerializeField]
+    private Sprite exitDoorSprite;
     [SerializeField]
     private float extraLevelLengthPerLevel;
     [SerializeField]
@@ -50,17 +51,25 @@ public class MapManager : MonoBehaviour {
         {
             for (int y = 0; y < levelHeight; y++)
             {
-                if(x == levelLength-1 && y == levelHeight - 1)
+                if(x == 0 && y == levelHeight - 1)
                 {
                     map[x, y] = new Tile(new Coord(x, y), true);
                 }
                 else map[x, y] = new Tile(new Coord(x, y), false);
             }
         }
+        PlaceKey(map[levelLength - 1, levelHeight - 1]);
         FindAllNeighbors();
         SetSprites();
         int cardsToGenerate = levelLength / rowsPerCard;
         GenerateBoardCards(levelNum, cardsToGenerate);
+    }
+
+    void PlaceKey(Tile tile)
+    {
+        tile.containedKey = 
+            Instantiate(Services.Prefabs.Key, tile.controller.transform)
+            .GetComponent<DoorKey>();
     }
 
     void SetSprites()
@@ -70,62 +79,63 @@ public class MapManager : MonoBehaviour {
 
     void SetSprite(Tile tile)
     {
-        if (tile.isExit)
-        {
-            GameObject door = 
-                Instantiate(Services.Prefabs.ExitDoor, tile.controller.transform);
-            door.transform.localPosition = Vector3.zero;
-            return;
-        }
         Sprite sprite;
         Quaternion rot = Quaternion.identity;
-        bool hasUpNeighbor = false;
-        bool hasDownNeighbor = false;
-        bool hasLeftNeighbor = false;
-        bool hasRightNeighbor = false;
-        foreach (Tile neighbor in tile.neighbors)
+
+        if (tile.isExit)
         {
-            Coord diff = neighbor.coord.Subtract(tile.coord);
-            if (diff == new Coord(0, 1))
-            {
-                hasUpNeighbor = true;
-            }
-            if (diff == new Coord(0, -1))
-            {
-                hasDownNeighbor = true;
-            }
-            if (diff == new Coord(1, 0))
-            {
-                hasRightNeighbor = true;
-            }
-            if (diff == new Coord(-1, 0))
-            {
-                hasLeftNeighbor = true;
-            }
+            sprite = exitDoorSprite;
         }
-        if (hasUpNeighbor && hasDownNeighbor && hasLeftNeighbor && hasRightNeighbor)
-            sprite = centerSprites[Random.Range(0, centerSprites.Length)];
-        else if (hasUpNeighbor && hasDownNeighbor && hasRightNeighbor) sprite = leftSprite;
-        else if (hasUpNeighbor && hasDownNeighbor && hasLeftNeighbor) sprite = rightSprite;
-        else if (hasUpNeighbor && hasRightNeighbor && hasLeftNeighbor) sprite = botSprite;
-        else if (hasDownNeighbor && hasRightNeighbor && hasLeftNeighbor)
+        else
         {
-            sprite = botSprite;
-            rot = Quaternion.Euler(new Vector3(0, 0, 180));
+            bool hasUpNeighbor = false;
+            bool hasDownNeighbor = false;
+            bool hasLeftNeighbor = false;
+            bool hasRightNeighbor = false;
+            foreach (Tile neighbor in tile.neighbors)
+            {
+                Coord diff = neighbor.coord.Subtract(tile.coord);
+                if (diff == new Coord(0, 1))
+                {
+                    hasUpNeighbor = true;
+                }
+                if (diff == new Coord(0, -1))
+                {
+                    hasDownNeighbor = true;
+                }
+                if (diff == new Coord(1, 0))
+                {
+                    hasRightNeighbor = true;
+                }
+                if (diff == new Coord(-1, 0))
+                {
+                    hasLeftNeighbor = true;
+                }
+            }
+            if (hasUpNeighbor && hasDownNeighbor && hasLeftNeighbor && hasRightNeighbor)
+                sprite = centerSprites[Random.Range(0, centerSprites.Length)];
+            else if (hasUpNeighbor && hasDownNeighbor && hasRightNeighbor) sprite = leftSprite;
+            else if (hasUpNeighbor && hasDownNeighbor && hasLeftNeighbor) sprite = rightSprite;
+            else if (hasUpNeighbor && hasRightNeighbor && hasLeftNeighbor) sprite = botSprite;
+            else if (hasDownNeighbor && hasRightNeighbor && hasLeftNeighbor)
+            {
+                sprite = botSprite;
+                rot = Quaternion.Euler(new Vector3(0, 0, 180));
+            }
+            else if (hasUpNeighbor && hasLeftNeighbor) sprite = botRightCornerSprite;
+            else if (hasUpNeighbor && hasRightNeighbor) sprite = botLeftCornerSprite;
+            else if (hasDownNeighbor && hasLeftNeighbor)
+            {
+                sprite = botLeftCornerSprite;
+                rot = Quaternion.Euler(new Vector3(0, 0, 180));
+            }
+            else if (hasDownNeighbor && hasRightNeighbor)
+            {
+                sprite = botRightCornerSprite;
+                rot = Quaternion.Euler(new Vector3(0, 0, 180));
+            }
+            else sprite = centerSprites[Random.Range(0, centerSprites.Length)];
         }
-        else if (hasUpNeighbor && hasLeftNeighbor) sprite = botRightCornerSprite;
-        else if (hasUpNeighbor && hasRightNeighbor) sprite = botLeftCornerSprite;
-        else if (hasDownNeighbor && hasLeftNeighbor)
-        {
-            sprite = botLeftCornerSprite;
-            rot = Quaternion.Euler(new Vector3(0, 0, 180));
-        }
-        else if (hasDownNeighbor && hasRightNeighbor)
-        {
-            sprite = botRightCornerSprite;
-            rot = Quaternion.Euler(new Vector3(0, 0, 180));
-        }
-        else sprite = centerSprites[Random.Range(0, centerSprites.Length)];
         tile.SetSprite(sprite, rot);
     }
 
@@ -163,6 +173,12 @@ public class MapManager : MonoBehaviour {
         return map[x, y];
     }
 
+    Tile GenerateRandomTile(Tile origin, int radius)
+    {
+        List<Tile> possibleTiles = AStarSearch.FindAllAvailableGoals(origin, radius, true);
+        return possibleTiles[Random.Range(0, possibleTiles.Count)];
+    }
+
     bool ValidateTile(Tile tile, int minDistFromMonster, int minDistFromCard)
     {
         if (Services.GameManager.player.currentTile == tile) return false;
@@ -189,6 +205,19 @@ public class MapManager : MonoBehaviour {
         {
             tile = GenerateRandomTile(minCol, maxCol);
             if (ValidateTile(tile, minDistFromMonster, minDistFromCard))
+                return tile;
+        }
+        return null;
+    }
+
+    public Tile GenerateValidTile(Tile origin, int radius, int minDIstFromMonster,
+        int minDistFromCard)
+    {
+        Tile tile;
+        for (int i = 0; i < maxTriesProcGen; i++)
+        {
+            tile = GenerateRandomTile(origin, radius);
+            if (ValidateTile(tile, minDIstFromMonster, minDistFromCard))
                 return tile;
         }
         return null;

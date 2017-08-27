@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 public class CardController : MonoBehaviour
 {
-    private Card card;
+    public Card card { get; private set; }
     private Vector3 basePos;
     public Vector3 baseScale { get; private set; }
     private int baseSortingOrder;
@@ -76,7 +76,7 @@ public class CardController : MonoBehaviour
     {
         if (card.playable && !Services.GameManager.mouseDown)
         {
-            DisplayInHand();
+            DisplayAtBasePos();
         }
         if (card.currentTile != null)
         {
@@ -91,13 +91,13 @@ public class CardController : MonoBehaviour
     private void OnMouseDown()
     {
         Services.GameManager.mouseDown = true;
+        Vector3 mousePos = Services.GameManager.currentCamera.ScreenToWorldPoint(Input.mousePosition);
+        mouseRelativePos = new Vector3(
+            mousePos.x - transform.localPosition.x,
+            mousePos.y - transform.localPosition.y,
+            0);
         if (card.playable)
         {
-            Vector3 mousePos = Services.Main.mainCamera.ScreenToWorldPoint(Input.mousePosition);
-            mouseRelativePos = new Vector3(
-                mousePos.x - transform.localPosition.x,
-                mousePos.y - transform.localPosition.y,
-                0);
             card.OnSelect();
         }
         if (card.currentTile != null)
@@ -108,22 +108,37 @@ public class CardController : MonoBehaviour
 
     private void OnMouseDrag()
     {
-        if (card.playable)
+        if (card.playable || card.deckViewMode)
         {
-            Vector3 mousePos = Services.Main.mainCamera.ScreenToWorldPoint(Input.mousePosition);
+            Vector3 mousePos = 
+                Services.GameManager.currentCamera.ScreenToWorldPoint(Input.mousePosition);
             Vector3 newPos = new Vector3(
                 mousePos.x - mouseRelativePos.x,
                 mousePos.y - mouseRelativePos.y,
-                basePos.z + Services.CardConfig.OnHoverOffset.z);
-            Reposition(newPos, false);
-            if (transform.position.y >= Services.CardConfig.CardPlayThresholdYPos
-                && card.CanPlay())
+                basePos.z);
+            if (card.deckViewMode)
             {
-                sr.color = Services.CardConfig.PlayableColor;
+                newPos = new Vector3(
+                    newPos.x, 
+                    newPos.y, 
+                    Services.CardConfig.OnHoverOffsetDeckViewMode.z);
             }
             else
             {
-                sr.color = Color.white;
+                newPos += new Vector3(0, 0, Services.CardConfig.OnHoverOffset.z);
+            }
+                Reposition(newPos, false);
+            if (card.playable)
+            {
+                if (transform.position.y >= Services.CardConfig.CardPlayThresholdYPos
+                    && card.CanPlay())
+                {
+                    sr.color = Services.CardConfig.PlayableColor;
+                }
+                else
+                {
+                    sr.color = Color.white;
+                }
             }
         }
     }
@@ -131,13 +146,16 @@ public class CardController : MonoBehaviour
     private void OnMouseUp()
     {
         Services.GameManager.mouseDown = false;
-        card.OnUnselect();
+        if (!card.deckViewMode)
+        {
+            card.OnUnselect();
+        }
         if (card.playable && card.CanPlay() &&
             transform.position.y >= Services.CardConfig.CardPlayThresholdYPos)
         {
             Services.GameManager.player.PlayCard(card);
         }
-        else if (card.currentTile == null) DisplayInHand();
+        else if (card.currentTile == null) DisplayAtBasePos();
     }
 
     public void DisplayInPlay()
@@ -147,7 +165,7 @@ public class CardController : MonoBehaviour
         transform.localScale = baseScale;
     }
 
-    public void DisplayInHand()
+    public void DisplayAtBasePos()
     {
         sr.color = Color.white;
         transform.localScale = baseScale;
@@ -182,7 +200,7 @@ public class CardController : MonoBehaviour
         }
         transform.localScale = Services.CardConfig.OnHoverScaleUp * baseScale;
         Vector3 offset = Services.CardConfig.CardOnBoardHoverOffset;
-        Vector3 uiPos = Services.Main.mainCamera.ScreenToWorldPoint(
+        Vector3 uiPos = Services.GameManager.currentCamera.ScreenToWorldPoint(
             Services.UIManager.moveCounter.GetComponent<RectTransform>().position);
         if (sr.bounds.min.y - 1 < uiPos.y)
         {
