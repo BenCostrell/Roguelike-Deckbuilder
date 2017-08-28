@@ -227,13 +227,13 @@ public class MapManager : MonoBehaviour {
     void GenerateBoardCards(int levelNum, int numCards)
     {
         cardsOnBoard = new List<Card>();
-        int highEndTier = 1 + ((levelNum - 1) / levelsPerCardTierIncrease);
+        int highEndTier = 1 + (levelNum / levelsPerCardTierIncrease);
         highEndTier = Mathf.Min(highEndTier, 
             Services.CardConfig.HighestTierOfCardsAvailable(false));
         int lowEndTier = Mathf.Max(highEndTier - 1, 1);
 
         float ratioOfLowTierCards =
-            ((levelsPerCardTierIncrease - ((levelNum - 1) % levelsPerCardTierIncrease)) /
+            ((levelsPerCardTierIncrease - (levelNum % levelsPerCardTierIncrease)) /
             (float)(levelsPerCardTierIncrease + 1));
         int numLowTierCards = Mathf.RoundToInt(ratioOfLowTierCards * numCards);
         int numHighTierCards = numCards - numLowTierCards;
