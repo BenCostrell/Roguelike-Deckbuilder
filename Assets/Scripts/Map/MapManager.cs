@@ -68,8 +68,9 @@ public class MapManager : MonoBehaviour {
     void PlaceKey(Tile tile)
     {
         tile.containedKey = 
-            Instantiate(Services.Prefabs.Key, tile.controller.transform)
+            Instantiate(Services.Prefabs.Key, Services.Main.transform)
             .GetComponent<DoorKey>();
+        tile.containedKey.transform.position = tile.controller.transform.position;
     }
 
     void SetSprites()

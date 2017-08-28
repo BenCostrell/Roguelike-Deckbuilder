@@ -12,26 +12,38 @@ public class TrashController : MonoBehaviour {
         levelTransition = GetComponentInParent<LevelTransition>();
     }
 
-    private void OnTriggerStay(Collider other)
+    private void OnTriggerEnter2D(Collider2D other)
     {
-        if(other.gameObject.GetComponent<CardController>() != null && 
+        if (other.gameObject.GetComponent<CardController>() != null && 
             !levelTransition.data.gameOver)
         {
             Card card = other.gameObject.GetComponent<CardController>().card;
             if (!card.info.IsMonster)
             {
+                card.controller.overTrash = this;
                 card.controller.sr.color = Color.red;
-                if (!Services.GameManager.mouseDown && card != cardToTrash)
-                {
-                    if (cardToTrash != null)
-                    {
-                        cardToTrash.controller.transform.position = cardPrevPos;
-                    }
-                    cardToTrash = card;
-                    cardPrevPos = card.controller.transform.position;
-                    cardToTrash.controller.transform.position = transform.position;
-                }
             }
         }
+    }
+
+    private void OnTriggerExit2D(Collider2D other)
+    {
+        if (other.gameObject.GetComponent<CardController>())
+        {
+            Card card = other.gameObject.GetComponent<CardController>().card;
+            card.controller.overTrash = null;
+            card.controller.sr.color = Color.white;
+        }
+    }
+
+    public void PlaceCardInTrash(Card card)
+    {
+        if (cardToTrash != null)
+        {
+            cardToTrash.controller.DisplayInDeckViewMode();
+        }
+        GetComponent<SpriteRenderer>().enabled = false;
+        cardToTrash = card;
+        cardToTrash.Reposition(transform.position + (2 * Vector3.forward), false);
     }
 }

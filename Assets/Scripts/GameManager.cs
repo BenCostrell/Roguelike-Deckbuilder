@@ -33,6 +33,7 @@ public class GameManager : MonoBehaviour
     {
         Services.InputManager.GetInput();
         Services.TaskManager.Update();
+        if (Input.GetKeyDown(KeyCode.P)) Debug.Break();
     }
 
     void InitializeServices()

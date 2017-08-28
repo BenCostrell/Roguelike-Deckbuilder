@@ -149,6 +149,7 @@ public class UIManager : MonoBehaviour {
             unitUIHealthBarBaseSize.x * (float)curHP / maxHP,
             unitUIHealthBarBaseSize.y);
         if (curHP == 0) unitUIRemainingHealthObj.SetActive(false);
+        else unitUIRemainingHealthObj.SetActive(true);
     }
 
     public void UpdatePlayerUI(int curHP, int maxHP)

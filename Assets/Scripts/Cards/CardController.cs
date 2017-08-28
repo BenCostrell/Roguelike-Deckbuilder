@@ -14,6 +14,7 @@ public class CardController : MonoBehaviour
     private TextMesh[] textMeshes;
     private Vector3 mouseRelativePos;
     private BoxCollider2D[] colliders;
+    public TrashController overTrash;
     // Use this for initialization
     public void Init(Card card_)
     {
@@ -62,8 +63,8 @@ public class CardController : MonoBehaviour
                 Reposition(basePos + Services.CardConfig.OnHoverOffset, false);
             }
         }
-        if (card.deckViewMode)
-        {
+        if (card.deckViewMode && overTrash == null)
+        { 
             if (!Services.GameManager.mouseDown)
             {
                 transform.localScale = Services.CardConfig.OnHoverScaleUp * baseScale;
@@ -82,7 +83,7 @@ public class CardController : MonoBehaviour
         {
             DisplayCardOnBoard();
         }
-        if (card.deckViewMode && !Services.GameManager.mouseDown)
+        if (card.deckViewMode && overTrash == null)
         {
             DisplayInDeckViewMode();
         }
@@ -108,6 +109,7 @@ public class CardController : MonoBehaviour
 
     private void OnMouseDrag()
     {
+        transform.localScale = Services.CardConfig.OnHoverScaleUp * baseScale;
         if (card.playable || card.deckViewMode)
         {
             Vector3 mousePos = 
@@ -146,16 +148,22 @@ public class CardController : MonoBehaviour
     private void OnMouseUp()
     {
         Services.GameManager.mouseDown = false;
-        if (!card.deckViewMode)
+        if (card.deckViewMode)
+        {
+            if (overTrash != null) overTrash.PlaceCardInTrash(card);
+            else DisplayAtBasePos();
+        }
+        else
         {
             card.OnUnselect();
-        }
-        if (card.playable && card.CanPlay() &&
+            if (card.playable && card.CanPlay() &&
             transform.position.y >= Services.CardConfig.CardPlayThresholdYPos)
-        {
-            Services.GameManager.player.PlayCard(card);
+            {
+                Services.GameManager.player.PlayCard(card);
+            }
+            else if (card.currentTile == null) DisplayAtBasePos();
         }
-        else if (card.currentTile == null) DisplayAtBasePos();
+        
     }
 
     public void DisplayInPlay()
@@ -172,7 +180,7 @@ public class CardController : MonoBehaviour
         Reposition(basePos, false);
     }
 
-    void DisplayInDeckViewMode()
+    public void DisplayInDeckViewMode()
     {
         transform.localScale = baseScale;
         Reposition(basePos, false);

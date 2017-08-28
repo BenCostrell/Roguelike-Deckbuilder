@@ -37,8 +37,9 @@ public class LevelTransition : Scene<MainTransitionData> {
         ClearDeckOfOldMonsters();
         for (int i = 0; i < data.deck.Count; i++)
         {
-            data.deck[i].CreatePhysicalCard(deckArea.transform);
-            data.deck[i].Reposition(deckDisplayOffset +
+            data.deck[i].CreatePhysicalCard(transform);
+            data.deck[i].Reposition(deckArea.transform.position +
+                deckDisplayOffset +
                 (deckDisplaySpacing * (i % maxCardsPerRow)) +
                 (deckDisplaySpacingPerRow * (i / maxCardsPerRow)),
                 true);
@@ -52,8 +53,9 @@ public class LevelTransition : Scene<MainTransitionData> {
 
             for (int j = 0; j < monsterCards.Count; j++)
             {
-                monsterCards[j].CreatePhysicalCard(monsterArea.transform);
-                monsterCards[j].Reposition(deckDisplayOffset +
+                monsterCards[j].CreatePhysicalCard(transform);
+                monsterCards[j].Reposition(monsterArea.transform.position +
+                    deckDisplayOffset +
                     (deckDisplaySpacing * (j % maxCardsPerRow)) +
                     (deckDisplaySpacingPerRow * (j / maxCardsPerRow)),
                     true);
