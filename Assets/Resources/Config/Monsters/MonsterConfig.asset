@@ -8,7 +8,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c6f457d53ec920d40843e8efe6b383cc, type: 3}
+  m_Script: {fileID: 11500000, guid: 41edd7ccd454a4c44933bcc008ccb632, type: 3}
   m_Name: MonsterConfig
   m_EditorClassIdentifier: 
   monsters:

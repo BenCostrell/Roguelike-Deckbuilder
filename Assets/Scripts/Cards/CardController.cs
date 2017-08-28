@@ -159,7 +159,7 @@ public class CardController : MonoBehaviour
             if (card.playable && card.CanPlay() &&
             transform.position.y >= Services.CardConfig.CardPlayThresholdYPos)
             {
-                Services.GameManager.player.PlayCard(card);
+                Services.Main.taskManager.AddTask(Services.GameManager.player.PlayCard(card));
             }
             else if (card.currentTile == null) DisplayAtBasePos();
         }

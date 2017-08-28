@@ -43,8 +43,8 @@ public class LevelTransition : Scene<MainTransitionData> {
                 (deckDisplaySpacing * (i % maxCardsPerRow)) +
                 (deckDisplaySpacingPerRow * (i / maxCardsPerRow)),
                 true);
-            data.deck[i].Disable();
             data.deck[i].deckViewMode = true;
+            data.deck[i].Disable();
         }
 
         if (!data.gameOver)
@@ -59,8 +59,8 @@ public class LevelTransition : Scene<MainTransitionData> {
                     (deckDisplaySpacing * (j % maxCardsPerRow)) +
                     (deckDisplaySpacingPerRow * (j / maxCardsPerRow)),
                     true);
-                monsterCards[j].Disable();
                 monsterCards[j].deckViewMode = true;
+                monsterCards[j].Disable();
             }
             AddNewMonsters(monsterCards);
         }
@@ -126,7 +126,7 @@ public class LevelTransition : Scene<MainTransitionData> {
     List<Card> GenerateMonstersForLevel()
     {
         List<Card> monsterCards = new List<Card>();
-        int numMonsters = data.levelNum + 2;
+        int numMonsters = data.levelNum + 1;
         int highestTier = Mathf.Min(data.levelNum / levelsPerMonsterTierIncrease, 
             Services.CardConfig.HighestTierOfCardsAvailable(true));
         int lowestTier;

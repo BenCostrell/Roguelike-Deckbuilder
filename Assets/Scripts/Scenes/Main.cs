@@ -63,7 +63,12 @@ public class Main : Scene<MainTransitionData> {
     {
         Services.SceneStackManager.Swap<LevelTransition>(new MainTransitionData(
             Services.GameManager.player.fullDeck,
-            Services.GameManager.player.maxHealth,
+            Services.GameManager.player.maxHealth + 1,
             levelNum + 1, false));
+    }
+
+    public void PlayAll()
+    {
+        taskManager.AddTask(Services.GameManager.player.PlayAll());
     }
 }

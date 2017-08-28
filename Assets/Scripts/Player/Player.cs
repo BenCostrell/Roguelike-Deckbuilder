@@ -61,6 +61,7 @@ public class Player {
 
     public void Initialize(Tile tile, MainTransitionData data)
     {
+        hasKey = false;
         InitializeSprite(tile);
         InitializeDeck(data.deck);
         Services.Main.taskManager.AddTask(DrawCards(5));
@@ -235,13 +236,29 @@ public class Player {
         controller.HideArrow();
     }
 
-    public void PlayCard(Card card)
+    public Task PlayCard(Card card)
     {
         Debug.Assert(hand.Contains(card));
         hand.Remove(card);
-        cardsInPlay.Add(card);
+        cardsInFlux.Add(card);
         Services.UIManager.SortHand(hand);
-        Services.TaskManager.AddTask(new PlayCardTask(card));
+        return new PlayCardTask(card);
+    }
+
+    public TaskTree PlayAll()
+    {
+        int lockID = Services.UIManager.nextLockID;
+        TaskTree playAllTree = new TaskTree(new ParameterizedActionTask<int>(DisableHand,
+            lockID));
+        for (int i = hand.Count - 1; i >= 0; i--)
+        {
+            if (hand[i].info.PlayOnPlayAll)
+            {
+                playAllTree.Then(PlayCard(hand[i]));
+            }
+        }
+        playAllTree.Then(new ParameterizedActionTask<int>(ReenableHand, lockID));
+        return playAllTree;
     }
 
     void RemoveCardFromPlay(Card card)
@@ -270,22 +287,34 @@ public class Player {
         return DrawCards(5);
     }
 
-    public void DisableCardsWhileTargeting()
+    public void DisableCardsWhileTargeting(int lockID)
     {
         targeting = true;
+        DisableHand(lockID);
+    }
+
+    public void DisableHand(int lockID)
+    {
         for (int i = 0; i < hand.Count; i++)
         {
             hand[i].Disable();
         }
+        Services.UIManager.DisablePlayAll(lockID);
     }
 
-    public void ReenableCardsWhenDoneTargeting()
+    public void ReenableCardsWhenDoneTargeting(int lockID)
     {
         targeting = false;
+        ReenableHand(lockID);
+    }
+
+    public void ReenableHand(int lockID)
+    {
         for (int i = 0; i < hand.Count; i++)
         {
             hand[i].Enable();
         }
+        Services.UIManager.EnablePlayAll(lockID);
     }
 
     public bool TakeDamage(int damage)

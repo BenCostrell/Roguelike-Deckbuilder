@@ -8,7 +8,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 464783c40566fda4eaa1eee3b62aa161, type: 3}
+  m_Script: {fileID: 11500000, guid: 5322b3392390d1743a91238da8141729, type: 3}
   m_Name: Goblin
   m_EditorClassIdentifier: 
   sprite: {fileID: 21300000, guid: 883f2ae2fd125c6418e7f2b188ed97c1, type: 3}

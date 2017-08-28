@@ -16,6 +16,9 @@ public class UIManager : MonoBehaviour {
     private GameObject endTurnButtonObj;
     private Button endTurnButton;
     [SerializeField]
+    private GameObject playAllButtonObj;
+    private Button playAllButton;
+    [SerializeField]
     private GameObject unitUI;
     [SerializeField]
     private GameObject unitUIRemainingHealthObj;
@@ -67,6 +70,8 @@ public class UIManager : MonoBehaviour {
     }
     private int endTurnLockID;
     private bool endTurnLocked;
+    private int playAllLockID;
+    private bool playAllLocked;
 
     // Use this for initialization
     void Awake() {
@@ -96,6 +101,7 @@ public class UIManager : MonoBehaviour {
         playerUIKeyIcon.SetActive(false);
 
         endTurnButton = endTurnButtonObj.GetComponent<Button>();
+        playAllButton = playAllButtonObj.GetComponent<Button>();
     }
 
     public void UpdateMoveCounter(int movesAvailable)
@@ -142,14 +148,14 @@ public class UIManager : MonoBehaviour {
     public void ShowUnitUI(string name, int curHP, int maxHP, Sprite sprite)
     {
         unitUI.SetActive(true);
+        if (curHP == 0) unitUIRemainingHealthObj.SetActive(false);
+        else unitUIRemainingHealthObj.SetActive(true);
         unitUIName.text = name;
         unitUIHealthCounter.text = curHP + "/" + maxHP;
         unitUISprite.sprite = sprite;
         unitUIRemainingHealthBody.GetComponent<RectTransform>().sizeDelta = new Vector2(
             unitUIHealthBarBaseSize.x * (float)curHP / maxHP,
             unitUIHealthBarBaseSize.y);
-        if (curHP == 0) unitUIRemainingHealthObj.SetActive(false);
-        else unitUIRemainingHealthObj.SetActive(true);
     }
 
     public void UpdatePlayerUI(int curHP, int maxHP)
@@ -186,6 +192,25 @@ public class UIManager : MonoBehaviour {
         {
             endTurnLocked = false;
             endTurnButton.enabled = true;
+        }
+    }
+
+    public void DisablePlayAll(int lockID)
+    {
+        if (!playAllLocked)
+        {
+            playAllLocked = true;
+            playAllLockID = lockID;
+            playAllButton.enabled = false;
+        }
+    }
+
+    public void EnablePlayAll(int lockID)
+    {
+        if (lockID == playAllLockID && playAllLocked)
+        {
+            playAllLocked = false;
+            playAllButton.enabled = true;
         }
     }
 }

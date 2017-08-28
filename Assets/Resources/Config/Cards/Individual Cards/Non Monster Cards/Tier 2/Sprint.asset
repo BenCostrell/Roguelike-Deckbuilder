@@ -8,7 +8,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3cc5731ddd8a4bb47a2fe91b425e254d, type: 3}
+  m_Script: {fileID: 11500000, guid: 73947de0df966ea409e713726a341966, type: 3}
   m_Name: Sprint
   m_EditorClassIdentifier: 
   cardType: 6
@@ -16,3 +16,5 @@ MonoBehaviour:
   cardText: Move 3 spaces.
   sprite: {fileID: 21300000, guid: 16fa49ae00d4ebe4eae6cd7ee4865aa0, type: 3}
   tier: 2
+  isMonster: 0
+  playOnPlayAll: 1
