@@ -20,12 +20,12 @@ public class AcquireCardTask : Task
     {
         timeElapsed = 0;
         duration = Services.CardConfig.AcquireAnimDur;
-        initialPos = card.controller.transform.position;
-        targetPos = Services.UIManager.discardZone.transform.position;
-        card.controller.ShowBoardCardOnHover();
+        card.controller.transform.parent = Services.UIManager.discardZone.transform;
+        initialPos = card.controller.transform.localPosition;
+        targetPos = Vector3.zero;
         initialScale = card.controller.transform.localScale;
         targetScale = Vector3.zero;
-        card.GetPickedUp();
+        //card.GetPickedUp();
     }
 
     internal override void Update()

@@ -58,6 +58,8 @@ public class Player {
         }
     }
     public bool hasKey { get; private set; }
+    private bool movementLocked;
+    private int movementLockID;
 
     public void Initialize(Tile tile, MainTransitionData data)
     {
@@ -149,9 +151,9 @@ public class Player {
         controller.PlaceOnTile(tile);
         currentTile = tile;
         ShowAvailableMoves();
-        if (currentTile.containedCard != null)
+        if (currentTile.containedChest != null && !currentTile.containedChest.opened)
         {
-            AcquireCard(currentTile.containedCard);
+            currentTile.containedChest.OpenChest();
         }
         if (currentTile.containedKey != null)
         {
@@ -161,7 +163,7 @@ public class Player {
 
     public bool CanMoveAlongPath(List<Tile> path)
     {
-        if (path.Count <= movesAvailable) return true;
+        if (path.Count <= movesAvailable && !movementLocked) return true;
         else return false;
     }
 
@@ -353,5 +355,22 @@ public class Player {
         hasKey = true;
         GameObject.Destroy(key.gameObject);
         Services.UIManager.UpdatePlayerUI(currentHealth, maxHealth);
+    }
+
+    public void LockMovement(int lockID)
+    {
+        if (!movementLocked)
+        {
+            movementLocked = true;
+            movementLockID = lockID;
+        }
+    }
+
+    public void UnlockMovement(int lockID)
+    {
+        if(movementLocked && lockID == movementLockID)
+        {
+            movementLocked = false;
+        }
     }
 }

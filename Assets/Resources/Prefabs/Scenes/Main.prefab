@@ -1898,9 +1898,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ca0d85cdf5204904cb7404a378c70c85, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  levelLength: 25
+  levelLength: 15
   levelHeight: 7
-  rowsPerCard: 10
+  rowsPerCard: 8
   maxTriesProcGen: 200
   botLeftCornerSprite: {fileID: 21300248, guid: 3defd70a9f557674ab6dd3a4e7f36461,
     type: 3}

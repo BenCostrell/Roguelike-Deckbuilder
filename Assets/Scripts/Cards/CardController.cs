@@ -7,7 +7,7 @@ public class CardController : MonoBehaviour
 {
     public Card card { get; private set; }
     private Vector3 basePos;
-    public Vector3 baseScale { get; private set; }
+    public Vector3 baseScale;
     private int baseSortingOrder;
     public SpriteRenderer sr { get; private set; }
     private SpriteRenderer imageSr;
@@ -71,11 +71,19 @@ public class CardController : MonoBehaviour
                 Reposition(basePos + Services.CardConfig.OnHoverOffsetDeckViewMode, false);
             }
         }
+        if (card.chest != null)
+        {
+            if (!Services.GameManager.mouseDown)
+            {
+                transform.localScale = Services.CardConfig.OnHoverScaleUp * baseScale;
+                Reposition(basePos + Services.CardConfig.OnHoverOffsetChestMode, false);
+            }
+        }
     }
 
     private void OnMouseExit()
     {
-        if (card.playable && !Services.GameManager.mouseDown)
+        if (card.playable && !Services.GameManager.mouseDown || card.chest != null)
         {
             DisplayAtBasePos();
         }
@@ -101,9 +109,13 @@ public class CardController : MonoBehaviour
         {
             card.OnSelect();
         }
-        if (card.currentTile != null)
+        //if (card.currentTile != null)
+        //{
+        //    ShowBoardCardOnHover();
+        //}
+        if (card.chest != null)
         {
-            ShowBoardCardOnHover();
+            card.chest.OnCardPicked(card);
         }
     }
 

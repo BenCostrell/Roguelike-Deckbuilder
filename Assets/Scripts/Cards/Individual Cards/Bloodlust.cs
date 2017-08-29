@@ -12,9 +12,11 @@ public class Bloodlust : Card
     public override void OnPlay()
     {
         base.OnPlay();
-        TaskTree playTasks = Services.GameManager.player.DrawCards(1);
-        playTasks.Then(new ActionTask(FinishResolution));
-        Services.Main.taskManager.AddTask(playTasks);
+        //TaskTree playTasks = Services.GameManager.player.DrawCards(1);
+        //playTasks.Then(new ActionTask(FinishResolution));
+        //Services.Main.taskManager.AddTask(playTasks);
+        Services.GameManager.player.movesAvailable += 1;
+        FinishResolution();
 
     }
 

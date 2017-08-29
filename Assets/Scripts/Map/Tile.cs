@@ -10,7 +10,8 @@ public class Tile
     public int movementCost { get; private set; }
     public bool hovered { get; private set; }
     public Monster containedMonster;
-    public Card containedCard;
+    //public Card containedCard;
+    public Chest containedChest;
     public DoorKey containedKey;
     public readonly bool isExit;
     public bool locked;

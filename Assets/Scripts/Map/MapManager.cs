@@ -12,7 +12,8 @@ public class MapManager : MonoBehaviour {
     public Tile[,] map { get; private set; }
     [SerializeField]
     private int maxTriesProcGen;
-    public List<Card> cardsOnBoard;
+    //public List<Card> cardsOnBoard;
+    public List<Chest> chestsOnBoard;
     [SerializeField]
     private Sprite botLeftCornerSprite;
     [SerializeField]
@@ -61,8 +62,9 @@ public class MapManager : MonoBehaviour {
         PlaceKey(map[levelLength - 1, levelHeight - 1]);
         FindAllNeighbors();
         SetSprites();
-        int cardsToGenerate = levelLength / rowsPerCard;
-        GenerateBoardCards(levelNum, cardsToGenerate);
+        int chestsToGenerate = levelLength / rowsPerCard;
+        //GenerateBoardCards(levelNum, cardsToGenerate);
+        GenerateChests(levelNum, chestsToGenerate);
     }
 
     void PlaceKey(Tile tile)
@@ -190,9 +192,9 @@ public class MapManager : MonoBehaviour {
                 < minDistFromMonster)
                 return false;
         }
-        for (int j = 0; j < cardsOnBoard.Count; j++)
+        for (int j = 0; j < chestsOnBoard.Count; j++)
         {
-            if (cardsOnBoard[j].currentTile.coord.Distance(tile.coord) < minDistFromCard)
+            if (chestsOnBoard[j].currentTile.coord.Distance(tile.coord) < minDistFromCard)
                 return false;
         }
         return true;
@@ -224,40 +226,87 @@ public class MapManager : MonoBehaviour {
         return null;
     }
 
-    void GenerateBoardCards(int levelNum, int numCards)
+    void GenerateChests(int levelNum, int numChests)
     {
-        cardsOnBoard = new List<Card>();
-        int highEndTier = 1 + (levelNum / levelsPerCardTierIncrease);
-        highEndTier = Mathf.Min(highEndTier, 
-            Services.CardConfig.HighestTierOfCardsAvailable(false));
+        chestsOnBoard = new List<Chest>();
+        int highestTier = Services.CardConfig.HighestTierOfCardsAvailable(false);
+        int potentialHighEnd = 1 + (levelNum / levelsPerCardTierIncrease);
+        int highEndTier = Mathf.Min(potentialHighEnd, highestTier);
         int lowEndTier = Mathf.Max(highEndTier - 1, 1);
+        if (potentialHighEnd > highestTier)
+        {
+            lowEndTier = highEndTier;
+        }
 
         float ratioOfLowTierCards =
             ((levelsPerCardTierIncrease - (levelNum % levelsPerCardTierIncrease)) /
             (float)(levelsPerCardTierIncrease + 1));
-        int numLowTierCards = Mathf.RoundToInt(ratioOfLowTierCards * numCards);
-        int numHighTierCards = numCards - numLowTierCards;
+        int numLowTierCards = Mathf.RoundToInt(ratioOfLowTierCards * numChests);
+        int numHighTierCards = numChests - numLowTierCards;
 
-        GenerateCardsOnBoardOfTier(numLowTierCards, lowEndTier);
-        GenerateCardsOnBoardOfTier(numHighTierCards, highEndTier);
+
+        GenerateChestsOfTier(numLowTierCards, lowEndTier);
+        GenerateChestsOfTier(numHighTierCards, highEndTier);
     }
 
-    void GenerateCardsOnBoardOfTier(int numCards, int tier)
+    void GenerateChestsOfTier(int numChests, int tier)
     {
-        for (int i = 0; i < numCards; i++)
+        for (int i = 0; i < numChests; i++)
         {
-            Card.CardType cardType = Services.CardConfig.GenerateTypeOfTier(tier, false);
-            Tile cardTile = GenerateValidTile(
+            Tile chestTile = GenerateValidTile(
                 Services.CardConfig.MinSpawnDistFromMonsters,
-                Services.CardConfig.MinSpawnDistFromItems, 
-                Services.CardConfig.MinSpawnCol, 
+                Services.CardConfig.MinSpawnDistFromItems,
+                Services.CardConfig.MinSpawnCol,
                 levelLength - 1);
-            if (cardTile != null)
+            if (chestTile != null)
             {
-                cardsOnBoard.Add(Services.CardConfig.GenerateCard(cardType, cardTile));
+                Chest chest = Instantiate(Services.Prefabs.Chest, Services.Main.transform).
+                    GetComponent<Chest>();
+                chest.currentTile = chestTile;
+                chest.transform.position = chestTile.controller.transform.position;
+                chest.tier = tier;
+                chestTile.containedChest = chest;
+                chestsOnBoard.Add(chest);
             }
             else break;
         }
-        Debug.Log("generated " + numCards + " cards of tier " + tier);
+        Debug.Log("generated " + numChests + " cards of tier " + tier);
     }
+
+    //void GenerateBoardCards(int levelNum, int numCards)
+    //{
+    //    cardsOnBoard = new List<Card>();
+    //    int highEndTier = 1 + (levelNum / levelsPerCardTierIncrease);
+    //    highEndTier = Mathf.Min(highEndTier, 
+    //        Services.CardConfig.HighestTierOfCardsAvailable(false));
+    //    int lowEndTier = Mathf.Max(highEndTier - 1, 1);
+
+    //    float ratioOfLowTierCards =
+    //        ((levelsPerCardTierIncrease - (levelNum % levelsPerCardTierIncrease)) /
+    //        (float)(levelsPerCardTierIncrease + 1));
+    //    int numLowTierCards = Mathf.RoundToInt(ratioOfLowTierCards * numCards);
+    //    int numHighTierCards = numCards - numLowTierCards;
+
+    //    GenerateCardsOnBoardOfTier(numLowTierCards, lowEndTier);
+    //    GenerateCardsOnBoardOfTier(numHighTierCards, highEndTier);
+    //}
+
+    //void GenerateCardsOnBoardOfTier(int numCards, int tier)
+    //{
+    //    for (int i = 0; i < numCards; i++)
+    //    {
+    //        Card.CardType cardType = Services.CardConfig.GenerateTypeOfTier(tier, false);
+    //        Tile cardTile = GenerateValidTile(
+    //            Services.CardConfig.MinSpawnDistFromMonsters,
+    //            Services.CardConfig.MinSpawnDistFromItems, 
+    //            Services.CardConfig.MinSpawnCol, 
+    //            levelLength - 1);
+    //        if (cardTile != null)
+    //        {
+    //            cardsOnBoard.Add(Services.CardConfig.GenerateCard(cardType, cardTile));
+    //        }
+    //        else break;
+    //    }
+    //    Debug.Log("generated " + numCards + " cards of tier " + tier);
+    //}
 }

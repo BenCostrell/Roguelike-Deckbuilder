@@ -19,12 +19,14 @@ public abstract class Card {
         Crossbow,
         Zombie,
         Slash,
-        Bloodlust
+        Bloodlust,
+        HitAndRun
     }
     public int tier { get; protected set; }
     public Sprite sprite { get; protected set; }
     public Tile currentTile { get; private set; }
     public bool deckViewMode;
+    public Chest chest;
 
     public void CreatePhysicalCard(Transform tform)
     {
@@ -33,15 +35,15 @@ public abstract class Card {
         controller.Init(this);
     }
 
-    public void CreatePhysicalCard(Tile tile)
-    {
-        CreatePhysicalCard(Services.Main.transform);
-        currentTile = tile;
-        tile.containedCard = this;
-        controller.DisplayCardOnBoard();
-        Reposition(tile.controller.transform.position + Services.CardConfig.CardOnBoardOffset, 
-            true);
-    }
+    //public void CreatePhysicalCard(Tile tile)
+    //{
+    //    CreatePhysicalCard(Services.Main.transform);
+    //    currentTile = tile;
+    //    tile.containedCard = this;
+    //    controller.DisplayCardOnBoard();
+    //    Reposition(tile.controller.transform.position + Services.CardConfig.CardOnBoardOffset, 
+    //        true);
+    //}
 
     public void DestroyPhysicalCard()
     {
@@ -101,10 +103,10 @@ public abstract class Card {
         sprite = info.Sprite;
     }
 
-    public void GetPickedUp()
-    {
-        currentTile.containedCard = null;
-        currentTile = null;
-        Services.MapManager.cardsOnBoard.Remove(this);
-    }
+    //public void GetPickedUp()
+    //{
+    //    currentTile.containedCard = null;
+    //    currentTile = null;
+    //    Services.MapManager.cardsOnBoard.Remove(this);
+    //}
 }

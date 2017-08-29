@@ -35,7 +35,7 @@ public class TileController : MonoBehaviour {
                 tile.containedMonster.maxHealth,
                 tile.containedMonster.info.Sprite);
         }
-        if (tile.containedCard != null) tile.containedCard.controller.ShowBoardCardOnHover();
+        //if (tile.containedCard != null) tile.containedCard.controller.ShowBoardCardOnHover();
     }
 
     private void OnMouseExit()
@@ -43,7 +43,7 @@ public class TileController : MonoBehaviour {
         tile.OnHoverExit();
         sr.color = defColor;
         Services.UIManager.HideUnitUI();
-        if (tile.containedCard != null) tile.containedCard.controller.DisplayCardOnBoard();
+        //if (tile.containedCard != null) tile.containedCard.controller.DisplayCardOnBoard();
     }
 
     private void OnMouseDown()

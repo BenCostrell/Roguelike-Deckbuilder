@@ -34,6 +34,10 @@ public class CardConfig : ScriptableObject
     public Vector3 OnHoverOffsetDeckViewMode { get { return onHoverOffsetDeckViewMode; } }
 
     [SerializeField]
+    private Vector3 onHoverOffsetChestMode;
+    public Vector3 OnHoverOffsetChestMode { get { return onHoverOffsetChestMode; } }
+
+    [SerializeField]
     private float cardPlayThresholdYPos;
     public float CardPlayThresholdYPos { get { return cardPlayThresholdYPos; } }
 
@@ -125,6 +129,8 @@ public class CardConfig : ScriptableObject
                 return new Slash();
             case Card.CardType.Bloodlust:
                 return new Bloodlust();
+            case Card.CardType.HitAndRun:
+                return new HitAndRun();
             default:
                 return null;
         }
@@ -149,12 +155,12 @@ public class CardConfig : ScriptableObject
         return card;
     }
 
-    public Card GenerateCard(Card.CardType cardType, Tile tile)
-    {
-        Card card = CreateCardOfType(cardType);
-        card.CreatePhysicalCard(tile);
-        return card;
-    }
+    //public Card GenerateCard(Card.CardType cardType, Tile tile)
+    //{
+    //    Card card = CreateCardOfType(cardType);
+    //    card.CreatePhysicalCard(tile);
+    //    return card;
+    //}
 
     public Card.CardType GenerateTypeOfTier(int tier, bool generateMonsters)
     {
@@ -171,5 +177,16 @@ public class CardConfig : ScriptableObject
     public Card GenerateCardOfTier(int tier, bool generateMonster)
     {
         return GenerateCard(GenerateTypeOfTier(tier, generateMonster));
+    }
+
+    public List<Card> GetAllCardsOfTier(int tier, bool getMonsters)
+    {
+        List<Card> cardsOfTier = new List<Card>();
+        foreach (CardInfo card in Cards)
+        {
+            if (card.Tier == tier && card.IsMonster == getMonsters)
+                cardsOfTier.Add(GenerateCard(card.CardType));
+        }
+        return cardsOfTier;
     }
 }

@@ -31,4 +31,8 @@ public class PrefabDB : ScriptableObject {
     [SerializeField]
     private GameObject key;
     public GameObject Key { get { return key; } }
+
+    [SerializeField]
+    private GameObject chest;
+    public GameObject Chest { get { return chest; } }
 }
