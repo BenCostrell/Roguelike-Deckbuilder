@@ -388,4 +388,9 @@ public class Player {
         Services.UIManager.EnableEndTurn(lockID);
         Services.UIManager.EnablePlayAll(lockID);
     }
+
+    public void Heal(int amountHealed)
+    {
+        currentHealth = Mathf.Max(maxHealth, currentHealth + amountHealed);
+    }
 }

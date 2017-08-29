@@ -14,6 +14,9 @@ MonoBehaviour:
   monsters:
   - {fileID: 11400000, guid: 9f64ad507fa16c645982317615ddbc5e, type: 2}
   - {fileID: 11400000, guid: 5b28d8ef206b1154cb5d8a4220a58a81, type: 2}
+  - {fileID: 11400000, guid: b97b15815773fa24b8d4e7d83a76f9bf, type: 2}
+  - {fileID: 11400000, guid: e54a0890bd5f2954e9a4441ad8b2c558, type: 2}
+  - {fileID: 11400000, guid: 216ecc07299b1e74ebd3c7a64d203ea9, type: 2}
   minDistFromMonsters: 4
   minDistFromCards: 3
   minDistFromPlayer: 5

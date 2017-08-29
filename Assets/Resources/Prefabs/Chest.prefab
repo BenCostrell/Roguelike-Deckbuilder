@@ -52,6 +52,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3b84f108dd9032f40a06721a2ab37b99, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  tier: 0
+  numCards: 3
+  leftmostCardPosition: {x: -4, y: 0, z: 10}
+  cardSpacing: {x: 4, y: 0, z: 0}
+  scaleFactor: 1.5
 --- !u!212 &212162023641210738
 SpriteRenderer:
   m_ObjectHideFlags: 1

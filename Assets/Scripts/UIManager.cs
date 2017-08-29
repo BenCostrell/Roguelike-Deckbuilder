@@ -40,6 +40,9 @@ public class UIManager : MonoBehaviour {
     private Text unitUIHealthCounter;
     private Vector2 unitUIHealthBarBaseSize;
     [SerializeField]
+    private GameObject unitUIStatsObj;
+    private Text unitUIStats;
+    [SerializeField]
     private GameObject playerUI;
     [SerializeField]
     private GameObject playerUIRemainingHealthObj;
@@ -92,6 +95,7 @@ public class UIManager : MonoBehaviour {
         unitUI.SetActive(false);
         unitUIHealthBarBaseSize = 
             unitUIRemainingHealthBody.GetComponent<RectTransform>().sizeDelta;
+        unitUIStats = unitUIStatsObj.GetComponent<Text>();
 
         playerUISprite = playerUISpriteObj.GetComponent<Image>();
         playerUIHealth = playerUIHealthObj.GetComponent<Image>();
@@ -145,17 +149,21 @@ public class UIManager : MonoBehaviour {
         }
     }
 
-    public void ShowUnitUI(string name, int curHP, int maxHP, Sprite sprite)
+    public void ShowUnitUI(Monster monster)
     {
         unitUI.SetActive(true);
-        if (curHP == 0) unitUIRemainingHealthObj.SetActive(false);
+        if (monster.currentHealth == 0) unitUIRemainingHealthObj.SetActive(false);
         else unitUIRemainingHealthObj.SetActive(true);
-        unitUIName.text = name;
-        unitUIHealthCounter.text = curHP + "/" + maxHP;
-        unitUISprite.sprite = sprite;
+        unitUIName.text = monster.info.Name;
+        unitUIHealthCounter.text = monster.currentHealth + "/" + monster.maxHealth;
+        unitUISprite.sprite = monster.info.Sprite;
         unitUIRemainingHealthBody.GetComponent<RectTransform>().sizeDelta = new Vector2(
-            unitUIHealthBarBaseSize.x * (float)curHP / maxHP,
+            unitUIHealthBarBaseSize.x * (float)monster.currentHealth / monster.maxHealth,
             unitUIHealthBarBaseSize.y);
+        unitUIStats.text =
+            "ATTACK " + monster.attackDamage + "\n" +
+            "MOVE " + monster.movementSpeed + "\n" +
+            "RANGE " + monster.attackRange;
     }
 
     public void UpdatePlayerUI(int curHP, int maxHP)

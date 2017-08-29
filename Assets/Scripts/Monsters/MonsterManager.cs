@@ -59,6 +59,12 @@ public class MonsterManager
                 return new Goblin();
             case Monster.MonsterType.Zombie:
                 return new Zombie();
+            case Monster.MonsterType.Bat:
+                return new Bat();
+            case Monster.MonsterType.Orc:
+                return new Orc();
+            case Monster.MonsterType.Flamekin:
+                return new Flamekin();
             default:
                 return null;
         }

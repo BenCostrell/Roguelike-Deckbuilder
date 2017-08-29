@@ -20,7 +20,11 @@ public abstract class Card {
         Zombie,
         Slash,
         Bloodlust,
-        HitAndRun
+        HitAndRun,
+        Potion,
+        Bat,
+        Orc,
+        Flamekin
     }
     public int tier { get; protected set; }
     public Sprite sprite { get; protected set; }

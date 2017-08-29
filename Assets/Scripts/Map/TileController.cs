@@ -29,11 +29,7 @@ public class TileController : MonoBehaviour {
         sr.color = onHoverColor;
         if (tile.containedMonster != null)
         {
-            Services.UIManager.ShowUnitUI(
-                tile.containedMonster.info.Name,
-                tile.containedMonster.currentHealth,
-                tile.containedMonster.maxHealth,
-                tile.containedMonster.info.Sprite);
+            Services.UIManager.ShowUnitUI(tile.containedMonster);
         }
         //if (tile.containedCard != null) tile.containedCard.controller.ShowBoardCardOnHover();
     }

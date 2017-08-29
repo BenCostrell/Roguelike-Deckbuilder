@@ -6,7 +6,10 @@ public abstract class Monster {
     public enum MonsterType
     {
         Goblin,
-        Zombie
+        Zombie,
+        Bat,
+        Orc,
+        Flamekin
     }
     protected MonsterType monsterType;
     protected MonsterController controller;
@@ -14,9 +17,9 @@ public abstract class Monster {
     public Tile currentTile { get; protected set; }
     public int currentHealth { get; protected set; }
     public int maxHealth { get; protected set; }
-    protected int movementSpeed;
-    protected int attackRange;
-    protected int attackDamage;
+    public int movementSpeed { get; protected set; }
+    public int attackRange { get; protected set; }
+    public int attackDamage { get; protected set; }
 
     public void CreatePhysicalMonster(Tile tile)
     {
@@ -57,7 +60,7 @@ public abstract class Monster {
     {
         currentHealth = Mathf.Max(0, currentHealth - damage);
         controller.UpdateHealthUI();
-        Services.UIManager.ShowUnitUI(info.Name, currentHealth, maxHealth, info.Sprite);
+        Services.UIManager.ShowUnitUI(this);
         if (currentHealth == 0) Die();
     }
 

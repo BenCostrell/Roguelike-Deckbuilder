@@ -13,7 +13,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cardType: 10
   name_: Bloodlust
-  cardText: "Draw a card.\nMove 1 space for \neach attack card \nin your hand."
+  cardText: "Move 1 space for \neach attack card \nin your hand plus 1."
   sprite: {fileID: 21300000, guid: ed07ce650493fc740908f70a8fa4a99d, type: 3}
   tier: 2
   isMonster: 0

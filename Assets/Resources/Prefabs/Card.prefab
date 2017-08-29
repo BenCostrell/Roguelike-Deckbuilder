@@ -279,7 +279,7 @@ TextMesh:
   m_Anchor: 1
   m_Alignment: 1
   m_TabSize: 4
-  m_FontSize: 65
+  m_FontSize: 60
   m_FontStyle: 0
   m_RichText: 1
   m_Font: {fileID: 12800000, guid: b1368cfa27ea32946ba7f19146e47de0, type: 3}
@@ -297,6 +297,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 32c770df9da6ccd46a8164db9c7f6ba3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  baseScale: {x: 0, y: 0, z: 0}
   overTrash: {fileID: 0}
 --- !u!212 &212515422846648890
 SpriteRenderer:

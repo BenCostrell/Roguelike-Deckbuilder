@@ -131,6 +131,14 @@ public class CardConfig : ScriptableObject
                 return new Bloodlust();
             case Card.CardType.HitAndRun:
                 return new HitAndRun();
+            case Card.CardType.Potion:
+                return new Potion();
+            case Card.CardType.Bat:
+                return new BatCard();
+            case Card.CardType.Orc:
+                return new OrcCard();
+            case Card.CardType.Flamekin:
+                return new FlamekinCard();
             default:
                 return null;
         }
