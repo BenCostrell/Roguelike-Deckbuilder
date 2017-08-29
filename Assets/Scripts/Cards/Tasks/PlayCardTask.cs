@@ -32,7 +32,7 @@ public class PlayCardTask : Task
         targetScale = card.controller.baseScale;
         card.Disable();
         lockID = Services.UIManager.nextLockID;
-        Services.GameManager.player.DisableHand(lockID);
+        Services.GameManager.player.LockEverything(lockID);
     }
 
     internal override void Update()
@@ -51,6 +51,6 @@ public class PlayCardTask : Task
     {
         card.OnPlay();
         card.Reposition(targetPos, true);
-        Services.GameManager.player.ReenableHand(lockID);
+        Services.GameManager.player.UnlockEverything(lockID);
     }
 }

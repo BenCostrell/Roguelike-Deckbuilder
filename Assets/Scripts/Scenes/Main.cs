@@ -47,14 +47,14 @@ public class Main : Scene<MainTransitionData> {
     public void EndTurn()
     {
         int lockID = Services.UIManager.nextLockID;
-        Services.UIManager.DisableEndTurn(lockID);
+        Services.GameManager.player.LockEverything(lockID);
         TaskTree endTurnTasks = new TaskTree(new EmptyTask());
         endTurnTasks
             .Then(Services.MonsterManager.MonstersMove())
             .Then(Services.MonsterManager.MonstersAttack())
             .Then(Services.GameManager.player.OnTurnEnd())
             .Then(new ParameterizedActionTask<int>(
-                Services.UIManager.EnableEndTurn, lockID));
+                Services.GameManager.player.UnlockEverything, lockID));
 
         taskManager.AddTask(endTurnTasks);
     }

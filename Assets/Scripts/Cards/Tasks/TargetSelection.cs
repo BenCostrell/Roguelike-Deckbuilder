@@ -16,7 +16,8 @@ public class TargetSelection : Task
     {
         lockID = Services.UIManager.nextLockID;
         Services.EventManager.Register<TileSelected>(OnSelection);
-        Services.GameManager.player.DisableCardsWhileTargeting(lockID);
+        Services.GameManager.player.LockEverything(lockID);
+        Services.GameManager.player.targeting = true;
         targetReticle = 
             GameObject.Instantiate(Services.Prefabs.TargetReticle, Services.Main.transform);
         card.OnSelect();
@@ -45,7 +46,8 @@ public class TargetSelection : Task
     protected override void OnSuccess()
     {
         Services.EventManager.Unregister<TileSelected>(OnSelection);
-        Services.GameManager.player.ReenableCardsWhenDoneTargeting(lockID);
+        Services.GameManager.player.UnlockEverything(lockID);
+        Services.GameManager.player.targeting = false;
         GameObject.Destroy(targetReticle);
         card.OnUnselect();
     }

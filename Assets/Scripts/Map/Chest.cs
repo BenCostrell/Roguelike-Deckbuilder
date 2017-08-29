@@ -51,10 +51,7 @@ public class Chest : MonoBehaviour {
                 cardsInChest[i].controller.baseScale;
         }
         lockID = Services.UIManager.nextLockID;
-        Services.GameManager.player.DisableHand(lockID);
-        Services.UIManager.DisableEndTurn(lockID);
-        Services.UIManager.DisablePlayAll(lockID);
-        Services.GameManager.player.LockMovement(lockID);
+        Services.GameManager.player.LockEverything(lockID);
     }
 
     public void OnCardPicked(Card card)
@@ -67,10 +64,7 @@ public class Chest : MonoBehaviour {
 
         Services.GameManager.player.AcquireCard(card);
 
-        Services.GameManager.player.ReenableHand(lockID);
-        Services.UIManager.EnableEndTurn(lockID);
-        Services.UIManager.EnablePlayAll(lockID);
-        Services.GameManager.player.UnlockMovement(lockID);
+        Services.GameManager.player.UnlockEverything(lockID);
         Destroy(gameObject);
     }
 }

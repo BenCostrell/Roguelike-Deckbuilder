@@ -93,14 +93,13 @@ public class Player {
     public TaskTree DrawCards(int numCardsToDraw)
     {
         int lockID = Services.UIManager.nextLockID;
-        Services.UIManager.DisableEndTurn(lockID);
+        LockEverything(lockID);
         TaskTree cardDrawTasks = new TaskTree(new EmptyTask());
         for (int i = 0; i < numCardsToDraw; i++)
         {
             cardDrawTasks.Then(DrawCard(GetRandomCardFromDeck()));
         }
-        cardDrawTasks.Then(new ParameterizedActionTask<int>(
-            Services.UIManager.EnableEndTurn, lockID));
+        cardDrawTasks.Then(new ParameterizedActionTask<int>(UnlockEverything, lockID));
         Services.UIManager.UpdateDeckCounter(remainingDeck.Count);
         Services.UIManager.UpdateDiscardCounter(discardPile.Count);
         return cardDrawTasks;
@@ -250,7 +249,7 @@ public class Player {
     public TaskTree PlayAll()
     {
         int lockID = Services.UIManager.nextLockID;
-        TaskTree playAllTree = new TaskTree(new ParameterizedActionTask<int>(DisableHand,
+        TaskTree playAllTree = new TaskTree(new ParameterizedActionTask<int>(LockEverything,
             lockID));
         for (int i = hand.Count - 1; i >= 0; i--)
         {
@@ -259,7 +258,7 @@ public class Player {
                 playAllTree.Then(PlayCard(hand[i]));
             }
         }
-        playAllTree.Then(new ParameterizedActionTask<int>(ReenableHand, lockID));
+        playAllTree.Then(new ParameterizedActionTask<int>(UnlockEverything, lockID));
         return playAllTree;
     }
 
@@ -372,5 +371,21 @@ public class Player {
         {
             movementLocked = false;
         }
+    }
+
+    public void LockEverything(int lockID)
+    {
+        LockMovement(lockID);
+        DisableHand(lockID);
+        Services.UIManager.DisableEndTurn(lockID);
+        Services.UIManager.DisablePlayAll(lockID);
+    }
+
+    public void UnlockEverything(int lockID)
+    {
+        UnlockMovement(lockID);
+        ReenableHand(lockID);
+        Services.UIManager.EnableEndTurn(lockID);
+        Services.UIManager.EnablePlayAll(lockID);
     }
 }
