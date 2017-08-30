@@ -11,4 +11,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cc9259f716bfc074080ce2548912b03c, type: 3}
   m_Name: AudioConfig
   m_EditorClassIdentifier: 
-  cardDrawAudio: {fileID: 0}
+  cardDrawAudio: {fileID: 8300000, guid: 8ba72610aab37dd419bd323efcbe1d1b, type: 3}
+  cardPlayAudio: {fileID: 8300000, guid: e33b06ea3ea67444e9c7a85522d7ddd2, type: 3}

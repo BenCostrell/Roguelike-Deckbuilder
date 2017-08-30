@@ -26,9 +26,7 @@ public abstract class AttackCard : TargetedCard
     public override void OnTargetSelected(Tile tile)
     {
         OnHit(tile.containedMonster);
-    }
-
-    
+    }  
 
     protected override void InitValues()
     {
