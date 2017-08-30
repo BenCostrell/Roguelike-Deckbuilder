@@ -33,6 +33,7 @@ public class DrawCardTask : Task
         initialPos = new Vector3(rawDiff.x, rawDiff.y, targetPos.z);
         midpointPos = initialPos + Services.CardConfig.DrawAnimMidpointOffset;
         card.Reposition(initialPos, false);
+        Services.SoundManager.CreateAndPlayAudio(Services.AudioConfig.CardDrawAudio);
     }
 
     internal override void Update()

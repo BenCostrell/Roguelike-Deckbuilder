@@ -34,6 +34,7 @@ public class PlayCardTask : Task
         card.Disable();
         lockID = Services.UIManager.nextLockID;
         Services.GameManager.player.LockEverything(lockID);
+        Services.SoundManager.CreateAndPlayAudio(Services.AudioConfig.CardPlayAudio);
     }
 
     internal override void Update()

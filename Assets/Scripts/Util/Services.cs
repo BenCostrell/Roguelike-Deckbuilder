@@ -15,4 +15,6 @@ public static class Services {
     public static CardConfig CardConfig { get; set; }
     public static MonsterConfig MonsterConfig { get; set; }
     public static MonsterManager MonsterManager { get; set; }
+    public static SoundManager SoundManager { get; set; }
+    public static AudioConfig AudioConfig { get; set; }
 }

@@ -1047,7 +1047,7 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
-  m_Sprite: {fileID: 21300000, guid: cac6f683f5b4c0444a5109dbb4fe00aa, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 8d2038cf28a1754418b19318813ac25b, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -1390,7 +1390,7 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
-  m_Sprite: {fileID: 21300000, guid: cac6f683f5b4c0444a5109dbb4fe00aa, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 8d2038cf28a1754418b19318813ac25b, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1

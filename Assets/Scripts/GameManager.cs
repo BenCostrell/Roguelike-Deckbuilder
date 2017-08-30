@@ -46,6 +46,8 @@ public class GameManager : MonoBehaviour
         Services.InputManager = new InputManager();
         Services.CardConfig = Resources.Load<CardConfig>("Config/Cards/CardConfig");
         Services.MonsterConfig = Resources.Load<MonsterConfig>("Config/Monsters/MonsterConfig");
+        Services.SoundManager = new SoundManager();
+        Services.AudioConfig = Resources.Load<AudioConfig>("Config/Audio/AudioConfig");
     }
 
     void InitializePlayer()
