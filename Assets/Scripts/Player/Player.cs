@@ -240,9 +240,6 @@ public class Player {
     public Task PlayCard(Card card)
     {
         Debug.Assert(hand.Contains(card));
-        hand.Remove(card);
-        cardsInFlux.Add(card);
-        Services.UIManager.SortHand(hand);
         return new PlayCardTask(card);
     }
 
@@ -391,6 +388,6 @@ public class Player {
 
     public void Heal(int amountHealed)
     {
-        currentHealth = Mathf.Max(maxHealth, currentHealth + amountHealed);
+        currentHealth = Mathf.Min(maxHealth, currentHealth + amountHealed);
     }
 }

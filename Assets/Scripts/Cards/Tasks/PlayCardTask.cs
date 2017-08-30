@@ -24,10 +24,11 @@ public class PlayCardTask : Task
         card.controller.sr.color = Color.white;
         card.controller.transform.parent = Services.UIManager.inPlayZone.transform;
         initialPos = card.controller.transform.localPosition;
-        Services.GameManager.player.cardsInFlux.Remove(card);
-        Services.GameManager.player.cardsInPlay.Add(card);
+        Services.GameManager.player.hand.Remove(card);
+        Services.GameManager.player.cardsInFlux.Add(card);
+        Services.UIManager.SortHand(Services.GameManager.player.hand);
         targetPos = Services.UIManager
-            .GetInPlayCardPosition(Services.GameManager.player.cardsInPlay.Count);
+            .GetInPlayCardPosition(Services.GameManager.player.cardsInPlay.Count + 1);
         initialScale = card.controller.transform.localScale;
         targetScale = card.controller.baseScale;
         card.Disable();
@@ -49,6 +50,8 @@ public class PlayCardTask : Task
 
     protected override void OnSuccess()
     {
+        Services.GameManager.player.cardsInFlux.Remove(card);
+        Services.GameManager.player.cardsInPlay.Add(card);
         card.OnPlay();
         card.Reposition(targetPos, true);
         Services.GameManager.player.UnlockEverything(lockID);
