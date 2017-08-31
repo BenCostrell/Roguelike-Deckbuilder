@@ -270,7 +270,7 @@ public class MapManager : MonoBehaviour {
             }
             else break;
         }
-        Debug.Log("generated " + numChests + " cards of tier " + tier);
+        Debug.Log("generated " + numChests + " chests of tier " + tier);
     }
 
     //void GenerateBoardCards(int levelNum, int numCards)

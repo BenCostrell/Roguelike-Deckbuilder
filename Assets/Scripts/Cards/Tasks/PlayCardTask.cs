@@ -21,7 +21,7 @@ public class PlayCardTask : Task
     {
         timeElapsed = 0;
         duration = Services.CardConfig.PlayAnimDur;
-        card.controller.sr.color = Color.white;
+        card.controller.color = Color.white;
         card.controller.transform.parent = Services.UIManager.inPlayZone.transform;
         initialPos = card.controller.transform.localPosition;
         Services.GameManager.player.hand.Remove(card);

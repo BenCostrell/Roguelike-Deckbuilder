@@ -26,6 +26,16 @@ public class TileSelected : Event
     }
 }
 
+public class CardSelected : Event
+{
+    public Card card;
+    public CardSelected(Card card_)
+    {
+        card = card_;
+    }
+}
+
+
 public class EventManager {
 
 	public delegate void EventDelegate<T>(T e) where T: Event;

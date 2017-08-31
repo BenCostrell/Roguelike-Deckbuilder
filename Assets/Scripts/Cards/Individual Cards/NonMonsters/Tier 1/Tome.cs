@@ -1,7 +1,9 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System;
+using System.Collections.Generic;
 
-public class Tome : Card
+public class Tome : CardSelectionCard
 {
     public Tome()
     {
@@ -9,9 +11,26 @@ public class Tome : Card
         InitValues();
     }
 
-    public override void OnPlay()
+    public override bool IsSelectionComplete(List<Card> cardsSelected)
     {
-        base.OnPlay();
-        Services.Main.taskManager.AddTask(Services.GameManager.player.DrawCards(2));
+        return cardsSelected.Count == 1;
+    }
+
+    public override bool IsSelectionValid(Card card)
+    {
+        return Services.GameManager.player.hand.Contains(card);
+    }
+
+    public override TaskTree PreCardSelectionActions()
+    {
+        return Services.GameManager.player.DrawCards(2);
+    }
+
+    public override void OnSelectionComplete(List<Card> cardsSelected)
+    {
+        foreach(Card card in cardsSelected)
+        {
+            Services.GameManager.player.DiscardCardFromHand(card);
+        }
     }
 }

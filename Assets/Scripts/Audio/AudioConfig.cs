@@ -11,4 +11,8 @@ public class AudioConfig : ScriptableObject {
     [SerializeField]
     private AudioClip cardPlayAudio;
     public AudioClip CardPlayAudio { get { return cardPlayAudio; } }
+
+    [SerializeField]
+    private AudioClip monsterHitAudio;
+    public AudioClip MonsterHitAudio { get { return monsterHitAudio; } }
 }

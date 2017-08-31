@@ -3,7 +3,7 @@ using System.Collections;
 using System;
 using System.Collections.Generic;
 
-public abstract class AttackCard : TargetedCard
+public abstract class AttackCard : TileTargetedCard
 {
     protected int damage;
 
@@ -14,6 +14,9 @@ public abstract class AttackCard : TargetedCard
 
     protected virtual void OnHit(Monster monster)
     {
+        AttackCardInfo attackInfo = info as AttackCardInfo;
+        if (attackInfo.OnHitAudio != null)
+            Services.SoundManager.CreateAndPlayAudio(attackInfo.OnHitAudio);
         monster.TakeDamage(damage);
     }
 

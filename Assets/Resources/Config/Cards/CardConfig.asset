@@ -51,7 +51,7 @@ MonoBehaviour:
   drawAnimScale: 2
   drawAnimMidpointOffset: {x: -7, y: 2, z: 0}
   playAnimDur: 0.3
-  acquireAnimDur: 1
+  acquireAnimDur: 0.5
   minSpawnDistFromMonsters: 1
   minSpawnDistFromItems: 10
   minSpawnCol: 5

@@ -137,7 +137,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   sceneRoot: {fileID: 975070295}
   playerStartingHealth: 5
-  mouseDown: 0
   currentCamera: {fileID: 0}
 --- !u!4 &11805883
 Transform:

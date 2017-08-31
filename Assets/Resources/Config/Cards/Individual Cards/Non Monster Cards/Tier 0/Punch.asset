@@ -16,5 +16,9 @@ MonoBehaviour:
   cardText: Deal 1 damage\n to a Monster \nwithin 1 range.
   sprite: {fileID: 21300000, guid: a45f077f52a898e4795c2db3c54ab159, type: 3}
   tier: 0
+  isMonster: 0
+  playOnPlayAll: 0
+  onPlayAudio: {fileID: 0}
   range: 1
   damage: 1
+  onHitAudio: {fileID: 8300000, guid: 28b5f3e73e7724543b2c58a54afda415, type: 3}

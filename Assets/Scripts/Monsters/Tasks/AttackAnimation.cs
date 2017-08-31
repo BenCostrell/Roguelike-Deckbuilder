@@ -44,4 +44,9 @@ public class AttackAnimation : Task
 
         if (timeElapsed >= attackDuration + recoveryDuration) SetStatus(TaskStatus.Success);
     }
+
+    protected override void OnSuccess()
+    {
+        Services.SoundManager.CreateAndPlayAudio(Services.AudioConfig.MonsterHitAudio, 0.1f);
+    }
 }

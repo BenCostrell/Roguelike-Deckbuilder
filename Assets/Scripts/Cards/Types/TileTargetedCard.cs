@@ -2,14 +2,14 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public abstract class TargetedCard : Card
+public abstract class TileTargetedCard : Card
 {
     protected int range;
 
     public override void OnPlay()
     {
         base.OnPlay();
-        Services.Main.taskManager.AddTask(new TargetSelection(this));
+        Services.Main.taskManager.AddTask(new TileTargetSelection(this));
     }
 
     public abstract bool IsTargetValid(Tile tile);

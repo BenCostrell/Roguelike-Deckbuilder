@@ -12,5 +12,15 @@ public class SoundManager {
         audioSource.Play();
         GameObject.Destroy(audioObj, clip.length);
     }
+
+    public void CreateAndPlayAudio(AudioClip clip, float volume)
+    {
+        GameObject audioObj = new GameObject();
+        AudioSource audioSource = audioObj.AddComponent<AudioSource>();
+        audioSource.clip = clip;
+        audioSource.volume = volume;
+        audioSource.Play();
+        GameObject.Destroy(audioObj, clip.length);
+    }
 }
 

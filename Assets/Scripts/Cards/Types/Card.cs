@@ -90,14 +90,14 @@ public abstract class Card {
         playable = false;
         if (!deckViewMode && controller.transform.parent != Services.UIManager.inPlayZone)
         {
-            controller.sr.color = Color.gray;
+            controller.color = Color.gray;
         }
     }
 
     public void Enable()
     {
         playable = true;
-        controller.sr.color = Color.white;
+        controller.color = Color.white;
     }
 
     protected virtual void InitValues()

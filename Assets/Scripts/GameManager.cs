@@ -11,8 +11,6 @@ public class GameManager : MonoBehaviour
 
     public Player player { get; private set; }
 
-    public bool mouseDown;
-
     public Camera currentCamera;
 
     void Awake()

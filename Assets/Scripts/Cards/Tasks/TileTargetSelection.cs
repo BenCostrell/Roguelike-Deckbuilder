@@ -1,13 +1,13 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class TargetSelection : Task
+public class TileTargetSelection : Task
 {
-    private TargetedCard card;
+    private TileTargetedCard card;
     private GameObject targetReticle;
     private int lockID;
 
-    public TargetSelection(TargetedCard card_)
+    public TileTargetSelection(TileTargetedCard card_)
     {
         card = card_;
     }
@@ -21,16 +21,13 @@ public class TargetSelection : Task
         targetReticle = 
             GameObject.Instantiate(Services.Prefabs.TargetReticle, Services.Main.transform);
         card.OnSelect();
-
     }
 
     internal override void Update()
     {
-        Vector3 mousePos = Services.GameManager.currentCamera.ScreenToWorldPoint(Input.mousePosition);
-        targetReticle.transform.position = new Vector3(
-            mousePos.x,
-            mousePos.y,
-            0);
+        Vector3 mousePos = 
+            Services.GameManager.currentCamera.ScreenToWorldPoint(Input.mousePosition);
+        targetReticle.transform.position = new Vector3(mousePos.x, mousePos.y, 0);
     }
 
     void OnSelection(TileSelected e)

@@ -7,7 +7,9 @@ public class MonsterController : MonoBehaviour
     [SerializeField]
     private GameObject healthUIobj;
     private TextMesh healthUI;
-    private SpriteRenderer sr;
+    public SpriteRenderer sr { get; private set; }
+    private SpriteMask mask;
+    public SpriteRenderer maskSprite { get; private set; }
 
     public void Init(Monster monster_)
     {
@@ -17,6 +19,9 @@ public class MonsterController : MonoBehaviour
         MeshRenderer mr = healthUIobj.GetComponent<MeshRenderer>();
         mr.sortingLayerID = sr.sortingLayerID;
         mr.sortingOrder = sr.sortingOrder;
+        mask = GetComponentInChildren<SpriteMask>();
+        maskSprite = mask.gameObject.GetComponent<SpriteRenderer>();
+        mask.sprite = monster.info.Sprite;
     }
 
     public void PlaceOnTile(Tile tile)
@@ -28,5 +33,7 @@ public class MonsterController : MonoBehaviour
     {
         healthUI.text = monster.currentHealth + "/" + monster.maxHealth;
     }
+
+
 
 }

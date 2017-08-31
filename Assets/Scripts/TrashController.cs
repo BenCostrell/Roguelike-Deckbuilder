@@ -21,7 +21,7 @@ public class TrashController : MonoBehaviour {
             if (!card.info.IsMonster)
             {
                 card.controller.overTrash = this;
-                card.controller.sr.color = Color.red;
+                card.controller.color = Color.red;
             }
         }
     }
@@ -32,7 +32,7 @@ public class TrashController : MonoBehaviour {
         {
             Card card = other.gameObject.GetComponent<CardController>().card;
             card.controller.overTrash = null;
-            card.controller.sr.color = Color.white;
+            card.controller.color = Color.white;
         }
     }
 

@@ -18,5 +18,7 @@ MonoBehaviour:
   tier: 1
   isMonster: 0
   playOnPlayAll: 0
+  onPlayAudio: {fileID: 0}
   range: 1
   damage: 1
+  onHitAudio: {fileID: 8300000, guid: 28b5f3e73e7724543b2c58a54afda415, type: 3}

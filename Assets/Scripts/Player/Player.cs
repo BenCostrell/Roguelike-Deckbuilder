@@ -36,6 +36,7 @@ public class Player {
     public List<Card> cardsInPlay;
     public List<Card> cardsInFlux;
     public bool targeting;
+    public bool selectingCards;
     public bool moving;
     private int maxHealth_;
     public int maxHealth
@@ -124,7 +125,7 @@ public class Player {
         return card.OnDraw();
     }
 
-    void DiscardCardFromHand(Card card)
+    public void DiscardCardFromHand(Card card)
     {
         hand.Remove(card);
         DiscardCard(card);

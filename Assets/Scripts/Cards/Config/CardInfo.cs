@@ -32,4 +32,8 @@ public class CardInfo : ScriptableObject
     [SerializeField]
     private bool playOnPlayAll;
     public bool PlayOnPlayAll { get { return playOnPlayAll; } }
+
+    [SerializeField]
+    private AudioClip onPlayAudio;
+    public AudioClip OnPlayAudio { get { return onPlayAudio; } }
 }

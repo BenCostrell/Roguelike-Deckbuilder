@@ -26,3 +26,4 @@ MonoBehaviour:
   attackAnimTime: 0.3
   recoveryAnimTime: 0.1
   attackAnimDist: 0.3
+  deathAnimTime: 0.25

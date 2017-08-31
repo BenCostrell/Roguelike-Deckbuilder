@@ -12,7 +12,7 @@ public abstract class Monster {
         Flamekin
     }
     protected MonsterType monsterType;
-    protected MonsterController controller;
+    public MonsterController controller { get; protected set; }
     public MonsterInfo info { get; protected set; }
     public Tile currentTile { get; protected set; }
     public int currentHealth { get; protected set; }
@@ -33,8 +33,6 @@ public abstract class Monster {
 
     void DestroyPhysicalMonster()
     {
-        currentTile.containedMonster = null;
-        currentTile = null;
         GameObject.Destroy(controller.gameObject);
     }
 
@@ -67,8 +65,12 @@ public abstract class Monster {
     void Die()
     {
         Services.MonsterManager.KillMonster(this);
-        DestroyPhysicalMonster();
+        currentTile.containedMonster = null;
+        currentTile = null;
         Services.GameManager.player.ShowAvailableMoves();
+        DeathAnimation deathAnim = new DeathAnimation(this);
+        deathAnim.Then(new ActionTask(DestroyPhysicalMonster));
+        Services.Main.taskManager.AddTask(deathAnim);
     }
 
     public bool IsPlayerInRange()

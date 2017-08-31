@@ -10,6 +10,19 @@ public class CardController : MonoBehaviour
     public Vector3 baseScale;
     private int baseSortingOrder;
     public SpriteRenderer sr { get; private set; }
+    public Color color
+    {
+        get
+        {
+            return sr.color;
+        }
+        set
+        {
+            prevColor = sr.color;
+            sr.color = value;
+        }
+    }
+    public Color prevColor { get; private set; }
     private SpriteRenderer imageSr;
     private TextMesh[] textMeshes;
     private Vector3 mouseRelativePos;
@@ -57,7 +70,7 @@ public class CardController : MonoBehaviour
     {
         if (card.playable)
         {
-            if (!Services.GameManager.mouseDown)
+            if (!Input.GetMouseButton(0))
             {
                 transform.localScale = Services.CardConfig.OnHoverScaleUp * baseScale;
                 Reposition(basePos + Services.CardConfig.OnHoverOffset, false);
@@ -65,7 +78,7 @@ public class CardController : MonoBehaviour
         }
         if (card.deckViewMode && overTrash == null)
         { 
-            if (!Services.GameManager.mouseDown)
+            if (!Input.GetMouseButton(0))
             {
                 transform.localScale = Services.CardConfig.OnHoverScaleUp * baseScale;
                 Reposition(basePos + Services.CardConfig.OnHoverOffsetDeckViewMode, false);
@@ -73,33 +86,37 @@ public class CardController : MonoBehaviour
         }
         if (card.chest != null)
         {
-            if (!Services.GameManager.mouseDown)
+            if (!Input.GetMouseButton(0))
             {
                 transform.localScale = Services.CardConfig.OnHoverScaleUp * baseScale;
                 Reposition(basePos + Services.CardConfig.OnHoverOffsetChestMode, false);
             }
         }
+
+        if (Services.GameManager.player.selectingCards)
+        {
+            OnHoverEnterForCardSelection();
+        }
     }
 
     private void OnMouseExit()
     {
-        if (card.playable && !Services.GameManager.mouseDown || card.chest != null)
+        if (card.playable && !Input.GetMouseButton(0) || card.chest != null)
         {
             DisplayAtBasePos();
-        }
-        if (card.currentTile != null)
-        {
-            DisplayCardOnBoard();
         }
         if (card.deckViewMode && overTrash == null)
         {
             DisplayInDeckViewMode();
         }
+        if (Services.GameManager.player.selectingCards)
+        {
+            OnHoverExitForCardSelection();
+        }
     }
 
     private void OnMouseDown()
     {
-        Services.GameManager.mouseDown = true;
         Vector3 mousePos = Services.GameManager.currentCamera.ScreenToWorldPoint(Input.mousePosition);
         mouseRelativePos = new Vector3(
             mousePos.x - transform.localPosition.x,
@@ -116,6 +133,10 @@ public class CardController : MonoBehaviour
         if (card.chest != null)
         {
             card.chest.OnCardPicked(card);
+        }
+        if (Services.GameManager.player.selectingCards)
+        {
+            Services.EventManager.Fire(new CardSelected(card));
         }
     }
 
@@ -147,11 +168,11 @@ public class CardController : MonoBehaviour
                 if (transform.position.y >= Services.CardConfig.CardPlayThresholdYPos
                     && card.CanPlay())
                 {
-                    sr.color = Services.CardConfig.PlayableColor;
+                    color = Services.CardConfig.PlayableColor;
                 }
                 else
                 {
-                    sr.color = Color.white;
+                    color = Color.white;
                 }
             }
         }
@@ -159,7 +180,6 @@ public class CardController : MonoBehaviour
 
     private void OnMouseUp()
     {
-        Services.GameManager.mouseDown = false;
         if (card.deckViewMode)
         {
             if (overTrash != null) overTrash.PlaceCardInTrash(card);
@@ -173,21 +193,20 @@ public class CardController : MonoBehaviour
             {
                 Services.Main.taskManager.AddTask(Services.GameManager.player.PlayCard(card));
             }
-            else if (card.currentTile == null) DisplayAtBasePos();
         }
         
     }
 
     public void DisplayInPlay()
     {
-        sr.color = Color.white;
+        color = Color.white;
         transform.parent = Services.UIManager.inPlayZone.transform;
         transform.localScale = baseScale;
     }
 
     public void DisplayAtBasePos()
     {
-        sr.color = Color.white;
+        color = Color.white;
         transform.localScale = baseScale;
         Reposition(basePos, false);
     }
@@ -228,5 +247,25 @@ public class CardController : MonoBehaviour
         }
         Reposition(basePos + offset, false);
         colliders[0].enabled = false;
+    }
+
+    public void UnselectedForCard()
+    {
+        color = prevColor;
+    }
+
+    public void SelectedForCard()
+    {
+        color = Color.blue;
+    }
+
+    void OnHoverEnterForCardSelection()
+    {
+        color = (Color.blue + Color.white) / 2;
+    }
+
+    void OnHoverExitForCardSelection()
+    {
+        color = prevColor;
     }
 }
