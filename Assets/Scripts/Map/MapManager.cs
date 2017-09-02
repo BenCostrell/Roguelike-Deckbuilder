@@ -4,6 +4,9 @@ using UnityEngine;
 
 public class MapManager : MonoBehaviour {
 
+    [SerializeField]
+    private int baseLevelLength;
+    [HideInInspector]
     public int levelLength;
     [SerializeField]
     private int levelHeight;
@@ -45,8 +48,8 @@ public class MapManager : MonoBehaviour {
 
     public void GenerateLevel(int levelNum)
     {
-        int extraLevelLength = Mathf.RoundToInt(levelNum * extraLevelLengthPerLevel);
-        levelLength += extraLevelLength;
+        int extraLevelLength = Mathf.RoundToInt((levelNum - 1) * extraLevelLengthPerLevel);
+        levelLength = baseLevelLength + extraLevelLength;
         map = new Tile[levelLength, levelHeight];
         for (int x = 0; x < levelLength; x++)
         {

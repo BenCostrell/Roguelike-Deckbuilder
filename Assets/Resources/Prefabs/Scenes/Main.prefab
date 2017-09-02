@@ -1952,9 +1952,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ca0d85cdf5204904cb7404a378c70c85, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  baseLevelLength: 12
   levelLength: 15
   levelHeight: 7
-  rowsPerCard: 8
+  rowsPerCard: 6
   maxTriesProcGen: 200
   chestsOnBoard: []
   botLeftCornerSprite: {fileID: 21300248, guid: 3defd70a9f557674ab6dd3a4e7f36461,
@@ -1967,7 +1968,7 @@ MonoBehaviour:
   centerSprites:
   - {fileID: 21300134, guid: 3defd70a9f557674ab6dd3a4e7f36461, type: 3}
   exitDoorSprite: {fileID: 21300000, guid: e4f05403d0980d74f9d9c4596a0c9b27, type: 3}
-  extraLevelLengthPerLevel: 5
+  extraLevelLengthPerLevel: 3
   levelsPerCardTierIncrease: 3
 --- !u!114 &114734425235778944
 MonoBehaviour:

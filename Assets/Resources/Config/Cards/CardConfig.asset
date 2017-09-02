@@ -53,7 +53,7 @@ MonoBehaviour:
   playAnimDur: 0.3
   acquireAnimDur: 0.5
   minSpawnDistFromMonsters: 1
-  minSpawnDistFromItems: 10
+  minSpawnDistFromItems: 8
   minSpawnCol: 5
   cardOnBoardOffset: {x: -0, y: -0.3, z: 0}
   cardOnBoardHoverOffset: {x: 1, y: -1.5, z: -2}
