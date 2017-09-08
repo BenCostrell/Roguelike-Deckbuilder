@@ -28,6 +28,9 @@ public class CardController : MonoBehaviour
     private Vector3 mouseRelativePos;
     private BoxCollider2D[] colliders;
     public TrashController overTrash;
+    private bool selected;
+    public static bool anyCardSelected;
+
     // Use this for initialization
     public void Init(Card card_)
     {
@@ -51,7 +54,7 @@ public class CardController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-
+        if (selected) Drag();
     }
 
     public void Reposition(Vector3 pos, bool changeBasePos)
@@ -117,30 +120,39 @@ public class CardController : MonoBehaviour
 
     private void OnMouseDown()
     {
-        Vector3 mousePos = Services.GameManager.currentCamera.ScreenToWorldPoint(Input.mousePosition);
-        mouseRelativePos = new Vector3(
-            mousePos.x - transform.localPosition.x,
-            mousePos.y - transform.localPosition.y,
-            0);
-        if (card.playable)
+        if (!selected)
         {
-            card.OnSelect();
+            selected = true;
+            Vector3 mousePos = Services.GameManager.currentCamera.ScreenToWorldPoint(Input.mousePosition);
+            mouseRelativePos = new Vector3(
+                mousePos.x - transform.localPosition.x,
+                mousePos.y - transform.localPosition.y,
+                0);
+            if (card.playable)
+            {
+                card.OnSelect();
+            }
+            //if (card.currentTile != null)
+            //{
+            //    ShowBoardCardOnHover();
+            //}
+            if (card.chest != null)
+            {
+                card.chest.OnCardPicked(card);
+            }
+            if (Services.GameManager.player.selectingCards)
+            {
+                Services.EventManager.Fire(new CardSelected(card));
+            }
         }
-        //if (card.currentTile != null)
-        //{
-        //    ShowBoardCardOnHover();
-        //}
-        if (card.chest != null)
+        else
         {
-            card.chest.OnCardPicked(card);
-        }
-        if (Services.GameManager.player.selectingCards)
-        {
-            Services.EventManager.Fire(new CardSelected(card));
+            selected = false;
+            PlaceCard();
         }
     }
 
-    private void OnMouseDrag()
+    void Drag()
     {
         transform.localScale = Services.CardConfig.OnHoverScaleUp * baseScale;
         if (card.playable || card.deckViewMode)
@@ -178,7 +190,7 @@ public class CardController : MonoBehaviour
         }
     }
 
-    private void OnMouseUp()
+    void PlaceCard()
     {
         if (card.deckViewMode)
         {
