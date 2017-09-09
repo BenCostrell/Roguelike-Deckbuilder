@@ -73,54 +73,60 @@ public class CardController : MonoBehaviour
 
     private void OnMouseEnter()
     {
-        if (card.playable)
+        if (currentlySelectedCard == null)
         {
-            if (!Input.GetMouseButton(0))
+            if (card.playable)
             {
-                transform.localScale = Services.CardConfig.OnHoverScaleUp * baseScale;
-                Reposition(basePos + Services.CardConfig.OnHoverOffset, false);
-                card.OnSelect();
+                if (!Input.GetMouseButton(0))
+                {
+                    transform.localScale = Services.CardConfig.OnHoverScaleUp * baseScale;
+                    Reposition(basePos + Services.CardConfig.OnHoverOffset, false);
+                    card.OnSelect();
+                }
             }
-        }
-        if (card.deckViewMode && overTrash == null)
-        { 
-            if (!Input.GetMouseButton(0))
+            if (card.deckViewMode && overTrash == null)
             {
-                transform.localScale = Services.CardConfig.OnHoverScaleUp * baseScale;
-                Reposition(basePos + Services.CardConfig.OnHoverOffsetDeckViewMode, false);
+                if (!Input.GetMouseButton(0))
+                {
+                    transform.localScale = Services.CardConfig.OnHoverScaleUp * baseScale;
+                    Reposition(basePos + Services.CardConfig.OnHoverOffsetDeckViewMode, false);
+                }
             }
-        }
-        if (card.chest != null)
-        {
-            if (!Input.GetMouseButton(0))
+            if (card.chest != null)
             {
-                transform.localScale = Services.CardConfig.OnHoverScaleUp * baseScale;
-                Reposition(basePos + Services.CardConfig.OnHoverOffsetChestMode, false);
+                if (!Input.GetMouseButton(0))
+                {
+                    transform.localScale = Services.CardConfig.OnHoverScaleUp * baseScale;
+                    Reposition(basePos + Services.CardConfig.OnHoverOffsetChestMode, false);
+                }
             }
-        }
 
-        if (Services.GameManager.player.selectingCards)
-        {
-            OnHoverEnterForCardSelection();
+            if (Services.GameManager.player.selectingCards)
+            {
+                OnHoverEnterForCardSelection();
+            }
         }
     }
 
     private void OnMouseExit()
     {
-        if (!selected)
+        if (currentlySelectedCard == null)
         {
-            if (card.playable && !Input.GetMouseButton(0) || card.chest != null)
+            if (!selected)
             {
-                DisplayAtBasePos();
-                card.OnUnselect();
-            }
-            if (card.deckViewMode && overTrash == null)
-            {
-                DisplayInDeckViewMode();
-            }
-            if (Services.GameManager.player.selectingCards)
-            {
-                OnHoverExitForCardSelection();
+                if (card.playable && !Input.GetMouseButton(0) || card.chest != null)
+                {
+                    DisplayAtBasePos();
+                    card.OnUnselect();
+                }
+                if (card.deckViewMode && overTrash == null)
+                {
+                    DisplayInDeckViewMode();
+                }
+                if (Services.GameManager.player.selectingCards)
+                {
+                    OnHoverExitForCardSelection();
+                }
             }
         }
     }
@@ -340,13 +346,22 @@ public class CardController : MonoBehaviour
     {
         Tile tileSelected = e.tile;
         TileTargetedCard targetedCard = card as TileTargetedCard;
-        bool successfullyPlayedCard = TryToPlayCard();
+        if (targetedCard.IsTargetValid(tileSelected))
+        {
+            bool successfullyPlayedCard = TryToPlayCard();
+            if (successfullyPlayedCard)
+            {
+                targetedCard.OnTargetSelected(tileSelected);
+            }
+        }
+        else
+        {
+            card.OnUnselect();
+            SetCardFrameStatus(true);
+            DisplayAtBasePos();
+        }
         selected = false;
         currentlySelectedCard = null;
-        if (targetedCard.IsTargetValid(tileSelected) && successfullyPlayedCard)
-        {
-            targetedCard.OnTargetSelected(tileSelected);
-        }
         Services.EventManager.Unregister<TileSelected>(OnTileSelected);
     }
 }

@@ -34,14 +34,6 @@ public class Main : Scene<MainTransitionData> {
     private void Update()
     {
         taskManager.Update();
-        if (CardController.currentlySelectedCard != null)
-        {
-            Debug.Log(CardController.currentlySelectedCard.info.Name);
-        }
-        else
-        {
-            Debug.Log("nothing selected");
-        }
     }
 
     void InitializeMainServices()
