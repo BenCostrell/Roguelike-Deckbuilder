@@ -9,7 +9,7 @@ public abstract class TileTargetedCard : Card
     public override void OnPlay()
     {
         base.OnPlay();
-        Services.Main.taskManager.AddTask(new TileTargetSelection(this));
+        //Services.Main.taskManager.AddTask(new TileTargetSelection(this));
     }
 
     public abstract bool IsTargetValid(Tile tile);

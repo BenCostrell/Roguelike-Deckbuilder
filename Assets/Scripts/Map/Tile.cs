@@ -47,12 +47,10 @@ public class Tile
 
     public void OnSelect()
     {
-        if (Services.GameManager.player.targeting)
-        {
-            Services.EventManager.Fire(new TileSelected(this));
-        }
-        else if (this != Services.GameManager.player.currentTile)
+        if (this != Services.GameManager.player.currentTile && 
+            CardController.currentlySelectedCard == null)
             Services.GameManager.player.MoveToTile(this);
+        Services.EventManager.Fire(new TileSelected(this));
     }
 
     public bool IsImpassable()
