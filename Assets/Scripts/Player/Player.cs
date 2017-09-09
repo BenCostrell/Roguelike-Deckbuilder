@@ -235,7 +235,7 @@ public class Player {
 
     public void HideArrow()
     {
-        controller.HideArrow();
+        if (controller != null) controller.HideArrow();
     }
 
     public Task PlayCard(Card card)

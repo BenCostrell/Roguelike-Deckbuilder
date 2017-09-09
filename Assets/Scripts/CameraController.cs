@@ -15,7 +15,8 @@ public class CameraController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        MoveTowardsPlayer();
+        if(Services.GameManager.player.controller != null)
+            MoveTowardsPlayer();
     }
 
     void MoveTowardsPlayer()

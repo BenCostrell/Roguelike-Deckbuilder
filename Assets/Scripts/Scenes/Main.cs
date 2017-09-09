@@ -26,9 +26,10 @@ public class Main : Scene<MainTransitionData> {
     internal override void OnEnter(MainTransitionData data)
     {
         levelNum = data.levelNum;
-        Services.MapManager.GenerateLevel(levelNum);
-        Services.GameManager.player.Initialize(
-            Services.MapManager.map[spawnPointX, spawnPointY], data);
+        //Services.MapManager.GenerateLevel(levelNum);
+        //Services.GameManager.player.Initialize(
+        //    Services.MapManager.map[spawnPointX, spawnPointY], data);
+        Services.MapManager.MakeTestTiles();
     }
 
     private void Update()

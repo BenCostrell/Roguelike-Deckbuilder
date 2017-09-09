@@ -1955,6 +1955,14 @@ MonoBehaviour:
   baseLevelLength: 12
   levelLength: 15
   levelHeight: 7
+  minRoomDimension: 6
+  maxRoomDimension: 10
+  roomGenRectDimension: 5
+  startingRoomWidth: 0
+  startingRoomHeight: 0
+  minRoomDist: 5
+  maxRoomDist: 20
+  numRoomsToGen: 10
   rowsPerCard: 6
   maxTriesProcGen: 200
   chestsOnBoard: []
