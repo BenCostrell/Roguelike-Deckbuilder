@@ -1957,12 +1957,14 @@ MonoBehaviour:
   levelHeight: 7
   minRoomDimension: 6
   maxRoomDimension: 10
+  hallwayWidth: 3
   roomGenRectDimension: 5
   startingRoomWidth: 0
   startingRoomHeight: 0
   minRoomDist: 5
   maxRoomDist: 20
-  numRoomsToGen: 10
+  numRoomsToGen: 3
+  proportionOfEdgesToReAdd: 0.3
   rowsPerCard: 6
   maxTriesProcGen: 200
   chestsOnBoard: []

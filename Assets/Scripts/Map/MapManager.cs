@@ -1,6 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using DelaunayTriangulator;
+using System.Linq;
 
 public class MapManager : MonoBehaviour {
 
@@ -11,6 +13,8 @@ public class MapManager : MonoBehaviour {
     [SerializeField]
     private int minRoomDimension, maxRoomDimension;
     [SerializeField]
+    private int hallwayWidth;
+    [SerializeField]
     private int roomGenRectDimension;
     [SerializeField]
     private int startingRoomWidth, startingRoomHeight;
@@ -18,6 +22,8 @@ public class MapManager : MonoBehaviour {
     private int minRoomDist, maxRoomDist;
     [SerializeField]
     private int numRoomsToGen;
+    [SerializeField]
+    private float proportionOfEdgesToReAdd;
     [SerializeField]
     private int rowsPerCard;
     public Tile[,] map { get; private set; }
@@ -73,34 +79,167 @@ public class MapManager : MonoBehaviour {
 
     public void MakeTestTiles()
     {
-        List<Tuple<Coord, IntVector2>> testRooms = GenerateInitialRooms(numRoomsToGen);
+        List<Room> testRooms = GenerateInitialRooms(numRoomsToGen);
         for (int i = 0; i < testRooms.Count; i++)
         {
             GenerateRoomTiles(testRooms[i]);
         }
-
+        List<Edge> edges = GenerateEdges(testRooms);
+        for (int i = 0; i < edges.Count; i++)
+        {
+            List<Coord> hallwayCoords = GenerateHallway(edges[i]);
+            GenerateHallwayTiles(hallwayCoords);
+        }
     }
 
-    void GenerateRoomTiles(Tuple<Coord, IntVector2> room)
+    List<Edge> GenerateEdges(List<Room> rooms)
     {
-        for (int i = 0; i < room.second.x - 1; i++)
+        List<Edge> delaunayTriangulation = DelaunayTriangulationOfRooms(rooms);
+        List<Edge> minSpanningTreePlus = 
+            GetMinimumSpanningTreePlusSomeEdges(delaunayTriangulation);
+        return minSpanningTreePlus;
+    }
+
+    List<Edge> DelaunayTriangulationOfRooms(List<Room> rooms)
+    {
+        List<Vertex> vertices = new List<Vertex>();
+        foreach (Room room in rooms)
         {
-            for (int j = 0; j < room.second.y -1; j++)
+            vertices.Add(new Vertex(room.Center.x, room.Center.y));
+        }
+        Triangulator triangulator = new Triangulator();
+        List<Triad> triangles = triangulator.Triangulation(vertices);
+        List<Edge> edges = new List<Edge>();
+        foreach (Triad triangle in triangles)
+        {
+            edges.Add(new Edge(rooms[triangle.a], rooms[triangle.b]));
+            edges.Add(new Edge(rooms[triangle.b], rooms[triangle.c]));
+            edges.Add(new Edge(rooms[triangle.a], rooms[triangle.c]));
+        }
+        //foreach (Edge edge in edges)
+        //{
+        //    Debug.DrawLine(edge.pointA + (Vector2.one * 0.2f),
+        //        edge.pointB + (Vector2.one * 0.2f), Color.blue, 60f);
+        //}
+        return edges;
+    }
+
+    List<Edge> GetMinimumSpanningTreePlusSomeEdges(List<Edge> edges)
+    {
+        List<Edge> orderedEdges = new List<Edge>(edges.OrderBy(edge => edge.Length));
+        List<Edge> spanningTree = new List<Edge>();
+        int edgeIndex = 0;
+        while (spanningTree.Count != numRoomsToGen - 1)
+        {
+            List<Edge> potentialTree = new List<Edge>(spanningTree);
+            Edge edge = orderedEdges[edgeIndex];
+            edgeIndex += 1;
+            potentialTree.Add(edge);
+            if (!CheckForCycles(potentialTree))
             {
-                new Tile(new Coord(room.first.x + i, room.first.y + j), false);
+                spanningTree.Add(edge);
+            }
+        }
+        int edgesToReAdd = Mathf.RoundToInt(
+            (orderedEdges.Count - spanningTree.Count) * proportionOfEdgesToReAdd);
+        int edgesReAddedSoFar = 0;
+        for (int i = 0; i < orderedEdges.Count; i++)
+        {
+            if (!spanningTree.Contains(orderedEdges[i]))
+            {
+                spanningTree.Add(orderedEdges[i]);
+                edgesReAddedSoFar += 1;
+                if (edgesReAddedSoFar == edgesToReAdd) break;
+            }
+        }
+        foreach (Edge edge in spanningTree)
+        {
+            Debug.DrawLine(edge.pointA, edge.pointB, Color.red, 60f);
+        }
+        return spanningTree;
+    }
+
+    bool CheckForCycles(List<Edge> graph)
+    {
+        List<Edge> exploredEdges = new List<Edge>();
+        for (int i = 0; i < graph.Count; i++)
+        {
+            if (!exploredEdges.Contains(graph[i]))
+            {
+                List<Room> visitedRooms = new List<Room>();
+                Stack<Room> roomsToExplore = new Stack<Room>();
+                roomsToExplore.Push(graph[i].a);
+                while (roomsToExplore.Count > 0)
+                {
+                    Room currentRoom = roomsToExplore.Pop();
+                    if (visitedRooms.Contains(currentRoom)) return true;
+                    else
+                    {
+                        visitedRooms.Add(currentRoom);
+                        List<Edge> adjEdges = AdjacentEdgesToVertex(currentRoom, graph);
+                        for (int j = 0; j < adjEdges.Count; j++)
+                        {
+                            if (!exploredEdges.Contains(adjEdges[j]))
+                            {
+                                Room adjRoom;
+                                if (adjEdges[j].a != currentRoom) adjRoom = adjEdges[j].a;
+                                else adjRoom = adjEdges[j].b;
+                                roomsToExplore.Push(adjRoom);
+                                exploredEdges.Add(adjEdges[j]);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    List<Edge> AdjacentEdgesToVertex(Room room, List<Edge> graph)
+    {
+        List<Edge> adjEdges = new List<Edge>();
+        foreach(Edge edge in graph)
+        {
+            if (edge.a == room || edge.b == room) adjEdges.Add(edge);
+        }
+        return adjEdges;
+    }
+
+    void GenerateRoomTiles(Room room)
+    {
+        for (int i = 0; i < room.dimensions.x - 1; i++)
+        {
+            for (int j = 0; j < room.dimensions.y -1; j++)
+            {
+                new Tile(new Coord(room.origin.x + i, room.origin.y + j), false);
             }
         }
     }
 
-    List<Tuple<Coord, IntVector2>> GenerateInitialRooms(int numRooms)
+    void GenerateHallwayTiles(List<Coord> hallwayCoords)
     {
-        List<Tuple<Coord, IntVector2>> rooms = new List<Tuple<Coord, IntVector2>>();
+        for (int i = 0; i < hallwayCoords.Count; i++)
+        {
+            new Tile(hallwayCoords[i], false);
+        }
+    }
+
+    List<Coord> GenerateHallway(Edge edge)
+    {
+        List<Coord> hallwayCoords = new List<Coord>();
+        //if()
+        return hallwayCoords;
+    }
+
+    List<Room> GenerateInitialRooms(int numRooms)
+    {
+        List<Room> rooms = new List<Room>();
         for (int i = 0; i < numRooms; i++)
         {
             Coord coord = 
                 GenerateRandomCoord(0, roomGenRectDimension, 0, roomGenRectDimension);
             IntVector2 dimensions = GenerateRoomDimensions();
-            Tuple<Coord, IntVector2> room = GenerateValidRoom(rooms);
+            Room room = GenerateValidRoom(rooms);
             if (room == null)
             {
                 Debug.Log("stopping early after " + i + " rooms");
@@ -111,29 +250,29 @@ public class MapManager : MonoBehaviour {
         return rooms;
     }
 
-    bool IsRoomValid(Tuple<Coord, IntVector2> room, List<Tuple<Coord, IntVector2>> otherRooms)
+    bool IsRoomValid(Room room, List<Room> otherRooms)
     {
         for (int i = 0; i < otherRooms.Count; i++)
         {
-            if (MinRoomDistance(room, otherRooms[i]) < minRoomDist)
+            if (room.Distance(otherRooms[i]) < minRoomDist)
             {
-                Debug.Log("too close, distance of " + MinRoomDistance(room, otherRooms[i]));
+                Debug.Log("too close, distance of " + room.Distance(otherRooms[i]));
                 return false;
             }
         }
         return true;
     }
 
-    Tuple<Coord, IntVector2> GenerateValidRoom(List<Tuple<Coord, IntVector2>> otherRooms)
+    Room GenerateValidRoom(List<Room> otherRooms)
     {
-        Tuple<Coord, IntVector2> room;
+        Room room;
         for (int i = 0; i < maxTriesProcGen; i++)
         {
             IntVector2 dimensions = GenerateRoomDimensions();
             Coord coord = new Coord(0, 0);
             if (otherRooms.Count > 0)
             {
-                Tuple<Coord, IntVector2> referenceRoom = 
+                Room referenceRoom = 
                     otherRooms[Random.Range(0, otherRooms.Count)];
                 int distanceX = Random.Range(
                     minRoomDist + minRoomDimension / 2,
@@ -144,31 +283,19 @@ public class MapManager : MonoBehaviour {
                 if (Random.Range(0, 2) == 0) distanceX *= -1;
                 if (Random.Range(0, 2) == 0) distanceY *= -1;
                 coord = new Coord(
-                    referenceRoom.first.x + (referenceRoom.second.x / 2) + distanceX,
-                    referenceRoom.first.y + (referenceRoom.second.y / 2) + distanceY);
+                    referenceRoom.origin.x + (referenceRoom.dimensions.x / 2) + distanceX,
+                    referenceRoom.origin.y + (referenceRoom.dimensions.y / 2) + distanceY);
             }
             
-            room = new Tuple<Coord, IntVector2>(coord, dimensions);
-            Debug.Log("trying room of size " + room.second.x + "," + room.second.y +
-                " at " + room.first.x + "," + room.first.y);
+            room = new Room(coord, dimensions);
+            Debug.Log("trying room of size " + room.dimensions.x + "," + room.dimensions.y +
+                " at " + room.origin.x + "," + room.origin.y);
             if (IsRoomValid(room, otherRooms)) return room;
         }
         return null;
     }
 
-    int MinRoomDistance(Tuple<Coord, IntVector2> roomA, Tuple<Coord, IntVector2> roomB)
-    {
-        if (RoomsTouching(roomA, roomB)) return 0;
-        int xDistance = Mathf.Min(
-            Mathf.Abs(RoomLeft(roomA) - RoomRight(roomB)),
-            Mathf.Abs(RoomLeft(roomB) - RoomRight(roomA)));
-        int yDistance = Mathf.Min(
-            Mathf.Abs(RoomBottom(roomA) - RoomTop(roomB)),
-            Mathf.Abs(RoomBottom(roomB) - RoomTop(roomA)));
-        return Mathf.Max(xDistance, yDistance);
-    }
-
-    void SpaceOutRooms(List<Tuple<Coord,IntVector2>> rooms)
+    void SpaceOutRooms(List<Room> rooms)
     {
         bool anyRoomsTouching = true;
         int shiftX, shiftY, shiftXA, shiftYA, shiftXB, shiftYB;
@@ -177,33 +304,33 @@ public class MapManager : MonoBehaviour {
             anyRoomsTouching = false;
             for (int i = 0; i < rooms.Count; i++)
             {
-                Tuple<Coord, IntVector2> roomA = rooms[i];
+                Room roomA = rooms[i];
                 for (int j = i+1; j < rooms.Count; j++)
                 {
-                    Tuple<Coord, IntVector2> roomB = rooms[j];
-                    if(RoomsTouching(roomA, roomB))
+                    Room roomB = rooms[j];
+                    if(roomA.RoomsTouching(roomB))
                     {
                         anyRoomsTouching = true;
                         int xOverlap = Mathf.Min(
-                            RoomRight(roomA) - RoomLeft(roomB) + 1,
-                            RoomRight(roomB) - RoomLeft(roomA) + 1);
+                            roomA.Right - roomB.Left + 1,
+                            roomB.Right - roomA.Left + 1);
                         int yOverlap = Mathf.Min(
-                            RoomTop(roomA) - RoomBottom(roomB) + 1,
-                            RoomTop(roomB) - RoomBottom(roomA) + 1);
+                            roomA.Top - roomB.Bottom + 1,
+                            roomB.Top - roomA.Bottom + 1);
                         bool shiftALeft = false;
                         bool shiftADown = false;
                         bool shiftHorizontal = false;
                         if(xOverlap < yOverlap)
                         {
                             shiftHorizontal = true;
-                            if (RoomRight(roomA) - RoomLeft(roomB) + 1 == xOverlap)
+                            if (roomA.Right - roomB.Left + 1 == xOverlap)
                             {
                                 shiftALeft = true;
                             }
                         }
                         else
                         {
-                            if(RoomTop(roomA) - RoomBottom(roomB) + 1 == yOverlap)
+                            if(roomA.Top - roomB.Bottom + 1 == yOverlap)
                             {
                                 shiftADown = true;
                             }
@@ -244,17 +371,17 @@ public class MapManager : MonoBehaviour {
                         }
                         Debug.Log("total x shift " + shiftX);
                         Debug.Log("total y shift " + shiftY);
-                        Debug.Log("shifting room A at " + roomA.first.x + ", " + roomA.first.y +
-                            " of size " + roomA.second.x + ", " + roomA.second.y +
+                        Debug.Log("shifting room A at " + roomA.origin.x + ", " + roomA.origin.y +
+                            " of size " + roomA.dimensions.x + ", " + roomA.dimensions.y +
                             " by " + shiftXA + ", " + shiftYA);
-                        Debug.Log("shifting room B at " + roomB.first.x + ", " + roomB.first.y +
-                            " of size " + roomB.second.x + ", " + roomB.second.y +
+                        Debug.Log("shifting room B at " + roomB.origin.x + ", " + roomB.origin.y +
+                            " of size " + roomB.dimensions.x + ", " + roomB.dimensions.y +
                             " by " + shiftXB + ", " + shiftYB);
 
-                        roomA = new Tuple<Coord, IntVector2>(new Coord(
-                            roomA.first.x + shiftXA, roomA.first.y + shiftYA), roomA.second);
-                        roomB = new Tuple<Coord, IntVector2>(new Coord(
-                            roomB.first.x + shiftXB, roomB.first.y + shiftYB), roomB.second);
+                        roomA = new Room(new Coord(
+                            roomA.origin.x + shiftXA, roomA.origin.y + shiftYA), roomA.dimensions);
+                        roomB = new Room(new Coord(
+                            roomB.origin.x + shiftXB, roomB.origin.y + shiftYB), roomB.dimensions);
                         rooms[i] = roomA;
                         rooms[j] = roomB;
                     }
@@ -263,49 +390,9 @@ public class MapManager : MonoBehaviour {
         }
     }
 
-    int RoomLeft(Tuple<Coord, IntVector2> room)
-    {
-        return room.first.x;
-    }
+    
 
-    int RoomRight(Tuple<Coord, IntVector2> room)
-    {
-        return room.first.x + room.second.x - 1;
-    }
-
-    int RoomBottom(Tuple<Coord, IntVector2> room)
-    {
-        return room.first.y;
-    }
-
-    int RoomTop(Tuple<Coord, IntVector2> room)
-    {
-        return room.first.y + room.second.y - 1;
-    }
-
-    bool RoomsTouching(Tuple<Coord, IntVector2> a, Tuple<Coord, IntVector2> b)
-    {
-        Coord[] corners = new Coord[4];
-        Coord bottomLeftCorner = a.first;
-        Coord bottomRightCorner = new Coord(a.first.x + a.second.x - 1, a.first.y);
-        Coord topLeftCorner = new Coord(a.first.x, a.first.y + a.second.y - 1);
-        Coord topRightCorner = new Coord(a.first.x + a.second.x - 1, a.first.y + a.second.y - 1);
-        corners[0] = bottomLeftCorner;
-        corners[1] = bottomRightCorner;
-        corners[2] = topLeftCorner;
-        corners[3] = topRightCorner;
-        foreach(Coord corner in corners)
-        {
-            if (CoordContainedWithinRoom(corner, b)) return true;
-        }
-        return false;
-    }
-
-    bool CoordContainedWithinRoom(Coord coord, Tuple<Coord, IntVector2> room)
-    {
-        return (coord.x >= room.first.x && coord.x <= room.first.x + room.second.x - 1) &&
-            (coord.y >= room.first.y && coord.y <= room.first.y + room.second.y - 1);
-    }
+    
 
     Coord GenerateRandomCoord(int xMin, int xMax, int yMin, int yMax)
     {
