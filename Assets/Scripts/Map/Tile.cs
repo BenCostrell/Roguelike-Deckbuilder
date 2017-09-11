@@ -15,8 +15,9 @@ public class Tile
     public DoorKey containedKey;
     public readonly bool isExit;
     public bool locked;
+    public readonly bool isRoom;
 
-    public Tile(Coord coord_, bool isExit_)
+    public Tile(Coord coord_, bool isExit_, bool isRoom_)
     {
         coord = coord_;
         GameObject obj = 
@@ -26,6 +27,7 @@ public class Tile
         movementCost = 1;
         isExit = isExit_;
         if (isExit) locked = true;
+        isRoom = isRoom_;
     }
 
     public void SetSprite(Sprite sprite, Quaternion rot)

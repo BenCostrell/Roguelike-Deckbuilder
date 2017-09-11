@@ -1955,9 +1955,9 @@ MonoBehaviour:
   baseLevelLength: 12
   levelLength: 15
   levelHeight: 7
-  minRoomDimension: 6
+  minRoomDimension: 5
   maxRoomDimension: 10
-  hallwayWidth: 3
+  hallwayWidth: 2
   roomGenRectDimension: 5
   startingRoomWidth: 0
   startingRoomHeight: 0
@@ -1968,6 +1968,7 @@ MonoBehaviour:
   rowsPerCard: 6
   maxTriesProcGen: 200
   chestsOnBoard: []
+  roomSprite: {fileID: 21300852, guid: 3defd70a9f557674ab6dd3a4e7f36461, type: 3}
   botLeftCornerSprite: {fileID: 21300248, guid: 3defd70a9f557674ab6dd3a4e7f36461,
     type: 3}
   botRightCornerSprite: {fileID: 21300252, guid: 3defd70a9f557674ab6dd3a4e7f36461,

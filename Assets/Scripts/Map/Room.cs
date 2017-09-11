@@ -1,15 +1,18 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class Room 
 {
     public Coord origin;
     public IntVector2 dimensions;
+    public List<Tile> tiles;
 
     public Room(Coord origin_, IntVector2 dimensions_)
     {
         origin = origin_;
         dimensions = dimensions_;
+        tiles = new List<Tile>();
     }
 
     public int Left

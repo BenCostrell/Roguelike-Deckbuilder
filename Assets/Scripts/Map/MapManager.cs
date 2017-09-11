@@ -32,6 +32,8 @@ public class MapManager : MonoBehaviour {
     //public List<Card> cardsOnBoard;
     public List<Chest> chestsOnBoard;
     [SerializeField]
+    private Sprite roomSprite;
+    [SerializeField]
     private Sprite botLeftCornerSprite, botRightCornerSprite;
     [SerializeField]
     private Sprite botSprite, leftSprite, rightSprite;
@@ -43,6 +45,7 @@ public class MapManager : MonoBehaviour {
     private float extraLevelLengthPerLevel;
     [SerializeField]
     private int levelsPerCardTierIncrease;
+    private List<Room> rooms;
 
 	// Use this for initialization
 	void Start () {
@@ -65,9 +68,9 @@ public class MapManager : MonoBehaviour {
             {
                 if(x == 0 && y == levelHeight - 1)
                 {
-                    map[x, y] = new Tile(new Coord(x, y), true);
+                    map[x, y] = new Tile(new Coord(x, y), true, true);
                 }
-                else map[x, y] = new Tile(new Coord(x, y), false);
+                else map[x, y] = new Tile(new Coord(x, y), false, true);
             }
         }
         PlaceKey(map[levelLength - 1, levelHeight - 1]);
@@ -79,17 +82,30 @@ public class MapManager : MonoBehaviour {
 
     public void MakeTestTiles()
     {
-        List<Room> testRooms = GenerateInitialRooms(numRoomsToGen);
-        for (int i = 0; i < testRooms.Count; i++)
+        rooms = GenerateInitialRooms(numRoomsToGen);
+        for (int i = 0; i < rooms.Count; i++)
         {
-            GenerateRoomTiles(testRooms[i]);
+            GenerateRoomTiles(rooms[i]);
         }
-        List<Edge> edges = GenerateEdges(testRooms);
+        List<Edge> edges = GenerateEdges(rooms);
+        List<Coord> hallwayCoords = new List<Coord>();
         for (int i = 0; i < edges.Count; i++)
         {
-            List<Coord> hallwayCoords = GenerateHallway(edges[i]);
-            GenerateHallwayTiles(hallwayCoords);
+            hallwayCoords.AddRange(GenerateHallway(edges[i]));
         }
+        hallwayCoords = RemoveDuplicates(hallwayCoords);
+        GenerateHallwayTiles(hallwayCoords);
+
+    }
+
+    List<Coord> RemoveDuplicates(List<Coord> listToFilter)
+    {
+        List<Coord> filteredList = new List<Coord>();
+        foreach(Coord coord in listToFilter)
+        {
+            if (!filteredList.Contains(coord)) filteredList.Add(coord);
+        }
+        return filteredList;
     }
 
     List<Edge> GenerateEdges(List<Room> rooms)
@@ -116,11 +132,11 @@ public class MapManager : MonoBehaviour {
             edges.Add(new Edge(rooms[triangle.b], rooms[triangle.c]));
             edges.Add(new Edge(rooms[triangle.a], rooms[triangle.c]));
         }
-        //foreach (Edge edge in edges)
-        //{
-        //    Debug.DrawLine(edge.pointA + (Vector2.one * 0.2f),
-        //        edge.pointB + (Vector2.one * 0.2f), Color.blue, 60f);
-        //}
+        foreach (Edge edge in edges)
+        {
+            Debug.DrawLine(edge.pointA + (Vector2.one * 0.2f),
+                edge.pointB + (Vector2.one * 0.2f), Color.blue, 60f);
+        }
         return edges;
     }
 
@@ -211,7 +227,10 @@ public class MapManager : MonoBehaviour {
         {
             for (int j = 0; j < room.dimensions.y -1; j++)
             {
-                new Tile(new Coord(room.origin.x + i, room.origin.y + j), false);
+                Tile tile =
+                    new Tile(new Coord(room.origin.x + i, room.origin.y + j), false, true);
+                tile.SetSprite(roomSprite, Quaternion.identity);
+                room.tiles.Add(tile);
             }
         }
     }
@@ -220,14 +239,64 @@ public class MapManager : MonoBehaviour {
     {
         for (int i = 0; i < hallwayCoords.Count; i++)
         {
-            new Tile(hallwayCoords[i], false);
+            new Tile(hallwayCoords[i], false, false);
         }
     }
 
     List<Coord> GenerateHallway(Edge edge)
     {
         List<Coord> hallwayCoords = new List<Coord>();
-        //if()
+        Vector2 midpointVector2 = (edge.a.Center + edge.b.Center) / 2;
+        Coord midpointCoord = new Coord(
+            Mathf.RoundToInt(midpointVector2.x), 
+            Mathf.RoundToInt(midpointVector2.y));
+        if ((midpointCoord.y >= edge.a.Bottom && midpointCoord.y <= edge.a.Top) &&
+            (midpointCoord.y >= edge.b.Bottom && midpointCoord.y <= edge.b.Top))
+        {
+            int startX = Mathf.Min(edge.a.Right, edge.b.Right);
+            int endX = Mathf.Max(edge.a.Left, edge.b.Left);
+            for (int i = startX; i < endX; i++)
+            {
+                for (int j = -hallwayWidth / 2; j < (hallwayWidth - hallwayWidth / 2); j++)
+                {
+                    hallwayCoords.Add(new Coord(i, midpointCoord.y + j));
+                }
+            }
+        }
+        else if ((midpointCoord.x >= edge.a.Left && midpointCoord.x <= edge.a.Right) &&
+            (midpointCoord.x >= edge.b.Left && midpointCoord.x <= edge.b.Right))
+        {
+            int startY = Mathf.Min(edge.a.Top, edge.b.Top);
+            int endY = Mathf.Max(edge.a.Bottom, edge.b.Bottom);
+            for (int i = startY; i < endY; i++)
+            {
+                for (int j = -hallwayWidth / 2; j < (hallwayWidth - hallwayWidth / 2); j++)
+                {
+                    hallwayCoords.Add(new Coord(midpointCoord.x + j, i));
+                }
+            }
+        }
+        else
+        {
+            int startX = Mathf.Min(edge.a.Right, edge.b.CenterCoord.x);
+            int endX = Mathf.Max(edge.a.Left, edge.b.CenterCoord.x);
+            for (int i = startX; i < endX; i++)
+            {
+                for (int j = -hallwayWidth / 2; j < (hallwayWidth - hallwayWidth / 2); j++)
+                {
+                    hallwayCoords.Add(new Coord(i, edge.a.CenterCoord.y + j));
+                }
+            }
+            int startY = Mathf.Min(edge.b.Top,edge.a.CenterCoord.y);
+            int endY = Mathf.Max(edge.b.Bottom, edge.a.CenterCoord.y);
+            for (int i = startY; i < endY; i++)
+            {
+                for (int j = -hallwayWidth / 2; j < (hallwayWidth - hallwayWidth / 2); j++)
+                {
+                    hallwayCoords.Add(new Coord(edge.b.CenterCoord.x + j, i));
+                }
+            }
+        }
         return hallwayCoords;
     }
 
