@@ -7,26 +7,24 @@ using System.Linq;
 public class MapManager : MonoBehaviour {
 
     [SerializeField]
-    private int baseLevelLength;
-    [HideInInspector]
-    public int levelLength, levelHeight;
+    private int minRoomDimension;
     [SerializeField]
-    private int minRoomDimension, maxRoomDimension;
+    private int maxRoomDimension;
     [SerializeField]
     private int hallwayWidth;
     [SerializeField]
     private int roomGenRectDimension;
     [SerializeField]
-    private int startingRoomWidth, startingRoomHeight;
+    private int minRoomDist;
     [SerializeField]
-    private int minRoomDist, maxRoomDist;
+    private int maxRoomDist;
     [SerializeField]
-    private int numRoomsToGen;
+    private int baseRooms;
+    [SerializeField]
+    private float roomsPerLevel;
+    private int numRooms;
     [SerializeField]
     private float proportionOfEdgesToReAdd;
-    [SerializeField]
-    private int rowsPerCard;
-    public Tile[,] map { get; private set; }
     public Dictionary<Coord, Tile> mapDict {get; private set;}
     [SerializeField]
     private int maxTriesProcGen;
@@ -43,14 +41,13 @@ public class MapManager : MonoBehaviour {
     [SerializeField]
     private Sprite exitDoorSprite;
     [SerializeField]
-    private float extraLevelLengthPerLevel;
-    [SerializeField]
     private int levelsPerCardTierIncrease;
     [SerializeField]
     private float chestsPerRoom;
     private List<Room> rooms;
     private List<Room> roomsWithoutChests;
     public Tile playerSpawnTile { get; private set; }
+    public Tile keyTile { get; private set; }
 
 	// Use this for initialization
 	void Start () {
@@ -64,42 +61,26 @@ public class MapManager : MonoBehaviour {
 
     public void GenerateLevel(int levelNum)
     {
-        int extraLevelLength = Mathf.RoundToInt((levelNum - 1) * extraLevelLengthPerLevel);
-        levelLength = baseLevelLength + extraLevelLength;
-        map = new Tile[levelLength, levelHeight];
-        for (int x = 0; x < levelLength; x++)
-        {
-            for (int y = 0; y < levelHeight; y++)
-            {
-                if(x == 0 && y == levelHeight - 1)
-                {
-                    map[x, y] = new Tile(new Coord(x, y), true, true);
-                }
-                else map[x, y] = new Tile(new Coord(x, y), false, true);
-            }
-        }
-        PlaceKey(map[levelLength - 1, levelHeight - 1]);
-        FindAllNeighbors();
-        SetSprites();
-        int chestsToGenerate = levelLength / rowsPerCard;
-        //GenerateChests(levelNum, chestsToGenerate);
-    }
-
-    public void MakeTestTiles(int levelNum)
-    {
-        rooms = GenerateInitialRooms(numRoomsToGen);
+        #region Generate rooms
+        numRooms = baseRooms + Mathf.RoundToInt(levelNum * roomsPerLevel);
+        rooms = GenerateInitialRooms(numRooms);
         List<Tile> allTiles = new List<Tile>();
         for (int i = 0; i < rooms.Count; i++)
         {
             allTiles.AddRange(GenerateRoomTiles(rooms[i]));
         }
+        #endregion
+
+        #region Calculate edges
         List<Edge> delaunayTriangulation = DelaunayTriangulationOfRooms(rooms);
         delaunayTriangulation = RemoveEdgeDuplicates(delaunayTriangulation);
         List<Edge> orderedEdges =
             new List<Edge>(delaunayTriangulation.OrderBy(edge => edge.Length));
         List<Edge> minSpanningTree = GetMinimumSpanningTree(delaunayTriangulation);
         List<Edge> edges = ReAddEdgesToSpanningTree(minSpanningTree, orderedEdges);
+        #endregion
 
+        #region Assign room neighbors
         foreach(Room room in rooms)
         {
             List<Edge> neighborEdges = AdjacentEdgesToVertex(room, edges);
@@ -111,7 +92,9 @@ public class MapManager : MonoBehaviour {
             }
             room.neighbors = neighbors;
         }
+        #endregion
 
+        #region Generate hallways
         List<Coord> hallwayCoords = new List<Coord>();
         for (int i = 0; i < edges.Count; i++)
         {
@@ -119,6 +102,9 @@ public class MapManager : MonoBehaviour {
         }
         hallwayCoords = RemoveCoordDuplicates(hallwayCoords);
         allTiles.AddRange(GenerateHallwayTiles(hallwayCoords));
+        #endregion
+
+        #region Generate map dictionary and assign tile neighbors
         mapDict = new Dictionary<Coord, Tile>();
         foreach(Tile tile in allTiles)
         {
@@ -128,22 +114,26 @@ public class MapManager : MonoBehaviour {
         {
             FindNeighbors(tile);
         }
+        #endregion
 
+        #region Assign start and key rooms
         Room startRoom, keyRoom;
         startRoom = GetFarthestRoom(rooms[0], edges, rooms);
         playerSpawnTile = GetFarthestTileFromHallwayEntrances(startRoom);
+        bool exitCreated = false;
         foreach (Tile tile in startRoom.tiles)
         {
-            tile.controller.GetComponent<SpriteRenderer>().color = Color.blue;
-
+            if(!exitCreated && tile.coord.Distance(playerSpawnTile.coord) == 1)
+            {
+                tile.isExit = true;
+                tile.SetSprite(exitDoorSprite, Quaternion.identity);
+                exitCreated = true;
+            }
         }
         keyRoom = GetFarthestRoom(startRoom, minSpanningTree, rooms);
-        PlaceKey(GetFarthestTileFromHallwayEntrances(keyRoom));
-        foreach (Tile tile in keyRoom.tiles)
-        {
-            tile.controller.GetComponent<SpriteRenderer>().color = Color.red;
-        }
-
+        keyTile = GetFarthestTileFromHallwayEntrances(keyRoom);
+        PlaceKey(keyTile);
+        #endregion
         GenerateChests(levelNum);
     }
 
@@ -257,7 +247,7 @@ public class MapManager : MonoBehaviour {
         List<Edge> orderedEdges = new List<Edge>(edges.OrderBy(edge => edge.Length));
         List<Edge> spanningTree = new List<Edge>();
         int edgeIndex = 0;
-        while (spanningTree.Count != numRoomsToGen - 1)
+        while (spanningTree.Count != numRooms - 1)
         {
             List<Edge> potentialTree = new List<Edge>(spanningTree);
             Edge edge = orderedEdges[edgeIndex];
@@ -462,9 +452,6 @@ public class MapManager : MonoBehaviour {
         List<Room> rooms = new List<Room>();
         for (int i = 0; i < numRooms; i++)
         {
-            Coord coord = 
-                GenerateRandomCoord(0, roomGenRectDimension, 0, roomGenRectDimension);
-            IntVector2 dimensions = GenerateRoomDimensions();
             Room room = GenerateValidRoom(rooms);
             if (room == null)
             {
@@ -543,11 +530,6 @@ public class MapManager : MonoBehaviour {
         tile.containedKey.transform.position = tile.controller.transform.position;
     }
 
-    void SetSprites()
-    {
-        foreach(Tile tile in map) SetSprite(tile);
-    }
-
     void SetSprite(Tile tile)
     {
         Sprite sprite;
@@ -610,31 +592,6 @@ public class MapManager : MonoBehaviour {
         tile.SetSprite(sprite, rot);
     }
 
-    void FindAllNeighbors()
-    {
-        for (int x = 0; x < levelLength; x++)
-        {
-            for (int y = 0; y < levelHeight; y++)
-            {
-                FindTileNeighbors(map[x, y]);
-            }
-        }
-    }
-
-    void FindTileNeighbors(Tile tile)
-    {
-        List<Tile> neighborsFound = new List<Tile>();
-        if (tile.coord.x + 1 < levelLength)
-            neighborsFound.Add(map[tile.coord.x + 1, tile.coord.y]);
-        if (tile.coord.x - 1 >= 0)
-            neighborsFound.Add(map[tile.coord.x - 1, tile.coord.y]);
-        if (tile.coord.y + 1 < levelHeight)
-            neighborsFound.Add(map[tile.coord.x, tile.coord.y + 1]);
-        if (tile.coord.y - 1 >= 0)
-            neighborsFound.Add(map[tile.coord.x, tile.coord.y - 1]);
-        tile.neighbors = neighborsFound;
-    }
-
     void FindNeighbors(Tile tile)
     {
         Coord[] directions = new Coord[4]
@@ -655,65 +612,6 @@ public class MapManager : MonoBehaviour {
             }
         }
         tile.neighbors = neighbors;
-    }
-
-    Tile GenerateRandomTile(int minColumn, int maxColumn)
-    {
-        int x = Random.Range(
-            Mathf.Min(minColumn, levelLength - 1),
-            Mathf.Min(maxColumn, levelLength));
-        int y = Random.Range(0, levelHeight);
-        return map[x, y];
-    }
-
-    Tile GenerateRandomTile(Tile origin, int radius)
-    {
-        List<Tile> possibleTiles = AStarSearch.FindAllAvailableGoals(origin, radius, true);
-        return possibleTiles[Random.Range(0, possibleTiles.Count)];
-    }
-
-    bool ValidateTile(Tile tile, int minDistFromMonster, int minDistFromCard)
-    {
-        if (Services.GameManager.player.currentTile == tile) return false;
-        for (int i = 0; i < Services.MonsterManager.monsters.Count; i++)
-        {
-            if (Services.MonsterManager.monsters[i].currentTile != null &&
-                Services.MonsterManager.monsters[i].currentTile.coord.Distance(tile.coord) 
-                < minDistFromMonster)
-                return false;
-        }
-        for (int j = 0; j < chestsOnBoard.Count; j++)
-        {
-            if (chestsOnBoard[j].currentTile.coord.Distance(tile.coord) < minDistFromCard)
-                return false;
-        }
-        return true;
-    }
-
-    public Tile GenerateValidTile(int minDistFromMonster, int minDistFromCard,
-        int minCol, int maxCol)
-    {
-        Tile tile;
-        for (int i = 0; i < maxTriesProcGen; i++)
-        {
-            tile = GenerateRandomTile(minCol, maxCol);
-            if (ValidateTile(tile, minDistFromMonster, minDistFromCard))
-                return tile;
-        }
-        return null;
-    }
-
-    public Tile GenerateValidTile(Tile origin, int radius, int minDIstFromMonster,
-        int minDistFromCard)
-    {
-        Tile tile;
-        for (int i = 0; i < maxTriesProcGen; i++)
-        {
-            tile = GenerateRandomTile(origin, radius);
-            if (ValidateTile(tile, minDIstFromMonster, minDistFromCard))
-                return tile;
-        }
-        return null;
     }
 
     void GenerateChests(int levelNum)

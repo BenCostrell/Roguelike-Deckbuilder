@@ -9,35 +9,36 @@ public class MonsterManager
     public void SpawnMonster(Monster.MonsterType monsterType)
     {
         Monster monster = CreateMonsterOfType(monsterType);
-        int originCol;
+        Tile playersTargetTile;
         if (!Services.GameManager.player.hasKey)
         {
-            originCol = Mathf.Min(Services.MapManager.levelLength - 1,
-            Services.GameManager.player.currentTile.coord.x +
-            Services.MonsterConfig.MinDistFromPlayer);
+            playersTargetTile = Services.MapManager.keyTile;
         }
         else
         {
-            originCol = Mathf.Max(0,
-                Services.GameManager.player.currentTile.coord.x -
-                Services.MonsterConfig.MinDistFromPlayer);
+            playersTargetTile = Services.MapManager.playerSpawnTile;
         }
-        Tile originTile = Services.MapManager.map[originCol, 
-            Services.GameManager.player.currentTile.coord.y];
-        for (int i = Services.MonsterConfig.MinDistFromMonsters; i >= 1; i--)
+        List<Tile> playersPathToTarget = AStarSearch.ShortestPath(
+            Services.GameManager.player.currentTile,
+            playersTargetTile, true);
+        playersPathToTarget.Reverse();
+        Tile spawnCenterPoint;
+        if(playersPathToTarget.Count < Services.MonsterConfig.MinDistFromMonsters)
         {
-            Tile tile = Services.MapManager.GenerateValidTile(
-            originTile,
-            Services.MonsterConfig.SpawnRange,
-            i,
-            Services.MonsterConfig.MinDistFromCards);
-            if (tile != null)
-            {
-                CreateMonster(monster, tile);
-                break;
-            }
+            spawnCenterPoint = playersPathToTarget[playersPathToTarget.Count - 1];
         }
-        
+        else
+        {
+            spawnCenterPoint = 
+                playersPathToTarget[Services.MonsterConfig.MinDistFromMonsters - 1];
+        }
+        List<Tile> potentialSpawnPoints = AStarSearch.FindAllAvailableGoals(spawnCenterPoint,
+            Services.MonsterConfig.SpawnRange, false);
+        Tile spawnPoint = potentialSpawnPoints[Random.Range(0, potentialSpawnPoints.Count)];
+        if (spawnPoint != null)
+        {
+            CreateMonster(monster, spawnPoint);
+        }
     }
 
     void CreateMonster(Monster monster, Tile tile)

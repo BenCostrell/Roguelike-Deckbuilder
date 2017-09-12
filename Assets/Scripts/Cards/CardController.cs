@@ -189,7 +189,7 @@ public class CardController : MonoBehaviour
                 Reposition(newPos, false);
             if (card.playable)
             {
-                if (transform.position.y >= Services.CardConfig.CardPlayThresholdYPos
+                if (transform.localPosition.y >= Services.CardConfig.CardPlayThresholdYPos
                     && card.CanPlay())
                 {
                     color = Services.CardConfig.PlayableColor;
@@ -258,7 +258,7 @@ public class CardController : MonoBehaviour
         card.OnUnselect();
         SetCardFrameStatus(true);
         if (card.playable && card.CanPlay() &&
-        transform.position.y >= Services.CardConfig.CardPlayThresholdYPos)
+        transform.localPosition.y >= Services.CardConfig.CardPlayThresholdYPos)
         {
             Services.Main.taskManager.AddTask(Services.GameManager.player.PlayCard(card));
             return true;

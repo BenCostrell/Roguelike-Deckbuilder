@@ -20,7 +20,6 @@ public static class AStarSearch
 
     public static float ShortestPathDistance(Room start, Room goal)
     {
-        List<Room> path = new List<Room>();
         Dictionary<Room, Room> cameFrom = new Dictionary<Room, Room>();
         Dictionary<Room, float> costSoFar = new Dictionary<Room, float>();
 

@@ -806,7 +806,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1910916128679260}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.6, z: -10}
+  m_LocalPosition: {x: -2, y: -2, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4305389640047190}
@@ -1952,20 +1952,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ca0d85cdf5204904cb7404a378c70c85, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  baseLevelLength: 12
-  levelLength: 15
-  levelHeight: 7
   minRoomDimension: 5
   maxRoomDimension: 10
   hallwayWidth: 2
   roomGenRectDimension: 5
-  startingRoomWidth: 0
-  startingRoomHeight: 0
   minRoomDist: 5
   maxRoomDist: 20
-  numRoomsToGen: 5
+  baseRooms: 2
+  roomsPerLevel: 1
   proportionOfEdgesToReAdd: 0.2
-  rowsPerCard: 6
   maxTriesProcGen: 200
   chestsOnBoard: []
   roomSprite: {fileID: 21300852, guid: 3defd70a9f557674ab6dd3a4e7f36461, type: 3}
@@ -1979,7 +1974,6 @@ MonoBehaviour:
   centerSprites:
   - {fileID: 21300134, guid: 3defd70a9f557674ab6dd3a4e7f36461, type: 3}
   exitDoorSprite: {fileID: 21300000, guid: e4f05403d0980d74f9d9c4596a0c9b27, type: 3}
-  extraLevelLengthPerLevel: 3
   levelsPerCardTierIncrease: 3
   chestsPerRoom: 0.5
 --- !u!114 &114734425235778944

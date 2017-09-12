@@ -13,7 +13,7 @@ public class Tile
     //public Card containedCard;
     public Chest containedChest;
     public DoorKey containedKey;
-    public readonly bool isExit;
+    public bool isExit;
     public bool locked;
     public readonly bool isRoom;
 
