@@ -46,7 +46,11 @@ public class MapManager : MonoBehaviour {
     private float extraLevelLengthPerLevel;
     [SerializeField]
     private int levelsPerCardTierIncrease;
+    [SerializeField]
+    private float chestsPerRoom;
     private List<Room> rooms;
+    private List<Room> roomsWithoutChests;
+    public Tile playerSpawnTile { get; private set; }
 
 	// Use this for initialization
 	void Start () {
@@ -78,10 +82,10 @@ public class MapManager : MonoBehaviour {
         FindAllNeighbors();
         SetSprites();
         int chestsToGenerate = levelLength / rowsPerCard;
-        GenerateChests(levelNum, chestsToGenerate);
+        //GenerateChests(levelNum, chestsToGenerate);
     }
 
-    public void MakeTestTiles()
+    public void MakeTestTiles(int levelNum)
     {
         rooms = GenerateInitialRooms(numRoomsToGen);
         List<Tile> allTiles = new List<Tile>();
@@ -108,18 +112,6 @@ public class MapManager : MonoBehaviour {
             room.neighbors = neighbors;
         }
 
-        Room startRoom, keyRoom;
-        startRoom = GetFarthestRoom(rooms[0], edges, rooms);
-        foreach (Tile tile in startRoom.tiles)
-        {
-            tile.controller.GetComponent<SpriteRenderer>().color = Color.blue;
-        }
-        keyRoom = GetFarthestRoom(startRoom, minSpanningTree, rooms);
-        foreach (Tile tile in keyRoom.tiles)
-        {
-            tile.controller.GetComponent<SpriteRenderer>().color = Color.red;
-        }
-
         List<Coord> hallwayCoords = new List<Coord>();
         for (int i = 0; i < edges.Count; i++)
         {
@@ -136,6 +128,47 @@ public class MapManager : MonoBehaviour {
         {
             FindNeighbors(tile);
         }
+
+        Room startRoom, keyRoom;
+        startRoom = GetFarthestRoom(rooms[0], edges, rooms);
+        playerSpawnTile = GetFarthestTileFromHallwayEntrances(startRoom);
+        foreach (Tile tile in startRoom.tiles)
+        {
+            tile.controller.GetComponent<SpriteRenderer>().color = Color.blue;
+
+        }
+        keyRoom = GetFarthestRoom(startRoom, minSpanningTree, rooms);
+        PlaceKey(GetFarthestTileFromHallwayEntrances(keyRoom));
+        foreach (Tile tile in keyRoom.tiles)
+        {
+            tile.controller.GetComponent<SpriteRenderer>().color = Color.red;
+        }
+
+        GenerateChests(levelNum);
+    }
+
+    Tile GetFarthestTileFromHallwayEntrances(Room room)
+    {
+        float maxMinDist = 0;
+        Tile furthestTileFromEntrances = null;
+        foreach (Tile tile in room.tiles)
+        {
+            float minDist = Mathf.Infinity;
+
+            foreach (Coord hallwayEntrance in room.hallwayEntrances)
+            {
+                if (hallwayEntrance.Distance(tile.coord) < minDist)
+                {
+                    minDist = hallwayEntrance.Distance(tile.coord);
+                }
+            }
+            if (minDist > maxMinDist)
+            {
+                maxMinDist = minDist;
+                furthestTileFromEntrances = tile;
+            }
+        }
+        return furthestTileFromEntrances;
     }
 
     Room GetFarthestRoom(Room room, List<Edge> graph, List<Room> otherRooms)
@@ -148,6 +181,7 @@ public class MapManager : MonoBehaviour {
             if(distance > longestDistance)
             {
                 farthestRoom = otherRoom;
+                longestDistance = distance;
             }  
         }
         return farthestRoom;
@@ -178,22 +212,20 @@ public class MapManager : MonoBehaviour {
     List<Coord> RemoveCoordDuplicates(List<Coord> coordList)
     {
         List<Coord> filteredList = new List<Coord>();
+        List<Coord> roomCoords = new List<Coord>();
+        foreach(Room room in rooms)
+        {
+            foreach(Tile tile in room.tiles)
+            {
+                roomCoords.Add(tile.coord);
+            }
+        }
         foreach(Coord coord in coordList)
         {
-            if (!filteredList.Contains(coord)) filteredList.Add(coord);
+            if (!filteredList.Contains(coord) && !roomCoords.Contains(coord))
+                filteredList.Add(coord);
         }
         return filteredList;
-    }
-
-    List<Edge> GenerateEdges(List<Room> rooms)
-    {
-        List<Edge> delaunayTriangulation = DelaunayTriangulationOfRooms(rooms);
-        delaunayTriangulation = RemoveEdgeDuplicates(delaunayTriangulation);
-        List<Edge> minSpanningTree = GetMinimumSpanningTree(delaunayTriangulation);
-        List<Edge> orderedEdges = 
-            new List<Edge>(delaunayTriangulation.OrderBy(edge => edge.Length));
-        List<Edge> minTreePlus = ReAddEdgesToSpanningTree(minSpanningTree, orderedEdges);
-        return minTreePlus;
     }
 
     List<Edge> DelaunayTriangulationOfRooms(List<Room> rooms)
@@ -396,6 +428,31 @@ public class MapManager : MonoBehaviour {
                     hallwayCoords.Add(new Coord(edge.b.CenterCoord.x + j, i));
                 }
             }
+        }
+        Coord closestToRoomA = new Coord(0, 0);
+        Coord closestToRoomB = new Coord(0, 0);
+        float shortestDistToRoomA = Mathf.Infinity;
+        float shortestDistToRoomB = Mathf.Infinity;
+        foreach(Coord coord in hallwayCoords)
+        {
+            if(coord.Distance(edge.a.CenterCoord) < shortestDistToRoomA)
+            {
+                closestToRoomA = coord;
+                shortestDistToRoomA = coord.Distance(edge.a.CenterCoord);
+            }
+            if (coord.Distance(edge.b.CenterCoord) < shortestDistToRoomB)
+            {
+                closestToRoomB = coord;
+                shortestDistToRoomB = coord.Distance(edge.b.CenterCoord);
+            }
+        }
+        if (!edge.a.hallwayEntrances.Contains(closestToRoomA))
+        {
+            edge.a.hallwayEntrances.Add(closestToRoomA);
+        }
+        if (!edge.b.hallwayEntrances.Contains(closestToRoomB))
+        {
+            edge.b.hallwayEntrances.Add(closestToRoomB);
         }
         return hallwayCoords;
     }
@@ -659,9 +716,11 @@ public class MapManager : MonoBehaviour {
         return null;
     }
 
-    void GenerateChests(int levelNum, int numChests)
+    void GenerateChests(int levelNum)
     {
+        int numChests = Mathf.RoundToInt(rooms.Count * chestsPerRoom);
         chestsOnBoard = new List<Chest>();
+        roomsWithoutChests = new List<Room>(rooms);
         int highestTier = Services.CardConfig.HighestTierOfCardsAvailable(false);
         int potentialHighEnd = 1 + (levelNum / levelsPerCardTierIncrease);
         int highEndTier = Mathf.Min(potentialHighEnd, highestTier);
@@ -686,11 +745,17 @@ public class MapManager : MonoBehaviour {
     {
         for (int i = 0; i < numChests; i++)
         {
-            Tile chestTile = GenerateValidTile(
-                Services.CardConfig.MinSpawnDistFromMonsters,
-                Services.CardConfig.MinSpawnDistFromItems,
-                Services.CardConfig.MinSpawnCol,
-                levelLength - 1);
+            Room randomRoomWithoutChest = 
+                roomsWithoutChests[Random.Range(0, roomsWithoutChests.Count)];
+            roomsWithoutChests.Remove(randomRoomWithoutChest);
+            Tile chestTile = randomRoomWithoutChest.tiles
+                [Random.Range(0, randomRoomWithoutChest.tiles.Count)];
+            while(chestTile.containedKey != null || 
+                Services.GameManager.player.currentTile == chestTile)
+            {
+                chestTile = randomRoomWithoutChest.tiles
+                [Random.Range(0, randomRoomWithoutChest.tiles.Count)];
+            }
             if (chestTile != null)
             {
                 Chest chest = Instantiate(Services.Prefabs.Chest, Services.Main.transform).

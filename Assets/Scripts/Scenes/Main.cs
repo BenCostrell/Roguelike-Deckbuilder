@@ -29,7 +29,7 @@ public class Main : Scene<MainTransitionData> {
         //Services.MapManager.GenerateLevel(levelNum);
         //Services.GameManager.player.Initialize(
         //    Services.MapManager.map[spawnPointX, spawnPointY], data);
-        Services.MapManager.MakeTestTiles();
+        Services.MapManager.MakeTestTiles(levelNum);
     }
 
     private void Update()

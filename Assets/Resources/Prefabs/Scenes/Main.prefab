@@ -1963,7 +1963,7 @@ MonoBehaviour:
   startingRoomHeight: 0
   minRoomDist: 5
   maxRoomDist: 20
-  numRoomsToGen: 20
+  numRoomsToGen: 5
   proportionOfEdgesToReAdd: 0.2
   rowsPerCard: 6
   maxTriesProcGen: 200
@@ -1981,6 +1981,7 @@ MonoBehaviour:
   exitDoorSprite: {fileID: 21300000, guid: e4f05403d0980d74f9d9c4596a0c9b27, type: 3}
   extraLevelLengthPerLevel: 3
   levelsPerCardTierIncrease: 3
+  chestsPerRoom: 0.5
 --- !u!114 &114734425235778944
 MonoBehaviour:
   m_ObjectHideFlags: 1

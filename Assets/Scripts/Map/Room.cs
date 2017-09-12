@@ -8,12 +8,14 @@ public class Room
     public IntVector2 dimensions;
     public List<Tile> tiles;
     public List<Tuple<Room, float>> neighbors;
+    public List<Coord> hallwayEntrances;
 
     public Room(Coord origin_, IntVector2 dimensions_)
     {
         origin = origin_;
         dimensions = dimensions_;
         tiles = new List<Tile>();
+        hallwayEntrances = new List<Coord>();
     }
 
     public int Left
