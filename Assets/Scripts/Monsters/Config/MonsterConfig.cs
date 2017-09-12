@@ -48,6 +48,10 @@ public class MonsterConfig : ScriptableObject
     private float deathAnimTime;
     public float DeathAnimTime { get { return deathAnimTime; } }
 
+    [SerializeField]
+    private float spawnAnimTime;
+    public float SpawnAnimTime { get { return spawnAnimTime; } }
+
     public MonsterInfo GetMonsterOfType(Monster.MonsterType monsterType)
     {
         foreach (MonsterInfo monsterInfo in monsters)

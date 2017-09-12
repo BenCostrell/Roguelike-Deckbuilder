@@ -6,7 +6,7 @@ public class MonsterManager
 {
     public List<Monster> monsters = new List<Monster>();
 
-    public void SpawnMonster(Monster.MonsterType monsterType)
+    public Monster SpawnMonster(Monster.MonsterType monsterType)
     {
         Monster monster = CreateMonsterOfType(monsterType);
         Tile playersTargetTile;
@@ -39,6 +39,11 @@ public class MonsterManager
         {
             CreateMonster(monster, spawnPoint);
         }
+        else
+        {
+            monster = null;
+        }
+        return monster;
     }
 
     void CreateMonster(Monster monster, Tile tile)
