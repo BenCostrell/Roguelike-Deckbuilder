@@ -7,6 +7,7 @@ public class Room
     public Coord origin;
     public IntVector2 dimensions;
     public List<Tile> tiles;
+    public List<Tuple<Room, float>> neighbors;
 
     public Room(Coord origin_, IntVector2 dimensions_)
     {

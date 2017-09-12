@@ -1963,8 +1963,8 @@ MonoBehaviour:
   startingRoomHeight: 0
   minRoomDist: 5
   maxRoomDist: 20
-  numRoomsToGen: 3
-  proportionOfEdgesToReAdd: 0.3
+  numRoomsToGen: 20
+  proportionOfEdgesToReAdd: 0.2
   rowsPerCard: 6
   maxTriesProcGen: 200
   chestsOnBoard: []

@@ -13,6 +13,45 @@ public static class AStarSearch
             new Vector2(b.coord.x, b.coord.y));
     }
 
+    public static float Heuristic(Room a, Room b)
+    {
+        return Vector2.Distance(a.Center, b.Center);
+    }
+
+    public static float ShortestPathDistance(Room start, Room goal)
+    {
+        List<Room> path = new List<Room>();
+        Dictionary<Room, Room> cameFrom = new Dictionary<Room, Room>();
+        Dictionary<Room, float> costSoFar = new Dictionary<Room, float>();
+
+        PriorityQueue<Room> frontier = new PriorityQueue<Room>();
+        frontier.Enqueue(start, 0);
+        cameFrom[start] = start;
+        costSoFar[start] = 0;
+
+        while (frontier.Count > 0)
+        {
+            Room current = frontier.Dequeue();
+            if (current == goal) break;
+            foreach (Tuple<Room, float> neighborInfo in current.neighbors)
+            {
+                Room next = neighborInfo.first;
+                float newCost;
+                newCost = costSoFar[current] + neighborInfo.second;
+
+                    if (!costSoFar.ContainsKey(next) || newCost < costSoFar[next])
+                    {
+                        costSoFar[next] = newCost;
+                        float priority = newCost + Heuristic(next, goal);
+                        frontier.Enqueue(next, priority);
+                        cameFrom[next] = current;
+                    }
+                }
+            }
+        return costSoFar[goal];
+    }
+
+
     public static List<Tile> ShortestPath(Tile start, Tile goal, bool raw)
     {
         List<Tile> path = new List<Tile>();

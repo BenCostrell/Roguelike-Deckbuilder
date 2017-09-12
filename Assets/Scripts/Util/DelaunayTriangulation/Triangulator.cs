@@ -235,10 +235,8 @@ namespace DelaunayTriangulator
                     }
                     else
                     {
-                        UnityEngine.Debug.Log("hull length is " + hull.Count);
                         for (int e = e1; e < e2; e++)
                         {
-                            UnityEngine.Debug.Log("attempting to access index " + e);
                             pidx.Add(hull[e].pointsIndex);
                             tridx.Add(hull[e].triadIndex);   // there are only n-1 triangles from n hull pts.
                         }
