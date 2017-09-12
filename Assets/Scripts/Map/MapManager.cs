@@ -13,8 +13,6 @@ public class MapManager : MonoBehaviour {
     [SerializeField]
     private int hallwayWidth;
     [SerializeField]
-    private int roomGenRectDimension;
-    [SerializeField]
     private int minRoomDist;
     [SerializeField]
     private int maxRoomDist;
@@ -28,7 +26,6 @@ public class MapManager : MonoBehaviour {
     public Dictionary<Coord, Tile> mapDict {get; private set;}
     [SerializeField]
     private int maxTriesProcGen;
-    //public List<Card> cardsOnBoard;
     public List<Chest> chestsOnBoard;
     [SerializeField]
     private Sprite roomSprite;
@@ -49,16 +46,6 @@ public class MapManager : MonoBehaviour {
     public Tile playerSpawnTile { get; private set; }
     public Tile keyTile { get; private set; }
 
-	// Use this for initialization
-	void Start () {
-		
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
-
     public void GenerateLevel(int levelNum)
     {
         #region Generate rooms
@@ -72,12 +59,22 @@ public class MapManager : MonoBehaviour {
         #endregion
 
         #region Calculate edges
-        List<Edge> delaunayTriangulation = DelaunayTriangulationOfRooms(rooms);
-        delaunayTriangulation = RemoveEdgeDuplicates(delaunayTriangulation);
-        List<Edge> orderedEdges =
-            new List<Edge>(delaunayTriangulation.OrderBy(edge => edge.Length));
-        List<Edge> minSpanningTree = GetMinimumSpanningTree(delaunayTriangulation);
-        List<Edge> edges = ReAddEdgesToSpanningTree(minSpanningTree, orderedEdges);
+        List<Edge> edges = new List<Edge>();
+        List<Edge> minSpanningTree = new List<Edge>();
+        if (numRooms >= 3)
+        {
+            List<Edge> delaunayTriangulation = DelaunayTriangulationOfRooms(rooms);
+            delaunayTriangulation = RemoveEdgeDuplicates(delaunayTriangulation);
+            List<Edge> orderedEdges =
+                new List<Edge>(delaunayTriangulation.OrderBy(edge => edge.Length));
+            minSpanningTree = GetMinimumSpanningTree(delaunayTriangulation);
+            edges = ReAddEdgesToSpanningTree(minSpanningTree, orderedEdges);
+        }
+        else
+        {
+            edges = new List<Edge>() { new Edge(rooms[0], rooms[1]) };
+            minSpanningTree = edges;
+        }
         #endregion
 
         #region Assign room neighbors
@@ -265,9 +262,6 @@ public class MapManager : MonoBehaviour {
         List<Edge> alteredSpanningTree = new List<Edge>(spanningTree);
         int edgesToReAdd = Mathf.RoundToInt(
             (orderedEdges.Count - alteredSpanningTree.Count) * proportionOfEdgesToReAdd);
-        Debug.Log("delaunay triangulation had " + orderedEdges.Count + " edges");
-        Debug.Log("spanning tree had " + alteredSpanningTree.Count + " edges");
-        Debug.Log("added back in " + edgesToReAdd + " edges");
         int edgesReAddedSoFar = 0;
         if (edgesToReAdd > 0)
         {
@@ -488,16 +482,16 @@ public class MapManager : MonoBehaviour {
                 Room referenceRoom = 
                     otherRooms[Random.Range(0, otherRooms.Count)];
                 int distanceX = Random.Range(
-                    minRoomDist + minRoomDimension / 2,
-                    maxRoomDist / 2 + maxRoomDimension / 2);
+                    minRoomDist + dimensions.x / 2,
+                    maxRoomDist / 2 + dimensions.x / 2);
                 int distanceY = Random.Range(
-                    minRoomDist + minRoomDimension / 2,
-                    maxRoomDist / 2 + maxRoomDimension / 2);
+                    minRoomDist + dimensions.y / 2,
+                    maxRoomDist / 2 + dimensions.y / 2);
                 if (Random.Range(0, 2) == 0) distanceX *= -1;
                 if (Random.Range(0, 2) == 0) distanceY *= -1;
                 coord = new Coord(
-                    referenceRoom.origin.x + (referenceRoom.dimensions.x / 2) + distanceX,
-                    referenceRoom.origin.y + (referenceRoom.dimensions.y / 2) + distanceY);
+                    referenceRoom.CenterCoord.x + (referenceRoom.dimensions.x / 2) + distanceX,
+                    referenceRoom.CenterCoord.y + (referenceRoom.dimensions.y / 2) + distanceY);
             }
             
             room = new Room(coord, dimensions);

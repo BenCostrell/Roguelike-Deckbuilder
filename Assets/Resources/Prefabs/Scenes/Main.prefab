@@ -1955,10 +1955,9 @@ MonoBehaviour:
   minRoomDimension: 5
   maxRoomDimension: 10
   hallwayWidth: 2
-  roomGenRectDimension: 5
   minRoomDist: 5
-  maxRoomDist: 20
-  baseRooms: 2
+  maxRoomDist: 15
+  baseRooms: 1
   roomsPerLevel: 1
   proportionOfEdgesToReAdd: 0.2
   maxTriesProcGen: 200
