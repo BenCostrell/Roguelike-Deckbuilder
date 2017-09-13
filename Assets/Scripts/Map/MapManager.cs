@@ -642,8 +642,7 @@ public class MapManager : MonoBehaviour {
             roomsWithoutChests.Remove(randomRoomWithoutChest);
             Tile chestTile = randomRoomWithoutChest.tiles
                 [Random.Range(0, randomRoomWithoutChest.tiles.Count)];
-            while(chestTile.containedKey != null || 
-                Services.GameManager.player.currentTile == chestTile)
+            while(chestTile == keyTile || chestTile == playerSpawnTile)
             {
                 chestTile = randomRoomWithoutChest.tiles
                 [Random.Range(0, randomRoomWithoutChest.tiles.Count)];

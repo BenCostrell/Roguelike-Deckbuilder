@@ -206,10 +206,13 @@ public class CardController : MonoBehaviour
                     color = Color.white;
                     if(card is TileTargetedCard)
                     {
-                        //TileTargetedCard targetedCard = card as TileTargetedCard;
-                        //targetedCard.OnUnselect();
                         SetCardFrameStatus(true);
                         Services.EventManager.Unregister<TileSelected>(OnTileSelected);
+                    }
+                    if(transform.localPosition.x >= Services.CardConfig.DiscardThreshold.x &&
+                        transform.localPosition.y <= Services.CardConfig.DiscardThreshold.y)
+                    {
+                        color = Color.red;
                     }
                 }
             }
@@ -263,8 +266,13 @@ public class CardController : MonoBehaviour
             Services.Main.taskManager.AddTask(Services.GameManager.player.PlayCard(card));
             return true;
         }
-        else
+        else if (transform.localPosition.x >= Services.CardConfig.DiscardThreshold.x &&
+                        transform.localPosition.y <= Services.CardConfig.DiscardThreshold.y)
         {
+            Services.GameManager.player.DiscardCardFromHand(card);
+            return false;
+        }
+        else {
             DisplayAtBasePos();
             return false;
         }

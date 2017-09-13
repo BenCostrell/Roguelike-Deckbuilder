@@ -42,6 +42,10 @@ public class CardConfig : ScriptableObject
     public float CardPlayThresholdYPos { get { return cardPlayThresholdYPos; } }
 
     [SerializeField]
+    private Vector2 discardThreshold;
+    public Vector2 DiscardThreshold { get { return discardThreshold; } }
+
+    [SerializeField]
     private Color playableColor;
     public Color PlayableColor { get { return playableColor; } }
 
