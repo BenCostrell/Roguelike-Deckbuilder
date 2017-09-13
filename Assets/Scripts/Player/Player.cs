@@ -268,13 +268,13 @@ public class Player {
 
     public TaskTree OnTurnEnd()
     {
-        if(hand.Count > 0)
-        {
-            for (int i = hand.Count - 1; i >= 0; i--)
-            {
-                DiscardCardFromHand(hand[i]);
-            }
-        }
+        //if(hand.Count > 0)
+        //{
+        //    for (int i = hand.Count - 1; i >= 0; i--)
+        //    {
+        //        DiscardCardFromHand(hand[i]);
+        //    }
+        //}
         if(cardsInPlay.Count > 0)
         {
             for (int i = cardsInPlay.Count - 1; i >= 0; i--)
@@ -283,7 +283,9 @@ public class Player {
             }
         }
         movesAvailable = 0;
-        return DrawCards(5);
+
+        int cardsToDraw = Mathf.Max(0, 5 - hand.Count);
+        return DrawCards(cardsToDraw);
     }
 
     public void DisableCardsWhileTargeting(int lockID)
