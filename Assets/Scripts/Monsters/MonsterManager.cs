@@ -34,7 +34,7 @@ public class MonsterManager
         }
         List<Tile> potentialSpawnPoints = AStarSearch.FindAllAvailableGoals(spawnCenterPoint,
             Services.MonsterConfig.SpawnRange, false);
-        for (int i = potentialSpawnPoints.Count - 1; i >= 0; i++)
+        for (int i = potentialSpawnPoints.Count - 1; i >= 0; i--)
         {
             if (potentialSpawnPoints[i].containedMonster != null ||
                 Services.GameManager.player.currentTile == potentialSpawnPoints[i])

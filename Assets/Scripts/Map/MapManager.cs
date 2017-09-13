@@ -11,6 +11,8 @@ public class MapManager : MonoBehaviour {
     [SerializeField]
     private int maxRoomDimension;
     [SerializeField]
+    private int levelOneRoomDimension;
+    [SerializeField]
     private int hallwayWidth;
     [SerializeField]
     private int minRoomDist;
@@ -50,7 +52,15 @@ public class MapManager : MonoBehaviour {
     {
         #region Generate rooms
         numRooms = baseRooms + Mathf.RoundToInt(levelNum * roomsPerLevel);
-        rooms = GenerateInitialRooms(numRooms);
+        if (numRooms == 1)
+        {
+            rooms = new List<Room>(){new Room(new Coord(0, 0),
+                new IntVector2(levelOneRoomDimension, levelOneRoomDimension)) };
+        }
+        else
+        {
+            rooms = GenerateInitialRooms(numRooms);
+        }
         List<Tile> allTiles = new List<Tile>();
         for (int i = 0; i < rooms.Count; i++)
         {
@@ -58,48 +68,52 @@ public class MapManager : MonoBehaviour {
         }
         #endregion
 
-        #region Calculate edges
         List<Edge> edges = new List<Edge>();
         List<Edge> minSpanningTree = new List<Edge>();
-        if (numRooms >= 3)
+        if (numRooms >= 2)
         {
-            List<Edge> delaunayTriangulation = DelaunayTriangulationOfRooms(rooms);
-            delaunayTriangulation = RemoveEdgeDuplicates(delaunayTriangulation);
-            List<Edge> orderedEdges =
-                new List<Edge>(delaunayTriangulation.OrderBy(edge => edge.Length));
-            minSpanningTree = GetMinimumSpanningTree(delaunayTriangulation);
-            edges = ReAddEdgesToSpanningTree(minSpanningTree, orderedEdges);
-        }
-        else
-        {
-            edges = new List<Edge>() { new Edge(rooms[0], rooms[1]) };
-            minSpanningTree = edges;
-        }
-        #endregion
 
-        #region Assign room neighbors
-        foreach(Room room in rooms)
-        {
-            List<Edge> neighborEdges = AdjacentEdgesToVertex(room, edges);
-            List<Tuple<Room, float>> neighbors = new List<Tuple<Room, float>>();
-            foreach(Edge edge in neighborEdges)
+            #region Calculate edges
+            if (numRooms >= 3)
             {
-                if (edge.a != room) neighbors.Add(new Tuple<Room, float>(edge.a, edge.Length));
-                else neighbors.Add(new Tuple<Room, float>(edge.b, edge.Length));
+                List<Edge> delaunayTriangulation = DelaunayTriangulationOfRooms(rooms);
+                delaunayTriangulation = RemoveEdgeDuplicates(delaunayTriangulation);
+                List<Edge> orderedEdges =
+                    new List<Edge>(delaunayTriangulation.OrderBy(edge => edge.Length));
+                minSpanningTree = GetMinimumSpanningTree(delaunayTriangulation);
+                edges = ReAddEdgesToSpanningTree(minSpanningTree, orderedEdges);
             }
-            room.neighbors = neighbors;
-        }
-        #endregion
+            else if (numRooms == 2)
+            {
+                edges = new List<Edge>() { new Edge(rooms[0], rooms[1]) };
+                minSpanningTree = edges;
+            }
+            #endregion
 
-        #region Generate hallways
-        List<Coord> hallwayCoords = new List<Coord>();
-        for (int i = 0; i < edges.Count; i++)
-        {
-            hallwayCoords.AddRange(GenerateHallway(edges[i]));
+            #region Assign room neighbors
+            foreach (Room room in rooms)
+            {
+                List<Edge> neighborEdges = AdjacentEdgesToVertex(room, edges);
+                List<Tuple<Room, float>> neighbors = new List<Tuple<Room, float>>();
+                foreach (Edge edge in neighborEdges)
+                {
+                    if (edge.a != room) neighbors.Add(new Tuple<Room, float>(edge.a, edge.Length));
+                    else neighbors.Add(new Tuple<Room, float>(edge.b, edge.Length));
+                }
+                room.neighbors = neighbors;
+            }
+            #endregion
+
+            #region Generate hallways
+            List<Coord> hallwayCoords = new List<Coord>();
+            for (int i = 0; i < edges.Count; i++)
+            {
+                hallwayCoords.AddRange(GenerateHallway(edges[i]));
+            }
+            hallwayCoords = RemoveCoordDuplicates(hallwayCoords);
+            allTiles.AddRange(GenerateHallwayTiles(hallwayCoords));
+            #endregion
         }
-        hallwayCoords = RemoveCoordDuplicates(hallwayCoords);
-        allTiles.AddRange(GenerateHallwayTiles(hallwayCoords));
-        #endregion
 
         #region Generate map dictionary and assign tile neighbors
         mapDict = new Dictionary<Coord, Tile>();
@@ -115,20 +129,31 @@ public class MapManager : MonoBehaviour {
 
         #region Assign start and key rooms
         Room startRoom, keyRoom;
-        startRoom = GetFarthestRoom(rooms[0], edges, rooms);
-        playerSpawnTile = GetFarthestTileFromHallwayEntrances(startRoom);
+        if (numRooms >= 2)
+        {
+            startRoom = GetFarthestRoom(rooms[0], edges, rooms);
+            playerSpawnTile = GetFarthestTileFromHallwayEntrances(startRoom);
+            keyRoom = GetFarthestRoom(startRoom, minSpanningTree, rooms);
+            keyTile = GetFarthestTileFromHallwayEntrances(keyRoom);
+        }
+        else
+        {
+            startRoom = rooms[0];
+            keyRoom = rooms[0];
+            playerSpawnTile = mapDict[new Coord(startRoom.Left, startRoom.Bottom)];
+            keyTile = mapDict[new Coord(startRoom.Right - 1, startRoom.Top - 1)];
+        }
         bool exitCreated = false;
         foreach (Tile tile in startRoom.tiles)
         {
-            if(!exitCreated && tile.coord.Distance(playerSpawnTile.coord) == 1)
+            if (!exitCreated && tile.coord.Distance(playerSpawnTile.coord) == 1)
             {
                 tile.isExit = true;
                 tile.SetSprite(exitDoorSprite, Quaternion.identity);
                 exitCreated = true;
             }
         }
-        keyRoom = GetFarthestRoom(startRoom, minSpanningTree, rooms);
-        keyTile = GetFarthestTileFromHallwayEntrances(keyRoom);
+
         PlaceKey(keyTile);
         #endregion
         GenerateChests(levelNum);
@@ -642,7 +667,7 @@ public class MapManager : MonoBehaviour {
             roomsWithoutChests.Remove(randomRoomWithoutChest);
             Tile chestTile = randomRoomWithoutChest.tiles
                 [Random.Range(0, randomRoomWithoutChest.tiles.Count)];
-            while(chestTile == keyTile || chestTile == playerSpawnTile)
+            while(chestTile == keyTile || chestTile == playerSpawnTile || chestTile.isExit)
             {
                 chestTile = randomRoomWithoutChest.tiles
                 [Random.Range(0, randomRoomWithoutChest.tiles.Count)];
