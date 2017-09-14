@@ -9,6 +9,14 @@ public class MonsterConfig : ScriptableObject
     public MonsterInfo[] Monsters { get { return monsters; } }
 
     [SerializeField]
+    private float baseMonstersPerLevel;
+    public float BaseMonstersPerLevel { get { return baseMonstersPerLevel; } }
+
+    [SerializeField]
+    private float monstersPerLevel;
+    public float MonstersPerLevel { get { return monstersPerLevel; } }
+
+    [SerializeField]
     private int minDistFromMonsters;
     public int MinDistFromMonsters { get { return minDistFromMonsters; } }
 

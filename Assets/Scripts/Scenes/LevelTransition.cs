@@ -126,7 +126,9 @@ public class LevelTransition : Scene<MainTransitionData> {
     List<Card> GenerateMonstersForLevel()
     {
         List<Card> monsterCards = new List<Card>();
-        int numMonsters = data.levelNum + 1;
+        int numMonsters =
+            Mathf.RoundToInt((Services.MonsterConfig.MonstersPerLevel * data.levelNum)
+            + Services.MonsterConfig.BaseMonstersPerLevel);
         int highestTier = Mathf.Min(data.levelNum / levelsPerMonsterTierIncrease, 
             Services.CardConfig.HighestTierOfCardsAvailable(true));
         int lowestTier;
