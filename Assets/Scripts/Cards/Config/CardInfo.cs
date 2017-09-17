@@ -30,10 +30,6 @@ public class CardInfo : ScriptableObject
     public bool IsMonster { get { return isMonster; } }
 
     [SerializeField]
-    private bool playOnPlayAll;
-    public bool PlayOnPlayAll { get { return playOnPlayAll; } }
-
-    [SerializeField]
     private AudioClip onPlayAudio;
     public AudioClip OnPlayAudio { get { return onPlayAudio; } }
 }

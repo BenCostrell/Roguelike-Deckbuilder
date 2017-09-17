@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 public abstract class TileTargetedCard : Card
 {
-    protected int range;
+    public int range { get; protected set; }
 
     public override void OnPlay()
     {

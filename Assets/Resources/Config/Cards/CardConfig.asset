@@ -12,12 +12,12 @@ MonoBehaviour:
   m_Name: CardConfig
   m_EditorClassIdentifier: 
   cards:
-  - {fileID: 11400000, guid: 43e29ec8a0fc55147bda0a193b407264, type: 2}
+  - {fileID: 11400000, guid: c9dce3a0040f95f4e9107fede62e481c, type: 2}
   - {fileID: 11400000, guid: ca27c1ba9738cea45a913e260caced79, type: 2}
   - {fileID: 11400000, guid: b7cffbf5124cb0f479a4b2b5ddbf7f72, type: 2}
   - {fileID: 11400000, guid: 89580e8565fd6b14c909fbd93b96246d, type: 2}
   - {fileID: 11400000, guid: 5f85ccc493edec346b13d0910441e550, type: 2}
-  - {fileID: 11400000, guid: 65b33f6be7c16d945a729045fc26a4ee, type: 2}
+  - {fileID: 11400000, guid: 54a3f5bc841e92b42ae31d7d2e4221e6, type: 2}
   - {fileID: 11400000, guid: f84b2021b9555be47b4e7586187f5224, type: 2}
   - {fileID: 11400000, guid: 1ada3ae0dbd55f6479e49f2ee65e56ad, type: 2}
   - {fileID: 11400000, guid: 52f86bf02c2d8fd4bb3e4afa1a5a1204, type: 2}
@@ -28,14 +28,14 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 7de91ef06db60d94293888b3e3ea3df0, type: 2}
   - {fileID: 11400000, guid: 0aa80e472e2975249813adddbc24a98c, type: 2}
   startingDeck:
-  - {fileID: 11400000, guid: 43e29ec8a0fc55147bda0a193b407264, type: 2}
-  - {fileID: 11400000, guid: 43e29ec8a0fc55147bda0a193b407264, type: 2}
-  - {fileID: 11400000, guid: 43e29ec8a0fc55147bda0a193b407264, type: 2}
-  - {fileID: 11400000, guid: 43e29ec8a0fc55147bda0a193b407264, type: 2}
-  - {fileID: 11400000, guid: 43e29ec8a0fc55147bda0a193b407264, type: 2}
-  - {fileID: 11400000, guid: 43e29ec8a0fc55147bda0a193b407264, type: 2}
-  - {fileID: 11400000, guid: 43e29ec8a0fc55147bda0a193b407264, type: 2}
-  - {fileID: 11400000, guid: 43e29ec8a0fc55147bda0a193b407264, type: 2}
+  - {fileID: 11400000, guid: c9dce3a0040f95f4e9107fede62e481c, type: 2}
+  - {fileID: 11400000, guid: c9dce3a0040f95f4e9107fede62e481c, type: 2}
+  - {fileID: 11400000, guid: c9dce3a0040f95f4e9107fede62e481c, type: 2}
+  - {fileID: 11400000, guid: c9dce3a0040f95f4e9107fede62e481c, type: 2}
+  - {fileID: 11400000, guid: c9dce3a0040f95f4e9107fede62e481c, type: 2}
+  - {fileID: 11400000, guid: c9dce3a0040f95f4e9107fede62e481c, type: 2}
+  - {fileID: 11400000, guid: c9dce3a0040f95f4e9107fede62e481c, type: 2}
+  - {fileID: 11400000, guid: c9dce3a0040f95f4e9107fede62e481c, type: 2}
   - {fileID: 11400000, guid: b7cffbf5124cb0f479a4b2b5ddbf7f72, type: 2}
   - {fileID: 11400000, guid: b7cffbf5124cb0f479a4b2b5ddbf7f72, type: 2}
   handCardSpacing: {x: 1.8, y: 0, z: 0}

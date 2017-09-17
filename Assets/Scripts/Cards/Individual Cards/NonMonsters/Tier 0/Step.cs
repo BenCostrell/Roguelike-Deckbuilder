@@ -1,7 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System;
 
-public class Step : Card {
+public class Step : MovementCard {
 
     public Step()
     {
@@ -12,6 +13,5 @@ public class Step : Card {
     public override void OnPlay()
     {
         base.OnPlay();
-        Services.GameManager.player.movesAvailable += 1;
     }
 }

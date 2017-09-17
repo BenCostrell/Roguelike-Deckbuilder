@@ -8,7 +8,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 73947de0df966ea409e713726a341966, type: 3}
+  m_Script: {fileID: 11500000, guid: a37a290b7ff7e9f49a2c5dae043ea8af, type: 3}
   m_Name: Step
   m_EditorClassIdentifier: 
   cardType: 0
@@ -18,3 +18,5 @@ MonoBehaviour:
   tier: 0
   isMonster: 0
   playOnPlayAll: 1
+  onPlayAudio: {fileID: 0}
+  range: 1

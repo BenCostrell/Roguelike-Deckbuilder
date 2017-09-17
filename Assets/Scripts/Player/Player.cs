@@ -251,8 +251,10 @@ public class Player {
             lockID));
         for (int i = hand.Count - 1; i >= 0; i--)
         {
-            if (hand[i].info.PlayOnPlayAll)
+            if (hand[i] is MovementCard)
             {
+                MovementCard movementCard = hand[i] as MovementCard;
+                movesAvailable += movementCard.range;
                 playAllTree.Then(PlayCard(hand[i]));
             }
         }

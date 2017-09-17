@@ -73,34 +73,27 @@ public class CardController : MonoBehaviour
 
     private void OnMouseEnter()
     {
-        if (currentlySelectedCard == null)
+        if (currentlySelectedCard == null && !Input.GetMouseButton(0))
         {
             if (card.playable)
             {
-                if (!Input.GetMouseButton(0))
-                {
-                    transform.localScale = Services.CardConfig.OnHoverScaleUp * baseScale;
-                    Reposition(basePos + Services.CardConfig.OnHoverOffset, false);
-                    card.OnSelect();
-                }
+                transform.localScale = Services.CardConfig.OnHoverScaleUp * baseScale;
+                Reposition(basePos + Services.CardConfig.OnHoverOffset, false);
+                card.OnSelect();
             }
             if (card.deckViewMode && overTrash == null)
             {
-                if (!Input.GetMouseButton(0))
-                {
-                    transform.localScale = Services.CardConfig.OnHoverScaleUp * baseScale;
-                    Reposition(basePos + Services.CardConfig.OnHoverOffsetDeckViewMode, false);
-                }
+
+                transform.localScale = Services.CardConfig.OnHoverScaleUp * baseScale;
+                Reposition(basePos + Services.CardConfig.OnHoverOffsetDeckViewMode, false);
+
             }
             if (card.chest != null)
             {
-                if (!Input.GetMouseButton(0))
-                {
-                    transform.localScale = Services.CardConfig.OnHoverScaleUp * baseScale;
-                    Reposition(basePos + Services.CardConfig.OnHoverOffsetChestMode, false);
-                }
-            }
+                transform.localScale = Services.CardConfig.OnHoverScaleUp * baseScale;
+                Reposition(basePos + Services.CardConfig.OnHoverOffsetChestMode, false);
 
+            }
             if (Services.GameManager.player.selectingCards)
             {
                 OnHoverEnterForCardSelection();
@@ -135,6 +128,7 @@ public class CardController : MonoBehaviour
     {
         if (!selected)
         {
+            Services.EventManager.Fire(new CardSelected(card));
             selected = true;
             currentlySelectedCard = card;
             Vector3 mousePos =
@@ -152,10 +146,6 @@ public class CardController : MonoBehaviour
                 card.chest.OnCardPicked(card);
                 selected = false;
                 currentlySelectedCard = null;
-            }
-            if (Services.GameManager.player.selectingCards)
-            {
-                Services.EventManager.Fire(new CardSelected(card));
             }
         }
         else
@@ -195,8 +185,6 @@ public class CardController : MonoBehaviour
                     color = Services.CardConfig.PlayableColor;
                     if(card is TileTargetedCard)
                     {
-                        //TileTargetedCard targetedCard = card as TileTargetedCard;
-                        //targetedCard.OnSelect();
                         SetCardFrameStatus(false);
                         Services.EventManager.Register<TileSelected>(OnTileSelected);
                     }

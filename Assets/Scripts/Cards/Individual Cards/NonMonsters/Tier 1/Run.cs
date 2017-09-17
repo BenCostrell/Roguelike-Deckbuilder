@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class Run : Card
+public class Run : MovementCard
 {
     public Run()
     {
@@ -12,6 +12,5 @@ public class Run : Card
     public override void OnPlay()
     {
         base.OnPlay();
-        Services.GameManager.player.movesAvailable += 2;
     }
 }
