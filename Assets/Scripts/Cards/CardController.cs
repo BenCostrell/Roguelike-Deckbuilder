@@ -126,9 +126,11 @@ public class CardController : MonoBehaviour
 
     private void OnMouseDown()
     {
-        if (!selected)
-        {
+        if (Services.GameManager.player.selectingCards) {
             Services.EventManager.Fire(new CardSelected(card));
+        }
+        else if (!selected)
+        {
             selected = true;
             currentlySelectedCard = card;
             Vector3 mousePos =
