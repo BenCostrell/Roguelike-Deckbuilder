@@ -143,6 +143,8 @@ public class CardConfig : ScriptableObject
                 return new OrcCard();
             case Card.CardType.Flamekin:
                 return new FlamekinCard();
+            case Card.CardType.Blank:
+                return new Blank();
             default:
                 return null;
         }

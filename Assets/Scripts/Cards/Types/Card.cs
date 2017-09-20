@@ -24,7 +24,8 @@ public abstract class Card {
         Potion,
         Bat,
         Orc,
-        Flamekin
+        Flamekin,
+        Blank
     }
     public int tier { get; protected set; }
     public Sprite sprite { get; protected set; }
@@ -55,8 +56,9 @@ public abstract class Card {
         controller = null;
     }
 
-    public virtual TaskTree OnDraw() {
-        TaskTree onDrawTasks = new TaskTree(new DrawCardTask(this));
+    public virtual TaskTree OnDraw(int deckSize, int discardSize, bool playerDraw) {
+        TaskTree onDrawTasks = 
+            new TaskTree(new DrawCardTask(this, deckSize, discardSize, playerDraw));
         return onDrawTasks;
     }
 

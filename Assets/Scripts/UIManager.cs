@@ -12,6 +12,11 @@ public class UIManager : MonoBehaviour {
     public GameObject handZone;
     public GameObject discardCounter;
     public GameObject discardZone;
+    public GameObject dungeonDeckCounter;
+    public GameObject dungeonDeckZone;
+    public GameObject dungeonDiscardCounter;
+    public GameObject dungeonDiscardZone;
+    public GameObject dungeonPlayZone;
     [SerializeField]
     private GameObject endTurnButtonObj;
     private Button endTurnButton;
@@ -118,9 +123,19 @@ public class UIManager : MonoBehaviour {
         deckCounter.GetComponent<Text>().text = cardsInDeck.ToString();
     }
 
+    public void UpdateDungeonDeckCounter(int cardsInDeck)
+    {
+        dungeonDeckCounter.GetComponent<Text>().text = cardsInDeck.ToString();
+    }
+
     public void UpdateDiscardCounter(int cardsInDiscard)
     {
         discardCounter.GetComponent<Text>().text = cardsInDiscard.ToString();
+    }
+
+    public void UpdateDungeonDiscardCounter(int cardsInDiscard)
+    {
+        dungeonDiscardCounter.GetComponent<Text>().text = cardsInDiscard.ToString();
     }
 
     public void SortHand(List<Card> cardsInHand)

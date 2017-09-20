@@ -29,12 +29,13 @@ public class LevelTransition : Scene<MainTransitionData> {
     private int maxCardsPerRow;
     public MainTransitionData data { get; private set; }
     private TrashController trashController;
+    [SerializeField]
+    private int dungeonDeckSize;
 
     internal override void OnEnter(MainTransitionData data_)
     {
         data = data_;
         InitializeScene();
-        ClearDeckOfOldMonsters();
         for (int i = 0; i < data.deck.Count; i++)
         {
             data.deck[i].CreatePhysicalCard(transform);
@@ -62,7 +63,7 @@ public class LevelTransition : Scene<MainTransitionData> {
                 monsterCards[j].deckViewMode = true;
                 monsterCards[j].Disable();
             }
-            AddNewMonsters(monsterCards);
+            data.dungeonDeck = monsterCards;
         }
         else
         {
@@ -110,25 +111,17 @@ public class LevelTransition : Scene<MainTransitionData> {
         SetPlayerUI();
     }
 
-    void ClearDeckOfOldMonsters()
-    {
-        for (int i = data.deck.Count - 1; i >= 0; i--)
-        {
-            if (data.deck[i].info.IsMonster) data.deck.Remove(data.deck[i]);
-        }
-    }
-
-    void AddNewMonsters(List<Card> monsterCards)
-    {
-        data.deck.AddRange(monsterCards);
-    }
-
     List<Card> GenerateMonstersForLevel()
     {
         List<Card> monsterCards = new List<Card>();
-        int numMonsters =
+        int numMonsters = Mathf.Min(
             Mathf.RoundToInt((Services.MonsterConfig.MonstersPerLevel * data.levelNum)
-            + Services.MonsterConfig.BaseMonstersPerLevel);
+            + Services.MonsterConfig.BaseMonstersPerLevel), dungeonDeckSize);
+        int numBlanks = Mathf.Max(0, dungeonDeckSize - numMonsters);
+        for (int i = 0; i < numBlanks; i++)
+        {
+            monsterCards.Add(Services.CardConfig.CreateCardOfType(Card.CardType.Blank));
+        }
         int highestTier = Mathf.Min(data.levelNum / levelsPerMonsterTierIncrease, 
             Services.CardConfig.HighestTierOfCardsAvailable(true));
         int lowestTier;

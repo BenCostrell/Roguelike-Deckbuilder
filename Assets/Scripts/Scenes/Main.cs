@@ -11,6 +11,7 @@ public class Main : Scene<MainTransitionData> {
     public Camera mainCamera { get; private set; }
     public TaskManager taskManager { get; private set; }
     public int levelNum { get; private set; }
+    public DungeonDeck dungeonDeck { get; private set; }
 
     private void Awake()
     {
@@ -27,6 +28,7 @@ public class Main : Scene<MainTransitionData> {
     {
         levelNum = data.levelNum;
         Services.MapManager.GenerateLevel(levelNum);
+        dungeonDeck = new DungeonDeck(data.dungeonDeck);
         Services.GameManager.player.Initialize(Services.MapManager.playerSpawnTile, data);
     }
 
@@ -51,6 +53,7 @@ public class Main : Scene<MainTransitionData> {
         endTurnTasks
             .Then(Services.MonsterManager.MonstersMove())
             .Then(Services.MonsterManager.MonstersAttack())
+            .Then(dungeonDeck.TakeDungeonTurn())
             .Then(Services.GameManager.player.OnTurnEnd())
             .Then(new ParameterizedActionTask<int>(
                 Services.GameManager.player.UnlockEverything, lockID));
@@ -62,6 +65,7 @@ public class Main : Scene<MainTransitionData> {
     {
         Services.SceneStackManager.Swap<LevelTransition>(new MainTransitionData(
             Services.GameManager.player.fullDeck,
+            new List<Card>(),
             Services.GameManager.player.maxHealth + 1,
             levelNum + 1, false));
     }

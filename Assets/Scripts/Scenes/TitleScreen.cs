@@ -24,7 +24,7 @@ public class TitleScreen : Scene<MainTransitionData> {
             startingDeck.Add(card);
         }
         Services.SceneStackManager.Swap<LevelTransition>(
-            new MainTransitionData(startingDeck,
+            new MainTransitionData(startingDeck, new List<Card>(),
             Services.GameManager.playerStartingHealth, 1, false));
     }
 }

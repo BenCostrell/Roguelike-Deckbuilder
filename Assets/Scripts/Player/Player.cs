@@ -101,8 +101,6 @@ public class Player {
             cardDrawTasks.Then(DrawCard(GetRandomCardFromDeck()));
         }
         cardDrawTasks.Then(new ParameterizedActionTask<int>(UnlockEverything, lockID));
-        Services.UIManager.UpdateDeckCounter(remainingDeck.Count);
-        Services.UIManager.UpdateDiscardCounter(discardPile.Count);
         return cardDrawTasks;
     }
 
@@ -122,7 +120,7 @@ public class Player {
 
     TaskTree DrawCard(Card card)
     {
-        return card.OnDraw();
+        return card.OnDraw(remainingDeck.Count, discardPile.Count, true);
     }
 
     public void DiscardCardFromHand(Card card)
@@ -337,6 +335,7 @@ public class Player {
         Debug.Log("dead");
         Services.SceneStackManager.Swap<LevelTransition>(new MainTransitionData(
             fullDeck,
+            new List<Card>(),
             maxHealth,
             Services.Main.levelNum,
             true));

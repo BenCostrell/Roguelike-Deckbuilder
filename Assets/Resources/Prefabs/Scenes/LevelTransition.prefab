@@ -745,7 +745,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: MONSTERS
+  m_Text: DUNGEON DECK
 --- !u!114 &114165789476085676
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1243,6 +1243,7 @@ MonoBehaviour:
   deckDisplaySpacing: {x: 1, y: 0, z: -2}
   deckDisplaySpacingPerRow: {x: 0, y: -0.7, z: -35}
   maxCardsPerRow: 10
+  dungeonDeckSize: 15
 --- !u!124 &124860827300927730
 Behaviour:
   m_ObjectHideFlags: 1
