@@ -12,8 +12,7 @@ public class TileController : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		
-	}
+    }
 
     public void Init(Tile tile_)
     {
@@ -23,9 +22,13 @@ public class TileController : MonoBehaviour {
         defColor = sr.color;
     }
 
-    private void OnMouseEnter()
+    private void OnMouseOver()
     {
         tile.OnHoverEnter();
+    }
+
+    private void OnMouseEnter()
+    {
         sr.color = onHoverColor;
         if (tile.containedMonster != null)
         {

@@ -218,6 +218,12 @@ public class UIManager : MonoBehaviour {
         }
     }
 
+    public void ForceUnlockEndTurn()
+    {
+        endTurnLocked = false;
+        endTurnButton.enabled = true;
+    }
+
     public void DisablePlayAll(int lockID)
     {
         if (!playAllLocked)
@@ -235,5 +241,11 @@ public class UIManager : MonoBehaviour {
             playAllLocked = false;
             playAllButton.enabled = true;
         }
+    }
+
+    public void ForceUnlockPlayAll()
+    {
+        playAllLocked = false;
+        playAllButton.enabled = true;
     }
 }

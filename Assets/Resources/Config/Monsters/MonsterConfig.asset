@@ -17,7 +17,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: b97b15815773fa24b8d4e7d83a76f9bf, type: 2}
   - {fileID: 11400000, guid: e54a0890bd5f2954e9a4441ad8b2c558, type: 2}
   - {fileID: 11400000, guid: 216ecc07299b1e74ebd3c7a64d203ea9, type: 2}
-  baseMonstersPerLevel: 1.51
+  baseMonstersPerLevel: 2
   monstersPerLevel: 0.5
   minDistFromMonsters: 4
   minDistFromCards: 3

@@ -71,6 +71,7 @@ public class Player {
         maxHealth = data.maxHealth;
         currentHealth = maxHealth;
         controller.UpdateHealthUI();
+        ForceUnlockEverything();
     }
 
     void InitializeSprite(Tile tile)
@@ -374,6 +375,19 @@ public class Player {
         }
     }
 
+    void ForceUnlockMovement()
+    {
+        movementLocked = false;
+    }
+
+    void ForceUnlockHand()
+    {
+        for (int i = 0; i < hand.Count; i++)
+        {
+            hand[i].Enable();
+        }
+    }
+
     public void LockEverything(int lockID)
     {
         LockMovement(lockID);
@@ -388,6 +402,14 @@ public class Player {
         ReenableHand(lockID);
         Services.UIManager.EnableEndTurn(lockID);
         Services.UIManager.EnablePlayAll(lockID);
+    }
+
+    void ForceUnlockEverything()
+    {
+        ForceUnlockMovement();
+        ForceUnlockHand();
+        Services.UIManager.ForceUnlockEndTurn();
+        Services.UIManager.ForceUnlockPlayAll();
     }
 
     public void Heal(int amountHealed)

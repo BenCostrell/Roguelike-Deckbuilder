@@ -635,7 +635,7 @@ public class MapManager : MonoBehaviour {
 
     void GenerateChests(int levelNum)
     {
-        int numChests = Mathf.RoundToInt(rooms.Count * chestsPerRoom);
+        int numChests = Mathf.CeilToInt(rooms.Count * chestsPerRoom);
         chestsOnBoard = new List<Chest>();
         roomsWithoutChests = new List<Room>(rooms);
         int highestTier = Services.CardConfig.HighestTierOfCardsAvailable(false);
