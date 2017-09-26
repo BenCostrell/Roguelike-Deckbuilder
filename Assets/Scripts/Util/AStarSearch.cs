@@ -73,7 +73,7 @@ public static class AStarSearch
             if (current == goal) break;
             foreach (Tile next in current.neighbors)
             {
-                if (!next.IsImpassable())
+                if (!next.IsImpassable() || raw)
                 {
                     float newCost;
                     if (raw)

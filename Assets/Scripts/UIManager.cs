@@ -5,7 +5,6 @@ using UnityEngine.UI;
 
 public class UIManager : MonoBehaviour {
 
-    public GameObject moveCounter;
     public GameObject deckCounter;
     public GameObject deckZone;
     public GameObject inPlayZone;
@@ -111,11 +110,6 @@ public class UIManager : MonoBehaviour {
 
         endTurnButton = endTurnButtonObj.GetComponent<Button>();
         playAllButton = playAllButtonObj.GetComponent<Button>();
-    }
-
-    public void UpdateMoveCounter(int movesAvailable)
-    {
-        moveCounter.GetComponent<Text>().text = "Moves Available: " + movesAvailable;
     }
 
     public void UpdateDeckCounter(int cardsInDeck)

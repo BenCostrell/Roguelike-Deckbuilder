@@ -31,6 +31,7 @@ public class CardController : MonoBehaviour
     public TrashController overTrash;
     private bool selected;
     public static Card currentlySelectedCard;
+    private bool inDiscardZone;
 
     // Use this for initialization
     public void Init(Card card_)
@@ -181,11 +182,20 @@ public class CardController : MonoBehaviour
                 Reposition(newPos, false);
             if (card.playable)
             {
-                if (transform.localPosition.y >= Services.CardConfig.CardPlayThresholdYPos
+                if (Services.UIManager.discardZone.GetComponent<Collider2D>().bounds.Contains(transform.position))
+                {
+                    color = Color.red;
+                    if (card is TileTargetedCard)
+                    {
+                        SetCardFrameStatus(true);
+                        Services.EventManager.Unregister<TileSelected>(OnTileSelected);
+                    }
+                }
+                else if (transform.localPosition.y >= Services.CardConfig.CardPlayThresholdYPos
                     && card.CanPlay())
                 {
                     color = Services.CardConfig.PlayableColor;
-                    if(card is TileTargetedCard)
+                    if (card is TileTargetedCard)
                     {
                         SetCardFrameStatus(false);
                         Services.EventManager.Register<TileSelected>(OnTileSelected);
@@ -194,15 +204,10 @@ public class CardController : MonoBehaviour
                 else
                 {
                     color = Color.white;
-                    if(card is TileTargetedCard)
+                    if (card is TileTargetedCard)
                     {
                         SetCardFrameStatus(true);
                         Services.EventManager.Unregister<TileSelected>(OnTileSelected);
-                    }
-                    if(transform.localPosition.x >= Services.CardConfig.DiscardThreshold.x &&
-                        transform.localPosition.y <= Services.CardConfig.DiscardThreshold.y)
-                    {
-                        color = Color.red;
                     }
                 }
             }
@@ -250,19 +255,19 @@ public class CardController : MonoBehaviour
     {
         card.OnUnselect();
         SetCardFrameStatus(true);
-        if (card.playable && card.CanPlay() &&
-        transform.localPosition.y >= Services.CardConfig.CardPlayThresholdYPos)
-        {
-            Services.Main.taskManager.AddTask(Services.GameManager.player.PlayCard(card));
-            return true;
-        }
-        else if (transform.localPosition.x >= Services.CardConfig.DiscardThreshold.x &&
-                        transform.localPosition.y <= Services.CardConfig.DiscardThreshold.y)
+        if (Services.UIManager.discardZone.GetComponent<Collider2D>().bounds.Contains(transform.position))
         {
             Services.GameManager.player.DiscardCardFromHand(card);
             return false;
         }
-        else {
+        else if (card.playable && card.CanPlay() &&
+            transform.localPosition.y >= Services.CardConfig.CardPlayThresholdYPos)
+        {
+            Services.Main.taskManager.AddTask(Services.GameManager.player.PlayCard(card));
+            return true;
+        }
+        else
+        {
             DisplayAtBasePos();
             return false;
         }
@@ -301,25 +306,6 @@ public class CardController : MonoBehaviour
         colliders[0].enabled = false;
     }
 
-    public void ShowBoardCardOnHover()
-    {
-        sr.enabled = true;
-        foreach (TextMesh mesh in textMeshes)
-        {
-            mesh.gameObject.SetActive(true);
-        }
-        transform.localScale = Services.CardConfig.OnHoverScaleUp * baseScale;
-        Vector3 offset = Services.CardConfig.CardOnBoardHoverOffset;
-        Vector3 uiPos = Services.GameManager.currentCamera.ScreenToWorldPoint(
-            Services.UIManager.moveCounter.GetComponent<RectTransform>().position);
-        if (sr.bounds.min.y - 1 < uiPos.y)
-        {
-            offset = new Vector3(offset.x, -offset.y + 0.5f, offset.z);
-        }
-        Reposition(basePos + offset, false);
-        colliders[0].enabled = false;
-    }
-
     public void UnselectedForCard()
     {
         color = prevColor;
@@ -327,12 +313,12 @@ public class CardController : MonoBehaviour
 
     public void SelectedForCard()
     {
-        color = Color.blue;
+        color = Color.red;
     }
 
     void OnHoverEnterForCardSelection()
     {
-        color = (Color.blue + Color.white) / 2;
+        color = (Color.red + Color.white) / 2;
     }
 
     void OnHoverExitForCardSelection()

@@ -684,6 +684,5 @@ public class MapManager : MonoBehaviour {
             }
             else break;
         }
-        Debug.Log("generated " + numChests + " chests of tier " + tier);
     }
 }

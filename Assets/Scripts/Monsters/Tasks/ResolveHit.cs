@@ -12,7 +12,7 @@ public class ResolveHit : Task
 
     protected override void Init()
     {
-        if(monster.controller == null)
+        if (monster.controller == null)
         {
             SetStatus(TaskStatus.Success);
             return;

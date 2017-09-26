@@ -21,6 +21,7 @@ public abstract class Monster {
     public int attackRange { get; protected set; }
     public int attackDamage { get; protected set; }
     public bool markedForDeath { get; protected set; }
+    public Tile targetTile;
 
     public void CreatePhysicalMonster(Tile tile)
     {
@@ -43,6 +44,10 @@ public abstract class Monster {
         currentTile = tile;
         tile.containedMonster = this;
         controller.PlaceOnTile(tile);
+        if(tile.containedMapObject != null)
+        {
+            tile.containedMapObject.OnStep(this);
+        }
     }
 
     protected void InitValues()
@@ -77,8 +82,8 @@ public abstract class Monster {
 
     public bool IsPlayerInRange()
     {
-        return Services.GameManager.player.currentTile.coord.Distance(currentTile.coord) 
-            <= attackRange;
+        return Services.GameManager.player.currentTile.coord.Distance(currentTile.coord) <= attackRange ||
+            (targetTile != null && Services.GameManager.player.currentTile.coord.Distance(targetTile.coord) <= attackRange);
     }
 
     public virtual TaskTree AttackPlayer()
@@ -110,6 +115,7 @@ public abstract class Monster {
         pathToMoveAlong.Reverse();
         if (pathToMoveAlong.Count > 0)
         {
+            targetTile = pathToMoveAlong[0];
             return new TaskTree(new MoveObjectAlongPath(controller.gameObject,
                 pathToMoveAlong));
         }

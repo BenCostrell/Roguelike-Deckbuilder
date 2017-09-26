@@ -18,6 +18,8 @@ public class LevelTransition : Scene<MainTransitionData> {
     [SerializeField]
     private GameObject startButton;
     [SerializeField]
+    private GameObject finalScore;
+    [SerializeField]
     private int levelsPerMonsterTierIncrease;
     [SerializeField]
     private Vector3 deckDisplayOffset;
@@ -102,10 +104,12 @@ public class LevelTransition : Scene<MainTransitionData> {
         if (!data.gameOver)
         {
             levelTitle.GetComponent<Text>().text = "LEVEL " + data.levelNum;
+            finalScore.SetActive(false);
         }
         else
         {
-            levelTitle.GetComponent<Text>().text = "GAME OVER - LEVEL " + data.levelNum;
+            levelTitle.GetComponent<Text>().text = "GAME OVER";
+            finalScore.GetComponent<Text>().text = "YOU MADE IT TO LEVEL " + data.levelNum;
 
         }
         SetPlayerUI();
@@ -115,7 +119,7 @@ public class LevelTransition : Scene<MainTransitionData> {
     {
         List<Card> monsterCards = new List<Card>();
         int numMonsters = Mathf.Min(
-            Mathf.RoundToInt((Services.MonsterConfig.MonstersPerLevel * data.levelNum)
+            Mathf.FloorToInt((Services.MonsterConfig.MonstersPerLevel * data.levelNum)
             + Services.MonsterConfig.BaseMonstersPerLevel), dungeonDeckSize);
         int numBlanks = Mathf.Max(0, dungeonDeckSize - numMonsters);
         for (int i = 0; i < numBlanks; i++)

@@ -13,7 +13,6 @@ public class Player {
         set
         {
             movesAvailable_ = value;
-            Services.UIManager.UpdateMoveCounter(movesAvailable_);
             ShowAvailableMoves();
         }
     }
@@ -79,7 +78,7 @@ public class Player {
         GameObject obj = GameObject.Instantiate(Services.Prefabs.Player, Services.Main.transform);
         controller = obj.GetComponent<PlayerController>();
         controller.Init(this);
-        PlaceOnTile(tile);
+        PlaceOnTile(tile, false);
         movesAvailable = 0;
     }
 
@@ -145,18 +144,25 @@ public class Player {
         Services.UIManager.UpdateDiscardCounter(discardPile.Count);
     }
 
-    public void PlaceOnTile(Tile tile)
+    public void PlaceOnTile(Tile tile, bool end)
     {
         controller.PlaceOnTile(tile);
         currentTile = tile;
         ShowAvailableMoves();
-        if (currentTile.containedChest != null && !currentTile.containedChest.opened)
+        if (tile.containedMapObject != null)
         {
-            currentTile.containedChest.OpenChest();
+            tile.containedMapObject.OnStep(this);
         }
-        if (currentTile.containedKey != null)
+        if (end)
         {
-            PickUpKey(currentTile);
+            if (currentTile.containedChest != null && !currentTile.containedChest.opened)
+            {
+                currentTile.containedChest.OpenChest();
+            }
+            if (currentTile.containedKey != null)
+            {
+                PickUpKey(currentTile);
+            }
         }
     }
 
@@ -253,12 +259,17 @@ public class Player {
             if (hand[i] is MovementCard)
             {
                 MovementCard movementCard = hand[i] as MovementCard;
-                movesAvailable += movementCard.range;
                 playAllTree.Then(PlayCard(hand[i]));
+                playAllTree.Then(new ParameterizedActionTask<int>(AddMovement, movementCard.range));
             }
         }
         playAllTree.Then(new ParameterizedActionTask<int>(UnlockEverything, lockID));
         return playAllTree;
+    }
+
+    void AddMovement(int moves)
+    {
+        movesAvailable += moves;
     }
 
     void RemoveCardFromPlay(Card card)
@@ -333,7 +344,6 @@ public class Player {
 
     void Die()
     {
-        Debug.Log("dead");
         Services.SceneStackManager.Swap<LevelTransition>(new MainTransitionData(
             fullDeck,
             new List<Card>(),

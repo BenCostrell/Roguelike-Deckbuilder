@@ -47,12 +47,11 @@ MonoBehaviour:
   onHoverOffsetDeckViewMode: {x: 0, y: 0, z: -100}
   onHoverOffsetChestMode: {x: 0, y: 0, z: -2}
   cardPlayThresholdYPos: 3.5
-  discardThreshold: {x: 15, y: 3}
   playableColor: {r: 0.44766432, g: 1, b: 0.30590397, a: 1}
   drawAnimDur: 0.3
   drawAnimTimeToMidpoint: 0.2
   drawAnimScale: 2
-  drawAnimMidpointOffset: {x: -7, y: 2, z: 0}
+  drawAnimMidpointOffset: {x: -1, y: -3, z: 0}
   playAnimDur: 0.3
   acquireAnimDur: 0.5
   minSpawnDistFromMonsters: 1

@@ -60,32 +60,21 @@ public class MoveObjectAlongPath : Task
 
         if (timeElapsed >= duration)
         {
-            if(isMonster)
-            {
-                obj.GetComponent<MonsterController>().monster.PlaceOnTile(path[pathIndex]);
-            }
-            if (path[pathIndex].containedMapObject != null)
+            if (pathIndex == 0) SetStatus(TaskStatus.Success);
+            else
             {
                 if (isMonster)
                 {
-                    path[pathIndex].containedMapObject.OnStep(obj.GetComponent<MonsterController>().monster);
+                    obj.GetComponent<MonsterController>().monster.PlaceOnTile(path[pathIndex]);
                 }
                 else
                 {
-                    path[pathIndex].containedMapObject.OnStep(obj.GetComponent<PlayerController>().player);
+                    obj.GetComponent<PlayerController>().player.PlaceOnTile(path[pathIndex], false);
                 }
-            }
-            if (pathIndex == 0)
-            {
-                SetStatus(TaskStatus.Success);
-            }
-            else
-            {
                 curPos = nextPos;
                 pathIndex -= 1;
                 nextPos = path[pathIndex].controller.transform.position;
                 timeElapsed = 0;
-                
             }
         }
     }
@@ -97,12 +86,14 @@ public class MoveObjectAlongPath : Task
         if (obj == null || (isMonster && obj.GetComponent<MonsterController>().monster.markedForDeath)) return;
         if (isMonster)
         {
-            obj.GetComponent<MonsterController>().monster.PlaceOnTile(finalTile);
+            Monster monster = obj.GetComponent<MonsterController>().monster;
+            monster.PlaceOnTile(finalTile);
+            monster.targetTile = null;
         }
         else
         {
             Player player = obj.GetComponent<PlayerController>().player;
-            player.PlaceOnTile(finalTile);
+            player.PlaceOnTile(finalTile, true);
             player.moving = false;
             if (finalTile.hovered) player.OnTileHover(finalTile);
             if (finalTile.isExit && player.hasKey) Services.Main.ExitLevel();
