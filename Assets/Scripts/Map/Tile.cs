@@ -13,9 +13,11 @@ public class Tile
     //public Card containedCard;
     public Chest containedChest;
     public DoorKey containedKey;
+    public MapObject containedMapObject;
     public bool isExit;
     public bool locked;
     public readonly bool isRoom;
+    public bool monsterMovementTarget;
 
     public Tile(Coord coord_, bool isExit_, bool isRoom_)
     {
@@ -57,7 +59,7 @@ public class Tile
 
     public bool IsImpassable()
     {
-        if (containedMonster != null) return true;
+        if (containedMonster != null || monsterMovementTarget) return true;
         return false;
     }
 }

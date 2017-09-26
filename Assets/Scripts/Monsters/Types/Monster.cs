@@ -20,6 +20,7 @@ public abstract class Monster {
     public int movementSpeed { get; protected set; }
     public int attackRange { get; protected set; }
     public int attackDamage { get; protected set; }
+    public bool markedForDeath { get; protected set; }
 
     public void CreatePhysicalMonster(Tile tile)
     {
@@ -67,6 +68,7 @@ public abstract class Monster {
         Services.MonsterManager.KillMonster(this);
         currentTile.containedMonster = null;
         currentTile = null;
+        markedForDeath = true;
         Services.GameManager.player.ShowAvailableMoves();
         DeathAnimation deathAnim = new DeathAnimation(this);
         deathAnim.Then(new ActionTask(DestroyPhysicalMonster));

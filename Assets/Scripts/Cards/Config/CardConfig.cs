@@ -145,6 +145,8 @@ public class CardConfig : ScriptableObject
                 return new FlamekinCard();
             case Card.CardType.Blank:
                 return new Blank();
+            case Card.CardType.SpikeTrap:
+                return new SpikeTrapCard();
             default:
                 return null;
         }

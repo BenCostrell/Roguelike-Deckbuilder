@@ -37,7 +37,8 @@ public class MonsterManager
         for (int i = potentialSpawnPoints.Count - 1; i >= 0; i--)
         {
             if (potentialSpawnPoints[i].containedMonster != null ||
-                Services.GameManager.player.currentTile == potentialSpawnPoints[i])
+                Services.GameManager.player.currentTile == potentialSpawnPoints[i] ||
+                potentialSpawnPoints[i].containedMapObject != null)
                 potentialSpawnPoints.Remove(potentialSpawnPoints[i]);
         }
         Tile spawnPoint = potentialSpawnPoints[Random.Range(0, potentialSpawnPoints.Count)];

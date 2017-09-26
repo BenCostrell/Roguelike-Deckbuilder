@@ -17,4 +17,5 @@ public static class Services {
     public static MonsterManager MonsterManager { get; set; }
     public static SoundManager SoundManager { get; set; }
     public static AudioConfig AudioConfig { get; set; }
+    public static MapObjectConfig MapObjectConfig { get; set; }
 }

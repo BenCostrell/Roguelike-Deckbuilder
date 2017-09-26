@@ -19,6 +19,11 @@ public class AttackAnimation : Task
 
     protected override void Init()
     {
+        if (attacker == null)
+        {
+            SetStatus(TaskStatus.Success);
+            return;
+        }
         basePos = attacker.transform.position;
         attackDuration = Services.MonsterConfig.AttackAnimTime;
         recoveryDuration = Services.MonsterConfig.RecoveryAnimTime;
@@ -29,6 +34,11 @@ public class AttackAnimation : Task
 
     internal override void Update()
     {
+        if (attacker == null)
+        {
+            SetStatus(TaskStatus.Success);
+            return;
+        }
         timeElapsed += Time.deltaTime;
 
         if(timeElapsed <= attackDuration)
@@ -47,6 +57,7 @@ public class AttackAnimation : Task
 
     protected override void OnSuccess()
     {
+        if (attacker == null) return;
         Services.SoundManager.CreateAndPlayAudio(Services.AudioConfig.MonsterHitAudio, 0.1f);
     }
 }

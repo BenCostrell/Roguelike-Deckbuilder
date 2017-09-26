@@ -12,6 +12,11 @@ public class ResolveHit : Task
 
     protected override void Init()
     {
+        if(monster.controller == null)
+        {
+            SetStatus(TaskStatus.Success);
+            return;
+        }
         if (monster.OnAttackHit()) SetStatus(TaskStatus.Aborted);
         else SetStatus(TaskStatus.Success);
     }

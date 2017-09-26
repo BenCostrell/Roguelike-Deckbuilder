@@ -25,7 +25,8 @@ public abstract class Card {
         Bat,
         Orc,
         Flamekin,
-        Blank
+        Blank,
+        SpikeTrap
     }
     public int tier { get; protected set; }
     public Sprite sprite { get; protected set; }
@@ -39,16 +40,6 @@ public abstract class Card {
         controller = obj.GetComponent<CardController>();
         controller.Init(this);
     }
-
-    //public void CreatePhysicalCard(Tile tile)
-    //{
-    //    CreatePhysicalCard(Services.Main.transform);
-    //    currentTile = tile;
-    //    tile.containedCard = this;
-    //    controller.DisplayCardOnBoard();
-    //    Reposition(tile.controller.transform.position + Services.CardConfig.CardOnBoardOffset, 
-    //        true);
-    //}
 
     public void DestroyPhysicalCard()
     {
@@ -108,11 +99,4 @@ public abstract class Card {
         tier = info.Tier;
         sprite = info.Sprite;
     }
-
-    //public void GetPickedUp()
-    //{
-    //    currentTile.containedCard = null;
-    //    currentTile = null;
-    //    Services.MapManager.cardsOnBoard.Remove(this);
-    //}
 }

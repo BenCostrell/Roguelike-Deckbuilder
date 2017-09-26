@@ -9,10 +9,12 @@ public abstract class TileTargetedCard : Card
     public override void OnPlay()
     {
         base.OnPlay();
-        //Services.Main.taskManager.AddTask(new TileTargetSelection(this));
     }
 
-    public abstract bool IsTargetValid(Tile tile);
+    public virtual bool IsTargetValid(Tile tile)
+    {
+        return tile.coord.Distance(Services.GameManager.player.currentTile.coord) <= range;
+    }
 
     public abstract void OnTargetSelected(Tile tile);
 

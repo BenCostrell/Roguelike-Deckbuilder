@@ -22,8 +22,8 @@ public abstract class AttackCard : TileTargetedCard
 
     public override bool IsTargetValid(Tile tile)
     {
-        return (tile.containedMonster != null && 
-            tile.coord.Distance(Services.GameManager.player.currentTile.coord) <= range);
+        return base.IsTargetValid(tile) && tile.containedMonster != null;
+            
     }
 
     public override void OnTargetSelected(Tile tile)

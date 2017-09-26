@@ -11,6 +11,7 @@ public class MoveObjectAlongPath : Task
     private Vector3 curPos;
     private Vector3 nextPos;
     private int pathIndex;
+    private bool isMonster;
 
     public MoveObjectAlongPath(GameObject obj_, List<Tile> path_)
     {
@@ -18,9 +19,9 @@ public class MoveObjectAlongPath : Task
         path = path_;
         if (obj.GetComponent<MonsterController>() != null)
         {
+            isMonster = true;
             curPos = obj.transform.position;
-            obj.GetComponent<MonsterController>().monster.PlaceOnTile(path[0]);
-            obj.transform.position = curPos;
+            path[0].monsterMovementTarget = true;
         }
     }
 
@@ -31,7 +32,7 @@ public class MoveObjectAlongPath : Task
         curPos = obj.transform.position;
         nextPos = path[pathIndex].controller.transform.position;
         duration = Services.MonsterConfig.MoveAnimTime;
-        if (obj.GetComponent<MonsterController>() != null)
+        if (isMonster)
         {
             if (path.Count * duration > Services.MonsterConfig.MaxMoveAnimDur)
             {
@@ -47,6 +48,11 @@ public class MoveObjectAlongPath : Task
 
     internal override void Update()
     {
+        if (obj == null || (isMonster && obj.GetComponent<MonsterController>().monster.markedForDeath))
+        {
+            SetStatus(TaskStatus.Success);
+            return;
+        }
         timeElapsed += Time.deltaTime;
 
         obj.transform.position = Vector3.Lerp(curPos, nextPos,
@@ -54,6 +60,21 @@ public class MoveObjectAlongPath : Task
 
         if (timeElapsed >= duration)
         {
+            if(isMonster)
+            {
+                obj.GetComponent<MonsterController>().monster.PlaceOnTile(path[pathIndex]);
+            }
+            if (path[pathIndex].containedMapObject != null)
+            {
+                if (isMonster)
+                {
+                    path[pathIndex].containedMapObject.OnStep(obj.GetComponent<MonsterController>().monster);
+                }
+                else
+                {
+                    path[pathIndex].containedMapObject.OnStep(obj.GetComponent<PlayerController>().player);
+                }
+            }
             if (pathIndex == 0)
             {
                 SetStatus(TaskStatus.Success);
@@ -64,6 +85,7 @@ public class MoveObjectAlongPath : Task
                 pathIndex -= 1;
                 nextPos = path[pathIndex].controller.transform.position;
                 timeElapsed = 0;
+                
             }
         }
     }
@@ -71,11 +93,13 @@ public class MoveObjectAlongPath : Task
     protected override void OnSuccess()
     {
         Tile finalTile = path[0];
-        if (obj.GetComponent<MonsterController>() != null)
+        finalTile.monsterMovementTarget = false;
+        if (obj == null || (isMonster && obj.GetComponent<MonsterController>().monster.markedForDeath)) return;
+        if (isMonster)
         {
             obj.GetComponent<MonsterController>().monster.PlaceOnTile(finalTile);
         }
-        if(obj.GetComponent<PlayerController>() != null)
+        else
         {
             Player player = obj.GetComponent<PlayerController>().player;
             player.PlaceOnTile(finalTile);
