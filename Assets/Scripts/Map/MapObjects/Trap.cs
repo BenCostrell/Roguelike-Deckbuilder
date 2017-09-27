@@ -13,16 +13,18 @@ public abstract class Trap : MapObject
         damage = trapInfo.Damage;
     }
 
-    public override void OnStep(Player player)
+    public override bool OnStep(Player player)
     {
         player.TakeDamage(damage);
         RemoveThis();
+        return true;
     }
 
-    public override void OnStep(Monster monster)
+    public override bool OnStep(Monster monster)
     {
         monster.TakeDamage(damage);
         RemoveThis();
+        return true;
     }
 
 }

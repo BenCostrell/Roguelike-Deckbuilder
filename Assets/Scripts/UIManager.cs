@@ -106,7 +106,7 @@ public class UIManager : MonoBehaviour {
         playerUIHealthCounter = playerUIHealthCounterObj.GetComponent<Text>();
         playerUIHealthBarBaseSize = 
             playerUIRemainingHealthBody.GetComponent<RectTransform>().sizeDelta;
-        playerUIKeyIcon.SetActive(false);
+        playerUIKeyIcon.GetComponent<Image>().color = new Color(1, 1, 1, 0.125f);
 
         endTurnButton = endTurnButtonObj.GetComponent<Button>();
         playAllButton = playAllButtonObj.GetComponent<Button>();
@@ -185,7 +185,8 @@ public class UIManager : MonoBehaviour {
         else playerUIRemainingHealthObj.SetActive(true);
         playerUISprite.sprite = 
             Services.GameManager.player.controller.GetComponent<SpriteRenderer>().sprite;
-        if (Services.GameManager.player.hasKey) playerUIKeyIcon.SetActive(true);
+        if (Services.GameManager.player.hasKey)
+            playerUIKeyIcon.GetComponent<Image>().color = Color.white;
     }
 
     public void HideUnitUI()

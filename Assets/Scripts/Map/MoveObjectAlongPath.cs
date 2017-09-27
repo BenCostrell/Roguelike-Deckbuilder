@@ -12,11 +12,13 @@ public class MoveObjectAlongPath : Task
     private Vector3 nextPos;
     private int pathIndex;
     private bool isMonster;
+    private bool stopped;
 
     public MoveObjectAlongPath(GameObject obj_, List<Tile> path_)
     {
         obj = obj_;
         path = path_;
+        stopped = false;
         if (obj.GetComponent<MonsterController>() != null)
         {
             isMonster = true;
@@ -48,11 +50,6 @@ public class MoveObjectAlongPath : Task
 
     internal override void Update()
     {
-        if (obj == null || (isMonster && obj.GetComponent<MonsterController>().monster.markedForDeath))
-        {
-            SetStatus(TaskStatus.Success);
-            return;
-        }
         timeElapsed += Time.deltaTime;
 
         obj.transform.position = Vector3.Lerp(curPos, nextPos,
@@ -65,12 +62,14 @@ public class MoveObjectAlongPath : Task
             {
                 if (isMonster)
                 {
-                    obj.GetComponent<MonsterController>().monster.PlaceOnTile(path[pathIndex]);
+                    stopped = obj.GetComponent<MonsterController>().monster.PlaceOnTile(path[pathIndex]);
                 }
                 else
                 {
-                    obj.GetComponent<PlayerController>().player.PlaceOnTile(path[pathIndex], false);
+                    stopped = obj.GetComponent<PlayerController>().player.PlaceOnTile(path[pathIndex], false);
+                    if (stopped) obj.GetComponent<PlayerController>().player.movesAvailable = 0;
                 }
+                if (stopped) SetStatus(TaskStatus.Success);
                 curPos = nextPos;
                 pathIndex -= 1;
                 nextPos = path[pathIndex].controller.transform.position;
@@ -83,20 +82,20 @@ public class MoveObjectAlongPath : Task
     {
         Tile finalTile = path[0];
         finalTile.monsterMovementTarget = false;
-        if (obj == null || (isMonster && obj.GetComponent<MonsterController>().monster.markedForDeath)) return;
-        if (isMonster)
+        Player player;
+        if (!isMonster)
+        {
+            player = obj.GetComponent<PlayerController>().player;
+            player.moving = false;
+            if (finalTile.hovered) player.OnTileHover(finalTile);
+            if (finalTile.isExit && player.hasKey) Services.Main.ExitLevel();
+            if(!stopped) player.PlaceOnTile(finalTile, true);
+        }
+        else if (!stopped)
         {
             Monster monster = obj.GetComponent<MonsterController>().monster;
             monster.PlaceOnTile(finalTile);
             monster.targetTile = null;
-        }
-        else
-        {
-            Player player = obj.GetComponent<PlayerController>().player;
-            player.PlaceOnTile(finalTile, true);
-            player.moving = false;
-            if (finalTile.hovered) player.OnTileHover(finalTile);
-            if (finalTile.isExit && player.hasKey) Services.Main.ExitLevel();
         }
     }
 }

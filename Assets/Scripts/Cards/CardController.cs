@@ -32,6 +32,7 @@ public class CardController : MonoBehaviour
     private bool selected;
     public static Card currentlySelectedCard;
     private bool inDiscardZone;
+    private bool selectedLastFrame;
 
     // Use this for initialization
     public void Init(Card card_)
@@ -57,7 +58,12 @@ public class CardController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (selected) Drag();
+        if (selected)
+        {
+            Drag();
+            if (Input.GetMouseButtonDown(0) && selectedLastFrame) PlaceCard();
+        }
+        selectedLastFrame = selected;
     }
 
     public void Reposition(Vector3 pos, bool changeBasePos)
@@ -151,10 +157,6 @@ public class CardController : MonoBehaviour
                 currentlySelectedCard = null;
             }
         }
-        else
-        {
-            PlaceCard();
-        }
     }
 
     void Drag()
@@ -247,11 +249,11 @@ public class CardController : MonoBehaviour
             if (overTrash != null) overTrash.PlaceCardInTrash(card);
             else DisplayAtBasePos();
         }
-        else TryToPlayCard();
+        else TryToPlayCard(false);
         
     }
 
-    bool TryToPlayCard()
+    public bool TryToPlayCard(bool forcePlay)
     {
         card.OnUnselect();
         SetCardFrameStatus(true);
@@ -260,8 +262,9 @@ public class CardController : MonoBehaviour
             Services.GameManager.player.DiscardCardFromHand(card);
             return false;
         }
-        else if (card.playable && card.CanPlay() &&
-            transform.localPosition.y >= Services.CardConfig.CardPlayThresholdYPos)
+        else if (card.playable && card.CanPlay() && (forcePlay ||
+            (transform.localPosition.y >= Services.CardConfig.CardPlayThresholdYPos &&
+            !(card is TileTargetedCard))))
         {
             Services.Main.taskManager.AddTask(Services.GameManager.player.PlayCard(card));
             return true;
@@ -332,7 +335,7 @@ public class CardController : MonoBehaviour
         TileTargetedCard targetedCard = card as TileTargetedCard;
         if (targetedCard.IsTargetValid(tileSelected))
         {
-            bool successfullyPlayedCard = TryToPlayCard();
+            bool successfullyPlayedCard = TryToPlayCard(true);
             if (successfullyPlayedCard)
             {
                 targetedCard.OnTargetSelected(tileSelected);

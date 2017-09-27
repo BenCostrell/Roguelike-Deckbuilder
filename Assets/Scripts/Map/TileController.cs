@@ -62,9 +62,16 @@ public class TileController : MonoBehaviour {
         sr.color = defColor;
     }
 
-    public void ShowAsTargetable()
+    public void ShowAsTargetable(bool validTarget)
     {
-        defColor = (Color.red + Color.white)/2;
+        if (validTarget)
+        {
+            defColor = (Color.blue + Color.white) / 2;
+        }
+        else
+        {
+            defColor = (Color.red + Color.white) / 2;
+        }
         sr.color = defColor;
     }
 

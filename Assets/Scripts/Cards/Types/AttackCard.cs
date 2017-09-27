@@ -28,6 +28,7 @@ public abstract class AttackCard : TileTargetedCard
 
     public override void OnTargetSelected(Tile tile)
     {
+        base.OnTargetSelected(tile);
         OnHit(tile.containedMonster);
     }  
 

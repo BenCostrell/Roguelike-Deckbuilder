@@ -19,6 +19,7 @@ public class MovementCard : TileTargetedCard
 
     public override void OnTargetSelected(Tile tile)
     {
+        base.OnTargetSelected(tile);
         Services.GameManager.player.movesAvailable += range;
         Services.GameManager.player.MoveToTile(tile);
     }
@@ -30,12 +31,14 @@ public class MovementCard : TileTargetedCard
             range, false);
         foreach (Tile tile in tilesInRange)
         {
-            tile.controller.ShowAsTargetable();
+            tile.controller.ShowAsTargetable(true);
         }
+        Services.GameManager.player.movementCardSelected = this;
     }
 
     public override void OnUnselect()
     {
+        Services.GameManager.player.movementCardSelected = null;
         List<Tile> tilesInRange =
             AStarSearch.FindAllAvailableGoals(Services.GameManager.player.currentTile,
             range, false);

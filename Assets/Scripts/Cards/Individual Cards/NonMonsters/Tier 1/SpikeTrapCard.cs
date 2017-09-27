@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class SpikeTrapCard : ObjectPlacementCard
+public class SpikeTrapCard : TrapCard
 {
     public SpikeTrapCard()
     {

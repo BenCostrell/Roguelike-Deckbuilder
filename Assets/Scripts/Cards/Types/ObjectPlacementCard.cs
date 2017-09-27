@@ -13,8 +13,17 @@ public class ObjectPlacementCard : TileTargetedCard
         objectTypeToPlace = opInfo.ObjectType;
     }
 
+    public override bool IsTargetValid(Tile tile)
+    {
+        return base.IsTargetValid(tile) &&
+            tile.containedChest == null &&
+            tile.containedMapObject == null &&
+            tile.containedKey == null;
+    }
+
     public override void OnTargetSelected(Tile tile)
     {
+        base.OnTargetSelected(tile);
         MapObject mapObject = Services.MapObjectConfig.CreateMapObjectOfType(objectTypeToPlace);
         mapObject.PlaceOnTile(tile);
     }

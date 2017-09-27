@@ -16,7 +16,9 @@ public abstract class TileTargetedCard : Card
         return tile.coord.Distance(Services.GameManager.player.currentTile.coord) <= range;
     }
 
-    public abstract void OnTargetSelected(Tile tile);
+    public virtual void OnTargetSelected(Tile tile)
+    {
+    }
 
     protected override void InitValues()
     {
@@ -32,7 +34,7 @@ public abstract class TileTargetedCard : Card
             range, true);
         foreach (Tile tile in tilesInRange)
         {
-            tile.controller.ShowAsTargetable();
+            tile.controller.ShowAsTargetable(IsTargetValid(tile));
         }
     }
 

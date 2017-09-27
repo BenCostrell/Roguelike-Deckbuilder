@@ -29,9 +29,15 @@ public abstract class MapObject
         currentTile = tile;
     }
 
-    public virtual void OnStep(Player player) { }
+    public virtual bool OnStep(Player player)
+    {
+        return false;
+    }
 
-    public virtual void OnStep(Monster monster) { }
+    public virtual bool OnStep(Monster monster)
+    {
+        return false;
+    }
 
     protected void RemoveThis()
     {

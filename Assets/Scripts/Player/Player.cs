@@ -60,6 +60,7 @@ public class Player {
     public bool hasKey { get; private set; }
     private bool movementLocked;
     private int movementLockID;
+    public MovementCard movementCardSelected;
 
     public void Initialize(Tile tile, MainTransitionData data)
     {
@@ -144,14 +145,15 @@ public class Player {
         Services.UIManager.UpdateDiscardCounter(discardPile.Count);
     }
 
-    public void PlaceOnTile(Tile tile, bool end)
+    public bool PlaceOnTile(Tile tile, bool end)
     {
+        bool stopped = false;
         controller.PlaceOnTile(tile);
         currentTile = tile;
         ShowAvailableMoves();
         if (tile.containedMapObject != null)
         {
-            tile.containedMapObject.OnStep(this);
+            stopped = tile.containedMapObject.OnStep(this);
         }
         if (end)
         {
@@ -164,12 +166,13 @@ public class Player {
                 PickUpKey(currentTile);
             }
         }
+        return stopped;
     }
 
-    public bool CanMoveAlongPath(List<Tile> path)
+    public bool CanMoveAlongPath(List<Tile> path, MovementCard movementCard)
     {
-        if (path.Count <= movesAvailable && !movementLocked) return true;
-        else return false;
+        return ((path.Count <= movesAvailable && !movementLocked) ||
+                movementCard != null && movementCard.range >= path.Count);
     }
 
     public void MoveToTile(Tile tile)
@@ -177,7 +180,7 @@ public class Player {
         if (!tile.IsImpassable())
         {
             List<Tile> shortestPath = GetShortestPath(tile);
-            if (CanMoveAlongPath(shortestPath))
+            if (CanMoveAlongPath(shortestPath, null))
             {
                 movesAvailable -= MovementCost(shortestPath);
                 HideAvailableMoves();
@@ -225,10 +228,10 @@ public class Player {
 
     public void OnTileHover(Tile hoveredTile)
     {
-        if (!targeting && !moving && !hoveredTile.IsImpassable())
+        if ((!targeting || movementCardSelected != null) && !moving && !hoveredTile.IsImpassable())
         {
             List<Tile> pathToTile = GetShortestPath(hoveredTile);
-            if (CanMoveAlongPath(pathToTile))
+            if (CanMoveAlongPath(pathToTile, movementCardSelected))
             {
                 controller.ShowPathArrow(pathToTile);
             }
@@ -280,13 +283,6 @@ public class Player {
 
     public TaskTree OnTurnEnd()
     {
-        //if(hand.Count > 0)
-        //{
-        //    for (int i = hand.Count - 1; i >= 0; i--)
-        //    {
-        //        DiscardCardFromHand(hand[i]);
-        //    }
-        //}
         if(cardsInPlay.Count > 0)
         {
             for (int i = cardsInPlay.Count - 1; i >= 0; i--)
