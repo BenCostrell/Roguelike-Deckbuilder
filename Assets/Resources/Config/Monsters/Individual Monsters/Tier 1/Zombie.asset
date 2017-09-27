@@ -17,4 +17,4 @@ MonoBehaviour:
   startingHealth: 2
   attackRange: 1
   attackDamage: 1
-  movementSpeed: 2
+  movementSpeed: 1

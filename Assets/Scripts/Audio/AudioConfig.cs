@@ -15,4 +15,12 @@ public class AudioConfig : ScriptableObject {
     [SerializeField]
     private AudioClip monsterHitAudio;
     public AudioClip MonsterHitAudio { get { return monsterHitAudio; } }
+
+    [SerializeField]
+    private AudioClip mainTrack;
+    public AudioClip MainTrack { get { return mainTrack; } }
+
+    [SerializeField]
+    private float musicFadeInTime;
+    public float MusicFadeInTime { get { return musicFadeInTime; } }
 }

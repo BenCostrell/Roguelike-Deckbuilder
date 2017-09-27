@@ -14,3 +14,5 @@ MonoBehaviour:
   cardDrawAudio: {fileID: 8300000, guid: 8ba72610aab37dd419bd323efcbe1d1b, type: 3}
   cardPlayAudio: {fileID: 8300000, guid: e33b06ea3ea67444e9c7a85522d7ddd2, type: 3}
   monsterHitAudio: {fileID: 8300000, guid: 1c50792a26aa47942b9bf01e8c8f90a3, type: 3}
+  mainTrack: {fileID: 8300000, guid: 0268e083b56303844bee573fe8ed87b6, type: 3}
+  musicFadeInTime: 0.6

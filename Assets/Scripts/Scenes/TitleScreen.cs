@@ -14,6 +14,11 @@ public class TitleScreen : Scene<MainTransitionData> {
 		
 	}
 
+    internal override void OnEnter(MainTransitionData data)
+    {
+        Services.SoundManager.SetMusicVolume(0.02f);
+    }
+
     void StartGame(ButtonPressed e)
     {
         Services.EventManager.Unregister<ButtonPressed>(StartGame);

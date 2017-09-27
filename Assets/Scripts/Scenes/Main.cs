@@ -30,6 +30,7 @@ public class Main : Scene<MainTransitionData> {
         Services.MapManager.GenerateLevel(levelNum);
         dungeonDeck = new DungeonDeck(data.dungeonDeck);
         Services.GameManager.player.Initialize(Services.MapManager.playerSpawnTile, data);
+        Services.SoundManager.SetMusicVolume(0.1f);
     }
 
     private void Update()

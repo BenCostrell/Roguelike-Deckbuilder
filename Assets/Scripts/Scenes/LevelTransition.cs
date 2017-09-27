@@ -38,6 +38,7 @@ public class LevelTransition : Scene<MainTransitionData> {
     {
         data = data_;
         InitializeScene();
+        Services.SoundManager.SetMusicVolume(0.05f);
         for (int i = 0; i < data.deck.Count; i++)
         {
             data.deck[i].CreatePhysicalCard(transform);

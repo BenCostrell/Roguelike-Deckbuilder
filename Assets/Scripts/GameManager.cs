@@ -16,6 +16,7 @@ public class GameManager : MonoBehaviour
     void Awake()
     {
         InitializeServices();
+        Services.SoundManager.PlayMusic(Services.AudioConfig.MainTrack, 0f);
     }
 
     // Use this for initialization
