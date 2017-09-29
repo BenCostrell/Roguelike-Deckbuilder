@@ -5,7 +5,6 @@ using System;
 public class ObjectPlacementCard : TileTargetedCard
 {
     protected MapObject.ObjectType objectTypeToPlace;
-
     protected override void InitValues()
     {
         base.InitValues();

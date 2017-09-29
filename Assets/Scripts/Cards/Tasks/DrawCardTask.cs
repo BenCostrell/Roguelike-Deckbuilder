@@ -39,6 +39,7 @@ public class DrawCardTask : Task
             rawDiff = Services.UIManager.deckZone.transform.position -
                 Services.UIManager.handZone.transform.position;
             card.CreatePhysicalCard(Services.UIManager.handZone.transform);
+            card.Disable();
         }
         else
         {
@@ -92,7 +93,6 @@ public class DrawCardTask : Task
         card.Reposition(targetPos, true);
         if (playerDeck)
         {
-            card.Enable();
             Services.GameManager.player.cardsInFlux.Remove(card);
             Services.GameManager.player.hand.Add(card);
         }

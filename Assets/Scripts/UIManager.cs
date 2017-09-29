@@ -75,9 +75,9 @@ public class UIManager : MonoBehaviour {
             return nextLockID_;
         }
     }
-    private int endTurnLockID;
+    private List<int> endTurnLockIDs;
     private bool endTurnLocked;
-    private int playAllLockID;
+    private List<int> playAllLockIDs;
     private bool playAllLocked;
 
     // Use this for initialization
@@ -110,6 +110,9 @@ public class UIManager : MonoBehaviour {
 
         endTurnButton = endTurnButtonObj.GetComponent<Button>();
         playAllButton = playAllButtonObj.GetComponent<Button>();
+
+        endTurnLockIDs = new List<int>();
+        playAllLockIDs = new List<int>();
     }
 
     public void UpdateDeckCounter(int cardsInDeck)
@@ -196,20 +199,22 @@ public class UIManager : MonoBehaviour {
 
     public void DisableEndTurn(int lockID)
     {
-        if (!endTurnLocked)
-        {
-            endTurnLocked = true;
-            endTurnLockID = lockID;
-            endTurnButton.enabled = false;
-        }
+        endTurnLocked = true;
+        endTurnLockIDs.Add(lockID);
+        endTurnButton.enabled = false;
+        
     }
 
     public void EnableEndTurn(int lockID)
     {
-        if (lockID == endTurnLockID && endTurnLocked)
+        if (endTurnLockIDs.Contains(lockID))
         {
-            endTurnLocked = false;
-            endTurnButton.enabled = true;
+            endTurnLockIDs.Remove(lockID);
+            if (endTurnLockIDs.Count == 0)
+            {
+                endTurnLocked = false;
+                endTurnButton.enabled = true;
+            }
         }
     }
 
@@ -217,30 +222,34 @@ public class UIManager : MonoBehaviour {
     {
         endTurnLocked = false;
         endTurnButton.enabled = true;
+        endTurnLockIDs = new List<int>();
     }
 
     public void DisablePlayAll(int lockID)
     {
-        if (!playAllLocked)
-        {
-            playAllLocked = true;
-            playAllLockID = lockID;
-            playAllButton.enabled = false;
-        }
+        playAllLocked = true;
+        playAllLockIDs.Add(lockID);
+        playAllButton.enabled = false;
     }
 
-    public void EnablePlayAll(int lockID)
+    public bool EnablePlayAll(int lockID)
     {
-        if (lockID == playAllLockID && playAllLocked)
+        if (playAllLockIDs.Contains(lockID))
         {
-            playAllLocked = false;
-            playAllButton.enabled = true;
+            playAllLockIDs.Remove(lockID);
+            if (playAllLockIDs.Count == 0)
+            {
+                playAllLocked = false;
+                playAllButton.enabled = true;
+            }
         }
+        return playAllLocked;
     }
 
     public void ForceUnlockPlayAll()
     {
         playAllLocked = false;
         playAllButton.enabled = true;
+        playAllLockIDs = new List<int>();
     }
 }

@@ -38,18 +38,12 @@ public abstract class Monster {
         GameObject.Destroy(controller.gameObject);
     }
 
-    public bool PlaceOnTile(Tile tile)
+    public void PlaceOnTile(Tile tile)
     {
-        bool stopped = false;
         if (currentTile != null) currentTile.containedMonster = null;
         currentTile = tile;
         tile.containedMonster = this;
         controller.PlaceOnTile(tile);
-        if(tile.containedMapObject != null)
-        {
-            stopped = tile.containedMapObject.OnStep(this);
-        }
-        return stopped;
     }
 
     protected void InitValues()

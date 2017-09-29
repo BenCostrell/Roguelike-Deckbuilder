@@ -59,12 +59,15 @@ public class Player {
     }
     public bool hasKey { get; private set; }
     private bool movementLocked;
-    private int movementLockID;
+    private List<int> movementLockIDs;
+    private List<int> handLockIDs;
     public MovementCard movementCardSelected;
 
     public void Initialize(Tile tile, MainTransitionData data)
     {
         hasKey = false;
+        movementLockIDs = new List<int>();
+        handLockIDs = new List<int>();
         InitializeSprite(tile);
         InitializeDeck(data.deck);
         Services.Main.taskManager.AddTask(DrawCards(5));
@@ -299,31 +302,37 @@ public class Player {
     public void DisableCardsWhileTargeting(int lockID)
     {
         targeting = true;
-        DisableHand(lockID);
+        LockEverything(lockID);
     }
 
     public void DisableHand(int lockID)
     {
+        handLockIDs.Add(lockID);
         for (int i = 0; i < hand.Count; i++)
         {
             hand[i].Disable();
         }
-        Services.UIManager.DisablePlayAll(lockID);
     }
 
     public void ReenableCardsWhenDoneTargeting(int lockID)
     {
         targeting = false;
-        ReenableHand(lockID);
+        UnlockEverything(lockID);
     }
 
     public void ReenableHand(int lockID)
     {
-        for (int i = 0; i < hand.Count; i++)
+        if (handLockIDs.Contains(lockID))
         {
-            hand[i].Enable();
+            handLockIDs.Remove(lockID);
+            if (handLockIDs.Count == 0)
+            {
+                for (int i = 0; i < hand.Count; i++)
+                {
+                    hand[i].Enable();
+                }
+            }
         }
-        Services.UIManager.EnablePlayAll(lockID);
     }
 
     public bool TakeDamage(int damage)
@@ -366,24 +375,23 @@ public class Player {
 
     public void LockMovement(int lockID)
     {
-        if (!movementLocked)
-        {
-            movementLocked = true;
-            movementLockID = lockID;
-        }
+        movementLocked = true;
+        movementLockIDs.Add(lockID);
     }
 
     public void UnlockMovement(int lockID)
     {
-        if(movementLocked && lockID == movementLockID)
+        if(movementLockIDs.Contains(lockID))
         {
-            movementLocked = false;
+            movementLockIDs.Remove(lockID);
+            if (movementLockIDs.Count == 0) movementLocked = false;
         }
     }
 
     void ForceUnlockMovement()
     {
         movementLocked = false;
+        movementLockIDs = new List<int>();
     }
 
     void ForceUnlockHand()

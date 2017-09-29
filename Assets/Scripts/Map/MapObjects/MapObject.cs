@@ -11,10 +11,12 @@ public abstract class MapObject
     protected MapObjectInfo info;
     protected GameObject physicalObject;
     protected Tile currentTile;
+    protected AudioClip onStepAudio;
 
     protected virtual void InitValues()
     {
         info = Services.MapObjectConfig.GetMapObjectOfType(objectType);
+        onStepAudio = info.OnStepAudio;
     }
 
     public void PlaceOnTile(Tile tile)
@@ -31,11 +33,13 @@ public abstract class MapObject
 
     public virtual bool OnStep(Player player)
     {
+        Services.SoundManager.CreateAndPlayAudio(onStepAudio);
         return false;
     }
 
     public virtual bool OnStep(Monster monster)
     {
+        Services.SoundManager.CreateAndPlayAudio(onStepAudio);
         return false;
     }
 

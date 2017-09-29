@@ -43,7 +43,7 @@ MonoBehaviour:
   handCardSpacing: {x: 1.8, y: 0, z: 0}
   inPlaySpacing: {x: 1, y: 0, z: -2}
   onHoverScaleUp: 2
-  onHoverOffset: {x: 0, y: 2.5, z: -2}
+  onHoverOffset: {x: 0, y: 3.1, z: -2}
   onHoverOffsetDeckViewMode: {x: 0, y: 0, z: -100}
   onHoverOffsetChestMode: {x: 0, y: 0, z: -2}
   cardPlayThresholdYPos: 3.5

@@ -15,6 +15,7 @@ public abstract class Trap : MapObject
 
     public override bool OnStep(Player player)
     {
+        base.OnStep(player);
         player.TakeDamage(damage);
         RemoveThis();
         return true;
@@ -22,6 +23,7 @@ public abstract class Trap : MapObject
 
     public override bool OnStep(Monster monster)
     {
+        base.OnStep(monster);
         monster.TakeDamage(damage);
         RemoveThis();
         return true;
