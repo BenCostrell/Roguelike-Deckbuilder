@@ -98,12 +98,21 @@ public class MoveObjectAlongPath : Task
         if (isMonster)
         {
             if (!monster.markedForDeath) monster.PlaceOnTile(finalTile);
+            if(finalTile.containedMapObject != null)
+            {
+                finalTile.containedMapObject.OnStep(monster);
+            }
             monster.targetTile = null;
         }
         else
         {
             player.PlaceOnTile(finalTile, true);
             player.moving = false;
+            if (finalTile.containedMapObject != null)
+            {
+                stopped = finalTile.containedMapObject.OnStep(player);
+                if (stopped) player.movesAvailable = 0;
+            }
             if (finalTile.hovered) player.OnTileHover(finalTile);
             if (finalTile.isExit && player.hasKey) Services.Main.ExitLevel();
         }

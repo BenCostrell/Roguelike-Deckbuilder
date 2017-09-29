@@ -61,20 +61,22 @@ public class Player {
     private bool movementLocked;
     private List<int> movementLockIDs;
     private List<int> handLockIDs;
-    public MovementCard movementCardSelected;
+    private List<int> nonMovementLockIDs;
+    public List<MovementCard> movementCardsSelected = new List<MovementCard>();
 
     public void Initialize(Tile tile, MainTransitionData data)
     {
         hasKey = false;
         movementLockIDs = new List<int>();
         handLockIDs = new List<int>();
+        nonMovementLockIDs = new List<int>();
         InitializeSprite(tile);
         InitializeDeck(data.deck);
+        ForceUnlockEverything();
         Services.Main.taskManager.AddTask(DrawCards(5));
         maxHealth = data.maxHealth;
         currentHealth = maxHealth;
         controller.UpdateHealthUI();
-        ForceUnlockEverything();
     }
 
     void InitializeSprite(Tile tile)
@@ -172,10 +174,9 @@ public class Player {
         return stopped;
     }
 
-    public bool CanMoveAlongPath(List<Tile> path, MovementCard movementCard)
+    public bool CanMoveAlongPath(List<Tile> path)
     {
-        return ((path.Count <= movesAvailable && !movementLocked) ||
-                movementCard != null && movementCard.range >= path.Count);
+        return ((path.Count <= movesAvailable && !movementLocked));
     }
 
     public void MoveToTile(Tile tile)
@@ -183,10 +184,21 @@ public class Player {
         if (!tile.IsImpassable())
         {
             List<Tile> shortestPath = GetShortestPath(tile);
-            if (CanMoveAlongPath(shortestPath, null))
+            if (CanMoveAlongPath(shortestPath))
             {
                 movesAvailable -= MovementCost(shortestPath);
                 HideAvailableMoves();
+                if(movementCardsSelected.Count != 0)
+                {
+                    TaskTree movementCardPlays = new TaskTree(new EmptyTask());
+                    foreach (MovementCard card in movementCardsSelected)
+                    {
+                        movementCardPlays.Then(PlayCard(card));
+                        card.OnMovementAct();
+                    }
+                    movementCardsSelected.Clear();
+                    Services.Main.taskManager.AddTask(movementCardPlays);
+                }
                 Services.Main.taskManager.AddTask(
                     new MoveObjectAlongPath(controller.gameObject, shortestPath));
             }
@@ -231,10 +243,10 @@ public class Player {
 
     public void OnTileHover(Tile hoveredTile)
     {
-        if ((!targeting || movementCardSelected != null) && !moving && !hoveredTile.IsImpassable())
+        if ((!targeting || movementCardsSelected != null) && !moving && !hoveredTile.IsImpassable())
         {
             List<Tile> pathToTile = GetShortestPath(hoveredTile);
-            if (CanMoveAlongPath(pathToTile, movementCardSelected))
+            if (CanMoveAlongPath(pathToTile))
             {
                 controller.ShowPathArrow(pathToTile);
             }
@@ -391,7 +403,7 @@ public class Player {
     void ForceUnlockMovement()
     {
         movementLocked = false;
-        movementLockIDs = new List<int>();
+        movementLockIDs.Clear();
     }
 
     void ForceUnlockHand()
@@ -400,6 +412,8 @@ public class Player {
         {
             hand[i].Enable();
         }
+        nonMovementLockIDs.Clear();
+        handLockIDs.Clear();
     }
 
     public void LockEverything(int lockID)
@@ -429,5 +443,30 @@ public class Player {
     public void Heal(int amountHealed)
     {
         currentHealth = Mathf.Min(maxHealth, currentHealth + amountHealed);
+    }
+
+    public void DisableNonMovementCards(int lockID)
+    {
+        nonMovementLockIDs.Add(lockID);
+        for (int i = 0; i < hand.Count; i++)
+        {
+            if (!(hand[i] is MovementCard))
+            {
+                hand[i].Disable();
+            }
+        }
+
+    }
+
+    public void EnableNonMovementCards(int lockID)
+    {
+        nonMovementLockIDs.Remove(lockID);
+        if(nonMovementLockIDs.Count == 0)
+        {
+            for (int i = 0; i < hand.Count; i++)
+            {
+                hand[i].Enable();
+            }
+        }
     }
 }

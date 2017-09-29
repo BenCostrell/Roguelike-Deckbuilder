@@ -2,50 +2,35 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class MovementCard : TileTargetedCard
+public class MovementCard : Card 
 {
+    public int range;
+    protected int lockId;
+
     public override bool CanPlay()
     {
         return AStarSearch.FindAllAvailableGoals(
             Services.GameManager.player.currentTile, range, false).Count > 0;
     }
 
-    public override bool IsTargetValid(Tile tile)
-    {
-        return (!tile.IsImpassable() &&
-            AStarSearch.FindAllAvailableGoals(Services.GameManager.player.currentTile, range, false)
-            .Contains(tile));
-    }
-
-    public override void OnTargetSelected(Tile tile)
-    {
-        base.OnTargetSelected(tile);
-        Services.GameManager.player.movesAvailable += range;
-        Services.GameManager.player.MoveToTile(tile);
-    }
-
     public override void OnSelect()
     {
-        List<Tile> tilesInRange =
-            AStarSearch.FindAllAvailableGoals(Services.GameManager.player.currentTile,
-            range, false);
-        foreach (Tile tile in tilesInRange)
-        {
-            tile.controller.ShowAsTargetable(true);
-        }
-        Services.GameManager.player.movementCardSelected = this;
+        Services.GameManager.player.movementCardsSelected.Add(this);
+        Services.GameManager.player.movesAvailable += range;
+        lockId = Services.UIManager.nextLockID;
+        Services.GameManager.player.DisableNonMovementCards(lockId);
     }
 
     public override void OnUnselect()
     {
-        Services.GameManager.player.movementCardSelected = null;
-        List<Tile> tilesInRange =
-            AStarSearch.FindAllAvailableGoals(Services.GameManager.player.currentTile,
-            range, false);
-        foreach (Tile tile in tilesInRange)
-        {
-            tile.controller.ShowAsUntargetable();
-        }
-        Services.GameManager.player.ShowAvailableMoves();
+        Services.GameManager.player.movementCardsSelected.Remove(this);
+        Services.GameManager.player.movesAvailable -= range;
+        Services.GameManager.player.EnableNonMovementCards(lockId);
+    }
+
+    public void OnMovementAct()
+    {
+        controller.selected = false;
+        CardController.currentlySelectedCards.Remove(this);
     }
 }

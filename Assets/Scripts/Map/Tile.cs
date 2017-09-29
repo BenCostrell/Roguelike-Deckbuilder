@@ -51,9 +51,12 @@ public class Tile
 
     public void OnSelect()
     {
-        if (this != Services.GameManager.player.currentTile && 
-            CardController.currentlySelectedCard == null)
+        if (this != Services.GameManager.player.currentTile &&
+            ((CardController.currentlySelectedCards.Count == 0) ||
+            Services.GameManager.player.movementCardsSelected.Count != 0))
+        {
             Services.GameManager.player.MoveToTile(this);
+        }
         Services.EventManager.Fire(new TileSelected(this));
     }
 

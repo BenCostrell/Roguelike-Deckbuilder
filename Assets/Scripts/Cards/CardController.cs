@@ -29,8 +29,8 @@ public class CardController : MonoBehaviour
     private Vector3 mouseRelativePos;
     private BoxCollider2D[] colliders;
     public TrashController overTrash;
-    private bool selected;
-    public static Card currentlySelectedCard;
+    public bool selected;
+    public static List<Card> currentlySelectedCards = new List<Card>();
     private bool inDiscardZone;
     private bool selectedLastFrame;
 
@@ -58,7 +58,7 @@ public class CardController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (selected)
+        if (selected && (!(card is MovementCard)|| card.deckViewMode))
         {
             Drag();
             if (Input.GetMouseButtonDown(0) && selectedLastFrame) PlaceCard();
@@ -80,13 +80,15 @@ public class CardController : MonoBehaviour
 
     private void OnMouseEnter()
     {
-        if (currentlySelectedCard == null && !Input.GetMouseButton(0))
+        if (((currentlySelectedCards.Count == 0) ||
+            (Services.GameManager.player.movementCardsSelected.Count != 0)) && 
+            !Input.GetMouseButton(0))
         {
-            if (card.playable)
+            if (card.playable && !selected)
             {
                 transform.localScale = Services.CardConfig.OnHoverScaleUp * baseScale;
                 Reposition(basePos + Services.CardConfig.OnHoverOffset, false);
-                card.OnSelect();
+                if(!(card is MovementCard)) card.OnSelect();
             }
             if (card.deckViewMode && overTrash == null)
             {
@@ -110,24 +112,22 @@ public class CardController : MonoBehaviour
 
     private void OnMouseExit()
     {
-        if (currentlySelectedCard == null)
+        if (!selected)
         {
-            if (!selected)
+            if (card.playable && !Input.GetMouseButton(0) || card.chest != null)
             {
-                if (card.playable && !Input.GetMouseButton(0) || card.chest != null)
-                {
-                    DisplayAtBasePos();
-                    card.OnUnselect();
-                }
-                if (card.deckViewMode && overTrash == null)
-                {
-                    DisplayInDeckViewMode();
-                }
-                if (Services.GameManager.player.selectingCards)
-                {
-                    OnHoverExitForCardSelection();
-                }
+                DisplayAtBasePos();
+                if(!(card is MovementCard)) card.OnUnselect();
             }
+            if (card.deckViewMode && overTrash == null)
+            {
+                DisplayInDeckViewMode();
+            }
+            if (Services.GameManager.player.selectingCards)
+            {
+                OnHoverExitForCardSelection();
+            }
+
         }
     }
 
@@ -139,23 +139,39 @@ public class CardController : MonoBehaviour
         else if (!selected)
         {
             selected = true;
-            currentlySelectedCard = card;
+            currentlySelectedCards.Add(card);
             Vector3 mousePos =
                 Services.GameManager.currentCamera.ScreenToWorldPoint(Input.mousePosition);
             mouseRelativePos = new Vector3(
                 mousePos.x - transform.localPosition.x,
                 mousePos.y - transform.localPosition.y,
                 0);
-            if (card.playable)
+            if (!card.deckViewMode)
             {
-                card.OnSelect();
+                if (card is MovementCard && card.playable)
+                {
+                    color = (Color.blue + Color.white) / 2;
+                    transform.localScale = baseScale * 1.1f;
+                    Reposition(basePos + Services.CardConfig.OnHoverOffset, false);
+                }
+                if (card.playable)
+                {
+                    card.OnSelect();
+                }
+                if (card.chest != null)
+                {
+                    card.chest.OnCardPicked(card);
+                    selected = false;
+                    currentlySelectedCards.Remove(card);
+                }
             }
-            if (card.chest != null)
-            {
-                card.chest.OnCardPicked(card);
-                selected = false;
-                currentlySelectedCard = null;
-            }
+        }
+        else if (card is MovementCard && !card.deckViewMode)
+        {
+            DisplayAtBasePos();
+            card.OnUnselect();
+            currentlySelectedCards.Remove(card);
+            selected = false;
         }
     }
 
@@ -243,7 +259,7 @@ public class CardController : MonoBehaviour
     void PlaceCard()
     {
         selected = false;
-        currentlySelectedCard = null;
+        currentlySelectedCards.Remove(card);
         if (card.deckViewMode)
         {
             if (overTrash != null) overTrash.PlaceCardInTrash(card);
@@ -296,19 +312,6 @@ public class CardController : MonoBehaviour
         Reposition(basePos, false);
     }
 
-    public void DisplayCardOnBoard()
-    {
-        card.Disable();
-        sr.enabled = false;
-        foreach(TextMesh mesh in textMeshes)
-        {
-            mesh.gameObject.SetActive(false);
-        }
-        transform.localScale = baseScale;
-        Reposition(basePos, false);
-        colliders[0].enabled = false;
-    }
-
     public void UnselectedForCard()
     {
         color = prevColor;
@@ -348,7 +351,7 @@ public class CardController : MonoBehaviour
             DisplayAtBasePos();
         }
         selected = false;
-        currentlySelectedCard = null;
+        currentlySelectedCards.Remove(card);
         Services.EventManager.Unregister<TileSelected>(OnTileSelected);
     }
 }
