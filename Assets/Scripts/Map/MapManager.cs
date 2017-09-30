@@ -506,23 +506,35 @@ public class MapManager : MonoBehaviour {
             {
                 Room referenceRoom = 
                     otherRooms[Random.Range(0, otherRooms.Count)];
+                int distance = Random.Range(minRoomDist, maxRoomDist + 1);
                 int distanceX = Random.Range(
-                    minRoomDist + dimensions.x / 2,
-                    maxRoomDist / 2 + dimensions.x / 2);
-                int distanceY = Random.Range(
-                    minRoomDist + dimensions.y / 2,
-                    maxRoomDist / 2 + dimensions.y / 2);
-                if (Random.Range(0, 2) == 0) distanceX *= -1;
-                if (Random.Range(0, 2) == 0) distanceY *= -1;
+                    dimensions.x / 2,
+                    distance + dimensions.x / 2);
+                int distanceY = distance - (distanceX - dimensions.x/2) + dimensions.y/2;
+                int offsetX = referenceRoom.dimensions.x / 2;
+                int offsetY = referenceRoom.dimensions.y / 2;
+                if (Random.Range(0, 2) == 0)
+                {
+                    distanceX *= -1;
+                    offsetX *= -1;
+                }
+                if (Random.Range(0, 2) == 0)
+                {
+                    distanceY *= -1;
+                    offsetY *= -1;
+                }
                 coord = new Coord(
-                    referenceRoom.CenterCoord.x + (referenceRoom.dimensions.x / 2) + distanceX,
-                    referenceRoom.CenterCoord.y + (referenceRoom.dimensions.y / 2) + distanceY);
+                    referenceRoom.CenterCoord.x + offsetX + distanceX,
+                    referenceRoom.CenterCoord.y + offsetY + distanceY);
             }
             
             room = new Room(coord, dimensions);
             //Debug.Log("trying room of size " + room.dimensions.x + "," + room.dimensions.y +
             //    " at " + room.origin.x + "," + room.origin.y);
-            if (IsRoomValid(room, otherRooms)) return room;
+            if (IsRoomValid(room, otherRooms))
+            {
+                return room;
+            }
         }
         return null;
     }

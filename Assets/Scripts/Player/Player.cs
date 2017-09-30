@@ -191,12 +191,12 @@ public class Player {
                 if(movementCardsSelected.Count != 0)
                 {
                     TaskTree movementCardPlays = new TaskTree(new EmptyTask());
-                    foreach (MovementCard card in movementCardsSelected)
+                    for (int i = movementCardsSelected.Count - 1; i >= 0; i--)
                     {
+                        MovementCard card = movementCardsSelected[i];
                         movementCardPlays.Then(PlayCard(card));
                         card.OnMovementAct();
                     }
-                    movementCardsSelected.Clear();
                     Services.Main.taskManager.AddTask(movementCardPlays);
                 }
                 Services.Main.taskManager.AddTask(

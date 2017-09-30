@@ -32,5 +32,6 @@ public class MovementCard : Card
     {
         controller.selected = false;
         CardController.currentlySelectedCards.Remove(this);
+        OnUnselect();
     }
 }

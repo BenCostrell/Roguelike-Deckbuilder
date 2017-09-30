@@ -2351,11 +2351,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   minRoomDimension: 5
-  maxRoomDimension: 10
-  levelOneRoomDimension: 9
+  maxRoomDimension: 8
+  levelOneRoomDimension: 8
   hallwayWidth: 2
-  minRoomDist: 5
-  maxRoomDist: 15
+  minRoomDist: 3
+  maxRoomDist: 5
   baseRooms: 0
   roomsPerLevel: 1
   proportionOfEdgesToReAdd: 0.2
