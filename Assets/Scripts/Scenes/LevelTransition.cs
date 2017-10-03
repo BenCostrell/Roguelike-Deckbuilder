@@ -159,4 +159,13 @@ public class LevelTransition : Scene<MainTransitionData> {
     {
         playerUIHPCounter.GetComponent<Text>().text = data.maxHealth + "/" + data.maxHealth;
     }
+
+    public void EditDeck()
+    {
+        for (int i = 0; i < data.deck.Count; i++)
+        {
+            data.deck[i].deckViewMode = false;
+        } 
+        Services.SceneStackManager.Swap<DeckConstruction>(data);
+    }
 }

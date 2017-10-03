@@ -23,15 +23,20 @@ public class MovementCard : Card
 
     public override void OnUnselect()
     {
-        Services.GameManager.player.movementCardsSelected.Remove(this);
+        CleanupUnselection();
         Services.GameManager.player.movesAvailable -= range;
-        Services.GameManager.player.EnableNonMovementCards(lockId);
     }
 
     public void OnMovementAct()
     {
         controller.selected = false;
         CardController.currentlySelectedCards.Remove(this);
-        OnUnselect();
+        CleanupUnselection();
+    }
+
+    void CleanupUnselection()
+    {
+        Services.GameManager.player.movementCardsSelected.Remove(this);
+        Services.GameManager.player.EnableNonMovementCards(lockId);
     }
 }

@@ -35,4 +35,8 @@ public class PrefabDB : ScriptableObject {
     [SerializeField]
     private GameObject chest;
     public GameObject Chest { get { return chest; } }
+
+    [SerializeField]
+    private GameObject cardCounter;
+    public GameObject CardCounter { get { return cardCounter; } }
 }

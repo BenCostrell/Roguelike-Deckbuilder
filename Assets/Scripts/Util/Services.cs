@@ -18,4 +18,5 @@ public static class Services {
     public static SoundManager SoundManager { get; set; }
     public static AudioConfig AudioConfig { get; set; }
     public static MapObjectConfig MapObjectConfig { get; set; }
+    public static DeckConstruction DeckConstruction { get; set; }
 }

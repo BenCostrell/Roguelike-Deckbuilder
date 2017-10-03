@@ -16,6 +16,7 @@ MonoBehaviour:
   - {fileID: 1769207381073088, guid: 3e64be3a118b7d2488facd7f98dcca57, type: 2}
   - {fileID: 1858779636021200, guid: 66aa4335767392c409182ce05110d90d, type: 2}
   - {fileID: 1678201852669964, guid: 24ae5b06045ba314497c33d0faf38eb5, type: 2}
+  - {fileID: 1301945173051606, guid: f877f4095a340e841a8fd9b77a8d22d3, type: 2}
   tile: {fileID: 1418186617509754, guid: 0ac33e504a8d3ae4ba53680c23f7544a, type: 2}
   card: {fileID: 1307522234372050, guid: c12b03564c4656d4e92599da3a795dce, type: 2}
   monster: {fileID: 1739216198130446, guid: 84128e5663257b942904e4b4a4763635, type: 2}
@@ -23,3 +24,5 @@ MonoBehaviour:
     type: 2}
   key: {fileID: 1135521771267632, guid: 00c5870ee1cf26a40b04b8c4ecd6a305, type: 2}
   chest: {fileID: 1238464452850584, guid: 327cf51bc4981d641b6ec5467f640f42, type: 2}
+  cardCounter: {fileID: 1407150868345090, guid: 7906bb13b8317f94a8835d466d2a2a7b,
+    type: 2}

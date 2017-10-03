@@ -267,22 +267,17 @@ public class Player {
         return new PlayCardTask(card);
     }
 
-    public TaskTree PlayAll()
+    public void PlayAll()
     {
-        int lockID = Services.UIManager.nextLockID;
-        TaskTree playAllTree = new TaskTree(new ParameterizedActionTask<int>(LockEverything,
-            lockID));
         for (int i = hand.Count - 1; i >= 0; i--)
         {
             if (hand[i] is MovementCard)
             {
                 MovementCard movementCard = hand[i] as MovementCard;
-                playAllTree.Then(PlayCard(hand[i]));
-                playAllTree.Then(new ParameterizedActionTask<int>(AddMovement, movementCard.range));
+                if (!movementCardsSelected.Contains(movementCard))
+                    movementCard.controller.SelectCard();
             }
         }
-        playAllTree.Then(new ParameterizedActionTask<int>(UnlockEverything, lockID));
-        return playAllTree;
     }
 
     void AddMovement(int moves)
@@ -364,6 +359,7 @@ public class Player {
         Services.SceneStackManager.Swap<LevelTransition>(new MainTransitionData(
             fullDeck,
             new List<Card>(),
+            Services.Main.collection,
             maxHealth,
             Services.Main.levelNum,
             true));

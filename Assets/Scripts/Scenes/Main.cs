@@ -12,6 +12,7 @@ public class Main : Scene<MainTransitionData> {
     public TaskManager taskManager { get; private set; }
     public int levelNum { get; private set; }
     public DungeonDeck dungeonDeck { get; private set; }
+    public List<Card> collection { get; private set; }
 
     private void Awake()
     {
@@ -29,6 +30,7 @@ public class Main : Scene<MainTransitionData> {
         levelNum = data.levelNum;
         Services.MapManager.GenerateLevel(levelNum);
         dungeonDeck = new DungeonDeck(data.dungeonDeck);
+        collection = data.collection;
         Services.GameManager.player.Initialize(Services.MapManager.playerSpawnTile, data);
         Services.SoundManager.SetMusicVolume(0.1f);
     }
@@ -67,12 +69,13 @@ public class Main : Scene<MainTransitionData> {
         Services.SceneStackManager.Swap<LevelTransition>(new MainTransitionData(
             Services.GameManager.player.fullDeck,
             new List<Card>(),
+            collection,
             Services.GameManager.player.maxHealth + 1,
             levelNum + 1, false));
     }
 
     public void PlayAll()
     {
-        taskManager.AddTask(Services.GameManager.player.PlayAll());
+        Services.GameManager.player.PlayAll();
     }
 }

@@ -6,7 +6,7 @@ public abstract class Card {
     public CardController controller { get; private set; }
     public CardInfo info { get; protected set; }
     public bool playable { get; private set; }
-    protected CardType cardType;
+    public CardType cardType { get; protected set; }
     public enum CardType
     {
         Step,
@@ -32,6 +32,7 @@ public abstract class Card {
     public Sprite sprite { get; protected set; }
     public Tile currentTile { get; private set; }
     public bool deckViewMode;
+    public bool collectionMode;
     public Chest chest;
 
     public void CreatePhysicalCard(Transform tform)
@@ -81,7 +82,7 @@ public abstract class Card {
     public void Disable()
     {
         playable = false;
-        if (!deckViewMode && controller.transform.parent != Services.UIManager.inPlayZone)
+        if (!collectionMode && !deckViewMode && controller.transform.parent != Services.UIManager.inPlayZone)
         {
             controller.color = Color.gray;
         }
