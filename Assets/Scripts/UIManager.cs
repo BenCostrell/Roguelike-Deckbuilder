@@ -5,66 +5,54 @@ using UnityEngine.UI;
 
 public class UIManager : MonoBehaviour {
 
-    public GameObject deckCounter;
+    public Text deckCounter;
     public GameObject deckZone;
     public GameObject inPlayZone;
     public GameObject handZone;
-    public GameObject discardCounter;
+    public Text discardCounter;
     public GameObject discardZone;
-    public GameObject dungeonDeckCounter;
+    public Text dungeonDeckCounter;
     public GameObject dungeonDeckZone;
-    public GameObject dungeonDiscardCounter;
+    public Text dungeonDiscardCounter;
     public GameObject dungeonDiscardZone;
     public GameObject dungeonPlayZone;
     [SerializeField]
-    private GameObject endTurnButtonObj;
     private Button endTurnButton;
     [SerializeField]
-    private GameObject playAllButtonObj;
     private Button playAllButton;
     [SerializeField]
     private GameObject unitUI;
     [SerializeField]
     private GameObject unitUIRemainingHealthObj;
     [SerializeField]
-    private GameObject unitUIRemainingHealthBody;
+    private RectTransform unitUIRemainingHealthBody;
     [SerializeField]
-    private GameObject unitUISpriteObj;
     private Image unitUISprite;
     [SerializeField]
-    private GameObject unitUIHealthContainer;
-    [SerializeField]
-    private GameObject unitUIHealthObj;
-    private Image unitUIHealth;
-    [SerializeField]
-    private GameObject unitUINameObj;
     private Text unitUIName;
     [SerializeField]
-    private GameObject unitUIHealthCounterObj;
     private Text unitUIHealthCounter;
     private Vector2 unitUIHealthBarBaseSize;
     [SerializeField]
-    private GameObject unitUIStatsObj;
     private Text unitUIStats;
     [SerializeField]
     private GameObject playerUI;
     [SerializeField]
     private GameObject playerUIRemainingHealthObj;
     [SerializeField]
-    private GameObject playerUIRemainingHealthBody;
+    private RectTransform playerUIRemainingHealthBody;
     [SerializeField]
-    private GameObject playerUISpriteObj;
     private Image playerUISprite;
     [SerializeField]
     private GameObject playerUIHealthContainer;
     [SerializeField]
-    private GameObject playerUIHealthObj;
-    private Image playerUIHealth;
-    [SerializeField]
-    private GameObject playerUIHealthCounterObj;
     private Text playerUIHealthCounter;
     [SerializeField]
-    private GameObject playerUIKeyIcon;
+    private Image playerUIKeyIcon;
+    [SerializeField]
+    private GameObject shieldIcon;
+    [SerializeField]
+    private Text shieldCounter;
     private Vector2 playerUIHealthBarBaseSize;
     private int nextLockID_;
     public int nextLockID
@@ -92,24 +80,12 @@ public class UIManager : MonoBehaviour {
     
     void InitUI()
     {
-        unitUISprite = unitUISpriteObj.GetComponent<Image>();
-        unitUIHealth = unitUIHealthObj.GetComponent<Image>();
-        unitUIHealthCounter = unitUIHealthCounterObj.GetComponent<Text>();
-        unitUIName = unitUINameObj.GetComponent<Text>();
         unitUI.SetActive(false);
-        unitUIHealthBarBaseSize = 
-            unitUIRemainingHealthBody.GetComponent<RectTransform>().sizeDelta;
-        unitUIStats = unitUIStatsObj.GetComponent<Text>();
+        unitUIHealthBarBaseSize = unitUIRemainingHealthBody.sizeDelta;
 
-        playerUISprite = playerUISpriteObj.GetComponent<Image>();
-        playerUIHealth = playerUIHealthObj.GetComponent<Image>();
-        playerUIHealthCounter = playerUIHealthCounterObj.GetComponent<Text>();
         playerUIHealthBarBaseSize = 
-            playerUIRemainingHealthBody.GetComponent<RectTransform>().sizeDelta;
-        playerUIKeyIcon.GetComponent<Image>().color = new Color(1, 1, 1, 0.125f);
-
-        endTurnButton = endTurnButtonObj.GetComponent<Button>();
-        playAllButton = playAllButtonObj.GetComponent<Button>();
+            playerUIRemainingHealthBody.sizeDelta;
+        playerUIKeyIcon.color = new Color(1, 1, 1, 0.125f);
 
         endTurnLockIDs = new List<int>();
         playAllLockIDs = new List<int>();
@@ -117,22 +93,22 @@ public class UIManager : MonoBehaviour {
 
     public void UpdateDeckCounter(int cardsInDeck)
     {
-        deckCounter.GetComponent<Text>().text = cardsInDeck.ToString();
+        deckCounter.text = cardsInDeck.ToString();
     }
 
     public void UpdateDungeonDeckCounter(int cardsInDeck)
     {
-        dungeonDeckCounter.GetComponent<Text>().text = cardsInDeck.ToString();
+        dungeonDeckCounter.text = cardsInDeck.ToString();
     }
 
     public void UpdateDiscardCounter(int cardsInDiscard)
     {
-        discardCounter.GetComponent<Text>().text = cardsInDiscard.ToString();
+        discardCounter.text = cardsInDiscard.ToString();
     }
 
     public void UpdateDungeonDiscardCounter(int cardsInDiscard)
     {
-        dungeonDiscardCounter.GetComponent<Text>().text = cardsInDiscard.ToString();
+        dungeonDiscardCounter.text = cardsInDiscard.ToString();
     }
 
     public void SortHand(List<Card> cardsInHand)
@@ -169,7 +145,7 @@ public class UIManager : MonoBehaviour {
         unitUIName.text = monster.info.Name;
         unitUIHealthCounter.text = monster.currentHealth + "/" + monster.maxHealth;
         unitUISprite.sprite = monster.info.Sprite;
-        unitUIRemainingHealthBody.GetComponent<RectTransform>().sizeDelta = new Vector2(
+        unitUIRemainingHealthBody.sizeDelta = new Vector2(
             unitUIHealthBarBaseSize.x * (float)monster.currentHealth / monster.maxHealth,
             unitUIHealthBarBaseSize.y);
         unitUIStats.text =
@@ -181,7 +157,7 @@ public class UIManager : MonoBehaviour {
     public void UpdatePlayerUI(int curHP, int maxHP)
     {
         playerUIHealthCounter.text = curHP + "/" + maxHP;
-        playerUIRemainingHealthBody.GetComponent<RectTransform>().sizeDelta = new Vector2(
+        playerUIRemainingHealthBody.sizeDelta = new Vector2(
             playerUIHealthBarBaseSize.x * (float)curHP / maxHP,
             playerUIHealthBarBaseSize.y);
         if (curHP == 0) playerUIRemainingHealthObj.SetActive(false);
@@ -189,7 +165,7 @@ public class UIManager : MonoBehaviour {
         playerUISprite.sprite = 
             Services.GameManager.player.controller.GetComponent<SpriteRenderer>().sprite;
         if (Services.GameManager.player.hasKey)
-            playerUIKeyIcon.GetComponent<Image>().color = Color.white;
+            playerUIKeyIcon.color = Color.white;
     }
 
     public void HideUnitUI()
@@ -251,5 +227,15 @@ public class UIManager : MonoBehaviour {
         playAllLocked = false;
         playAllButton.enabled = true;
         playAllLockIDs = new List<int>();
+    }
+
+    public void SetShieldUI(int shieldAmount)
+    {
+        if (shieldAmount == 0) shieldIcon.SetActive(false);
+        else
+        {
+            shieldIcon.SetActive(true);
+            shieldCounter.text = shieldAmount.ToString();
+        }
     }
 }

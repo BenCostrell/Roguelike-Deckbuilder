@@ -50,6 +50,7 @@ public class Main : Scene<MainTransitionData> {
 
     public void EndTurn()
     {
+        Services.GameManager.player.OnTurnEnd();
         int lockID = Services.UIManager.nextLockID;
         Services.GameManager.player.LockEverything(lockID);
         TaskTree endTurnTasks = new TaskTree(new EmptyTask());
@@ -57,7 +58,7 @@ public class Main : Scene<MainTransitionData> {
             .Then(Services.MonsterManager.MonstersMove())
             .Then(Services.MonsterManager.MonstersAttack())
             .Then(dungeonDeck.TakeDungeonTurn())
-            .Then(Services.GameManager.player.OnTurnEnd())
+            .Then(Services.GameManager.player.OnTurnStart())
             .Then(new ParameterizedActionTask<int>(
                 Services.GameManager.player.UnlockEverything, lockID));
 

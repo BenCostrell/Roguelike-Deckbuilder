@@ -29,6 +29,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 0aa80e472e2975249813adddbc24a98c, type: 2}
   - {fileID: 11400000, guid: 886a3f65389ce9a4098d1a4886c28cc9, type: 2}
   - {fileID: 11400000, guid: 52b0fe0bcceca5042b249450754ea2f8, type: 2}
+  - {fileID: 11400000, guid: 892f7c9919eb27d4b9b14f3d99019209, type: 2}
   startingDeck: []
   handCardSpacing: {x: 1.8, y: 0, z: 0}
   inPlaySpacing: {x: 1, y: 0, z: -2}

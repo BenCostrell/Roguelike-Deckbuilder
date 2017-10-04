@@ -1,30 +1,22 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class Bloodlust : Card
+public class Bloodlust : MovementCard
 {
     public Bloodlust()
     {
         cardType = CardType.Bloodlust;
         InitValues();
+        baseRange = 0;
     }
 
-    public override void OnPlay()
+    protected override int GetRange()
     {
-        base.OnPlay();
-        //TaskTree playTasks = Services.GameManager.player.DrawCards(1);
-        //playTasks.Then(new ActionTask(FinishResolution));
-        //Services.Main.taskManager.AddTask(playTasks);
-        Services.GameManager.player.movesAvailable += 1;
-        FinishResolution();
-
-    }
-
-    void FinishResolution()
-    {
-        foreach (Card card in Services.GameManager.player.hand)
+        int movementRange = 0;
+        foreach (Card card in player.hand)
         {
-            if (card is AttackCard) Services.GameManager.player.movesAvailable += 1;
+            if (card is AttackCard) movementRange += 1;
         }
+        return movementRange;
     }
 }

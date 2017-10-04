@@ -7,7 +7,7 @@ public class Run : MovementCard
     {
         cardType = CardType.Run;
         InitValues();
-        range = 2;
+        baseRange = 2;
     }
 
     public override void OnPlay()

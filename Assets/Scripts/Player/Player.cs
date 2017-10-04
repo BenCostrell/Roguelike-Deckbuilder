@@ -57,6 +57,16 @@ public class Player {
             Services.UIManager.UpdatePlayerUI(currentHealth, maxHealth);
         }
     }
+    private int shield_;
+    private int shield
+    {
+        get { return shield_; }
+        set
+        {
+            shield_ = value;
+            Services.UIManager.SetShieldUI(shield_);
+        }
+    }
     public bool hasKey { get; private set; }
     private bool movementLocked;
     private List<int> movementLockIDs;
@@ -77,6 +87,7 @@ public class Player {
         maxHealth = data.maxHealth;
         currentHealth = maxHealth;
         controller.UpdateHealthUI();
+        shield = 0;
     }
 
     void InitializeSprite(Tile tile)
@@ -291,9 +302,9 @@ public class Player {
         Services.UIManager.SortInPlayZone(cardsInPlay);
     }
 
-    public TaskTree OnTurnEnd()
+    public void OnTurnEnd()
     {
-        if(cardsInPlay.Count > 0)
+        if (cardsInPlay.Count > 0)
         {
             for (int i = cardsInPlay.Count - 1; i >= 0; i--)
             {
@@ -301,9 +312,16 @@ public class Player {
             }
         }
         movesAvailable = 0;
+    }
 
+    public TaskTree OnTurnStart()
+    {
         int cardsToDraw = Mathf.Max(0, 5 - hand.Count);
-        return DrawCards(cardsToDraw);
+
+        TaskTree startTurnTaskTree = 
+            new TaskTree(new ParameterizedActionTask<int>(SetShield, 0));
+        startTurnTaskTree.Then(DrawCards(cardsToDraw));
+        return startTurnTaskTree;
     }
 
     public void DisableCardsWhileTargeting(int lockID)
@@ -342,8 +360,15 @@ public class Player {
         }
     }
 
-    public bool TakeDamage(int damage)
+    public bool TakeDamage(int incomingDamage)
     {
+        int damage = incomingDamage;
+        if (shield > 0)
+        {
+            int shieldDamage = Mathf.Min(damage, shield);
+            shield -= shieldDamage;
+            damage -= shieldDamage;
+        }
         currentHealth = Mathf.Max(0, currentHealth - damage);
         controller.UpdateHealthUI();
         if (currentHealth == 0)
@@ -464,5 +489,15 @@ public class Player {
                 hand[i].Enable();
             }
         }
+    }
+
+    public void GainShield(int shieldAmount)
+    {
+        shield += shieldAmount;
+    }
+
+    void SetShield(int shieldValue)
+    {
+        shield = shieldValue;
     }
 }

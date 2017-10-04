@@ -8,11 +8,6 @@ public class Step : MovementCard {
     {
         cardType = CardType.Step;
         InitValues();
-        range = 1;
-    }
-
-    public override void OnPlay()
-    {
-        base.OnPlay();
+        baseRange = 1;
     }
 }

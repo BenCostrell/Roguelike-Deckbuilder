@@ -22,6 +22,7 @@ public abstract class Monster {
     public int attackDamage { get; protected set; }
     public bool markedForDeath { get; protected set; }
     public Tile targetTile;
+    protected Player player { get { return Services.GameManager.player; } }
 
     public void CreatePhysicalMonster(Tile tile)
     {
@@ -70,7 +71,7 @@ public abstract class Monster {
         currentTile.containedMonster = null;
         currentTile = null;
         markedForDeath = true;
-        Services.GameManager.player.ShowAvailableMoves();
+        player.ShowAvailableMoves();
         DeathAnimation deathAnim = new DeathAnimation(this);
         deathAnim.Then(new ActionTask(DestroyPhysicalMonster));
         Services.Main.taskManager.AddTask(deathAnim);
@@ -78,28 +79,27 @@ public abstract class Monster {
 
     public bool IsPlayerInRange()
     {
-        return Services.GameManager.player.currentTile.coord.Distance(currentTile.coord) <= attackRange ||
-            (targetTile != null && Services.GameManager.player.currentTile.coord.Distance(targetTile.coord) <= attackRange);
+        return player.currentTile.coord.Distance(currentTile.coord) <= attackRange ||
+            (targetTile != null && player.currentTile.coord.Distance(targetTile.coord) <= attackRange);
     }
 
     public virtual TaskTree AttackPlayer()
     {
         TaskTree attackTasks = new TaskTree(new AttackAnimation(controller.gameObject,
-            Services.GameManager.player.controller.gameObject));
+            player.controller.gameObject));
         attackTasks.Then(new ResolveHit(this));
         return attackTasks;
     }
 
     public virtual bool OnAttackHit()
     {
-        return Services.GameManager.player.TakeDamage(attackDamage);
+        return player.TakeDamage(attackDamage);
     }
 
     public virtual TaskTree Move()
     {
         List<Tile> shortestPathToPlayer =
-            AStarSearch.ShortestPath(currentTile,
-            Services.GameManager.player.currentTile, false);
+            AStarSearch.ShortestPath(currentTile, player.currentTile, false);
         List<Tile> pathToMoveAlong = new List<Tile>();
         int movesLeft = movementSpeed;
         for (int i = shortestPathToPlayer.Count - 1; i >= 1; i--)

@@ -10,8 +10,8 @@ public class MainTransitionData : TransitionData
     public int maxHealth;
     public int levelNum;
     public bool gameOver;
-    public int minDeckSize { get { return levelNum + 9; } }
-    public int maxDeckSize { get { return levelNum + 9; } }
+    public int minDeckSize { get { return Mathf.Min(20, levelNum + 9); } }
+    public int maxDeckSize { get { return Mathf.Min(20, levelNum + 9); } }
 
     public MainTransitionData(List<Card> deck_, List<Card> dungeonDeck_, 
         List<Card> collection_, int maxHealth_, int levelNum_, bool gameOver_)

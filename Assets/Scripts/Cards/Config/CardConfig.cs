@@ -143,6 +143,8 @@ public class CardConfig : ScriptableObject
                 return new Blank();
             case Card.CardType.SpikeTrap:
                 return new SpikeTrapCard();
+            case Card.CardType.Shield:
+                return new Shield();
             default:
                 return null;
         }

@@ -12,6 +12,6 @@ public class HitAndRun : AttackCard
     protected override void OnHit(Monster monster)
     {
         base.OnHit(monster);
-        Services.GameManager.player.movesAvailable += 1;
+        player.movesAvailable += 1;
     }
 }

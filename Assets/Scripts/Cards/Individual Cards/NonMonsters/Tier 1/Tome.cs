@@ -18,19 +18,19 @@ public class Tome : CardSelectionCard
 
     public override bool IsSelectionValid(Card card)
     {
-        return Services.GameManager.player.hand.Contains(card);
+        return player.hand.Contains(card);
     }
 
     public override TaskTree PreCardSelectionActions()
     {
-        return Services.GameManager.player.DrawCards(2);
+        return player.DrawCards(2);
     }
 
     public override void OnSelectionComplete(List<Card> cardsSelected)
     {
         foreach(Card card in cardsSelected)
         {
-            Services.GameManager.player.DiscardCardFromHand(card);
+            player.DiscardCardFromHand(card);
         }
     }
 }

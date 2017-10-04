@@ -12,6 +12,6 @@ public class Potion : Card
     public override void OnPlay()
     {
         base.OnPlay();
-        Services.GameManager.player.Heal(1);
+        player.Heal(1);
     }
 }

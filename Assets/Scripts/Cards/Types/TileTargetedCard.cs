@@ -13,7 +13,7 @@ public abstract class TileTargetedCard : Card
 
     public virtual bool IsTargetValid(Tile tile)
     {
-        return tile.coord.Distance(Services.GameManager.player.currentTile.coord) <= range;
+        return tile.coord.Distance(player.currentTile.coord) <= range;
     }
 
     public virtual void OnTargetSelected(Tile tile)
@@ -47,6 +47,6 @@ public abstract class TileTargetedCard : Card
         {
             tile.controller.ShowAsUntargetable();
         }
-        Services.GameManager.player.ShowAvailableMoves();
+        player.ShowAvailableMoves();
     }
 }

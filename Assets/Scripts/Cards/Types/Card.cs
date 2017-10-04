@@ -26,7 +26,8 @@ public abstract class Card {
         Orc,
         Flamekin,
         Blank,
-        SpikeTrap
+        SpikeTrap,
+        Shield
     }
     public int tier { get; protected set; }
     public Sprite sprite { get; protected set; }
@@ -34,6 +35,7 @@ public abstract class Card {
     public bool deckViewMode;
     public bool collectionMode;
     public Chest chest;
+    protected Player player { get { return Services.GameManager.player; } }
 
     public void CreatePhysicalCard(Transform tform)
     {

@@ -32,6 +32,7 @@ public class CardController : MonoBehaviour
     public static List<Card> currentlySelectedCards = new List<Card>();
     private bool inDiscardZone;
     private bool selectedLastFrame;
+    private Player player { get { return Services.GameManager.player; } }
 
     // Use this for initialization
     public void Init(Card card_)
@@ -80,7 +81,7 @@ public class CardController : MonoBehaviour
     private void OnMouseEnter()
     {
         if (((currentlySelectedCards.Count == 0) ||
-            (Services.GameManager.player.movementCardsSelected.Count != 0)) && 
+            (player.movementCardsSelected.Count != 0)) && 
             !Input.GetMouseButton(0))
         {
             if (card.deckViewMode || card.collectionMode)
@@ -102,7 +103,7 @@ public class CardController : MonoBehaviour
                 Reposition(basePos + Services.CardConfig.OnHoverOffsetChestMode, false);
 
             }
-            if (Services.GameManager.player.selectingCards)
+            if (player.selectingCards)
             {
                 OnHoverEnterForCardSelection();
             }
@@ -122,7 +123,7 @@ public class CardController : MonoBehaviour
                 DisplayAtBasePos();
                 if(!(card is MovementCard)) card.OnUnselect();
             }
-            if (Services.GameManager.player.selectingCards)
+            if (player.selectingCards)
             {
                 OnHoverExitForCardSelection();
             }
@@ -137,7 +138,7 @@ public class CardController : MonoBehaviour
         {
             Services.DeckConstruction.OnCardClicked(card);
         }
-        else if (Services.GameManager.player.selectingCards) {
+        else if (player.selectingCards) {
             Services.EventManager.Fire(new CardSelected(card));
         }
         else if (!selected)
@@ -277,14 +278,14 @@ public class CardController : MonoBehaviour
         SetCardFrameStatus(true);
         if (Services.UIManager.discardZone.GetComponent<Collider2D>().bounds.Contains(transform.position))
         {
-            Services.GameManager.player.DiscardCardFromHand(card);
+            player.DiscardCardFromHand(card);
             return false;
         }
         else if (card.playable && card.CanPlay() && (forcePlay ||
             (transform.localPosition.y >= Services.CardConfig.CardPlayThresholdYPos &&
             !(card is TileTargetedCard))))
         {
-            Services.Main.taskManager.AddTask(Services.GameManager.player.PlayCard(card));
+            Services.Main.taskManager.AddTask(player.PlayCard(card));
             return true;
         }
         else

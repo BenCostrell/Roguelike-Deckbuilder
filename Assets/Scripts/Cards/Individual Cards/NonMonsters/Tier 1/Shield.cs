@@ -1,17 +1,17 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class Sprint : Card
+public class Shield : Card
 {
-    public Sprint()
+    public Shield()
     {
-        cardType = CardType.Sprint;
+        cardType = CardType.Shield;
         InitValues();
     }
 
     public override void OnPlay()
     {
         base.OnPlay();
-        player.movesAvailable += 3;
+        player.GainShield(1);
     }
 }

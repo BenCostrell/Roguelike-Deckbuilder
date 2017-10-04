@@ -2,29 +2,29 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class MovementCard : Card 
+public abstract class MovementCard : Card 
 {
-    public int range;
+    public int range { get { return GetRange(); } }
+    protected int baseRange;
     protected int lockId;
 
     public override bool CanPlay()
     {
-        return AStarSearch.FindAllAvailableGoals(
-            Services.GameManager.player.currentTile, range, false).Count > 0;
+        return AStarSearch.FindAllAvailableGoals(player.currentTile, range, false).Count > 0;
     }
 
     public override void OnSelect()
     {
-        Services.GameManager.player.movementCardsSelected.Add(this);
-        Services.GameManager.player.movesAvailable += range;
+        player.movementCardsSelected.Add(this);
+        player.movesAvailable += range;
         lockId = Services.UIManager.nextLockID;
-        Services.GameManager.player.DisableNonMovementCards(lockId);
+        player.DisableNonMovementCards(lockId);
     }
 
     public override void OnUnselect()
     {
         CleanupUnselection();
-        Services.GameManager.player.movesAvailable -= range;
+        player.movesAvailable -= range;
     }
 
     public void OnMovementAct()
@@ -36,7 +36,12 @@ public class MovementCard : Card
 
     void CleanupUnselection()
     {
-        Services.GameManager.player.movementCardsSelected.Remove(this);
-        Services.GameManager.player.EnableNonMovementCards(lockId);
+        player.movementCardsSelected.Remove(this);
+        player.EnableNonMovementCards(lockId);
+    }
+
+    protected virtual int GetRange()
+    {
+        return baseRange;
     }
 }
