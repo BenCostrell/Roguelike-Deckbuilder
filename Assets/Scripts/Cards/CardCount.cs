@@ -31,9 +31,9 @@ public class CardCount
         {
             count -= 1;
             counter.text = "x " + count;
-            if (count == 0) return false;
+            if (count == 0) return false; // there are no more copies remaining
         }
-        return true;
+        return true; // there are still copies remaining
     }
 
     public void Add()

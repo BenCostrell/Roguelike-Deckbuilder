@@ -29,17 +29,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 0aa80e472e2975249813adddbc24a98c, type: 2}
   - {fileID: 11400000, guid: 886a3f65389ce9a4098d1a4886c28cc9, type: 2}
   - {fileID: 11400000, guid: 52b0fe0bcceca5042b249450754ea2f8, type: 2}
-  startingDeck:
-  - {fileID: 11400000, guid: bd31b52cd16140d4ca5756d38c69abfe, type: 2}
-  - {fileID: 11400000, guid: bd31b52cd16140d4ca5756d38c69abfe, type: 2}
-  - {fileID: 11400000, guid: bd31b52cd16140d4ca5756d38c69abfe, type: 2}
-  - {fileID: 11400000, guid: bd31b52cd16140d4ca5756d38c69abfe, type: 2}
-  - {fileID: 11400000, guid: bd31b52cd16140d4ca5756d38c69abfe, type: 2}
-  - {fileID: 11400000, guid: bd31b52cd16140d4ca5756d38c69abfe, type: 2}
-  - {fileID: 11400000, guid: bd31b52cd16140d4ca5756d38c69abfe, type: 2}
-  - {fileID: 11400000, guid: bd31b52cd16140d4ca5756d38c69abfe, type: 2}
-  - {fileID: 11400000, guid: b7cffbf5124cb0f479a4b2b5ddbf7f72, type: 2}
-  - {fileID: 11400000, guid: b7cffbf5124cb0f479a4b2b5ddbf7f72, type: 2}
+  startingDeck: []
   handCardSpacing: {x: 1.8, y: 0, z: 0}
   inPlaySpacing: {x: 1, y: 0, z: -2}
   onHoverScaleUp: 2

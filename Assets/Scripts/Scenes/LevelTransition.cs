@@ -12,8 +12,6 @@ public class LevelTransition : Scene<MainTransitionData> {
     [SerializeField]
     private GameObject monsterArea;
     [SerializeField]
-    private GameObject trashLabel;
-    [SerializeField]
     private GameObject playerUIHPCounter;
     [SerializeField]
     private GameObject startButton;
@@ -30,7 +28,6 @@ public class LevelTransition : Scene<MainTransitionData> {
     [SerializeField]
     private int maxCardsPerRow;
     public MainTransitionData data { get; private set; }
-    private TrashController trashController;
     [SerializeField]
     private int dungeonDeckSize;
 
@@ -71,13 +68,6 @@ public class LevelTransition : Scene<MainTransitionData> {
         else
         {
             startButton.GetComponentInChildren<Text>().text = "RESTART";
-            trashController.gameObject.SetActive(false);
-            trashLabel.SetActive(false);
-        }
-        if(data.levelNum == 1)
-        {
-            trashController.gameObject.SetActive(false);
-            trashLabel.SetActive(false);
         }
     }
 
@@ -85,7 +75,6 @@ public class LevelTransition : Scene<MainTransitionData> {
     {
         if (!data.gameOver)
         {
-            data.deck.Remove(trashController.cardToTrash);
             foreach (Card card in data.deck)
             {
                 card.deckViewMode = false;
@@ -100,7 +89,6 @@ public class LevelTransition : Scene<MainTransitionData> {
 
     void InitializeScene()
     {
-        trashController = GetComponentInChildren<TrashController>();
         Services.GameManager.currentCamera = GetComponentInChildren<Camera>();
         if (!data.gameOver)
         {
@@ -112,6 +100,12 @@ public class LevelTransition : Scene<MainTransitionData> {
             levelTitle.GetComponent<Text>().text = "GAME OVER";
             finalScore.GetComponent<Text>().text = "YOU MADE IT TO LEVEL " + data.levelNum;
 
+        }
+        if (data.deck.Count > data.maxDeckSize || data.deck.Count < data.minDeckSize)
+        {
+            startButton.GetComponent<Button>().interactable = false;
+            startButton.GetComponentInChildren<Text>().text = "INVALID DECK";
+            startButton.GetComponentInChildren<Text>().fontSize = 40;
         }
         SetPlayerUI();
     }
@@ -165,7 +159,16 @@ public class LevelTransition : Scene<MainTransitionData> {
         for (int i = 0; i < data.deck.Count; i++)
         {
             data.deck[i].deckViewMode = false;
-        } 
+        }
+        // for testing purposes
+        //data.collection = new List<Card>();
+        //for (int i = 0; i < Services.CardConfig.Cards.Length; i++)
+        //{
+        //    data.collection.Add(
+        //        Services.CardConfig.CreateCardOfType(Services.CardConfig.Cards[i].CardType));
+        //    data.collection.Add(
+        //        Services.CardConfig.CreateCardOfType(Services.CardConfig.Cards[i].CardType));
+        //}
         Services.SceneStackManager.Swap<DeckConstruction>(data);
     }
 }

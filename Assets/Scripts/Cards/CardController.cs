@@ -28,7 +28,6 @@ public class CardController : MonoBehaviour
     private TextMesh[] textMeshes;
     private Vector3 mouseRelativePos;
     private BoxCollider2D[] colliders;
-    public TrashController overTrash;
     public bool selected;
     public static List<Card> currentlySelectedCards = new List<Card>();
     private bool inDiscardZone;

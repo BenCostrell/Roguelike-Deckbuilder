@@ -38,8 +38,6 @@ public class DeckConstruction : Scene<MainTransitionData> {
     private Text pageCounter;
     [SerializeField]
     private Text deckCounter;
-    private int minDeckSize { get { return transitionData.levelNum + 9; } }
-    private int maxDeckSize { get { return transitionData.levelNum + 9; } }
     [SerializeField]
     private Button submitDeckButton;
 
@@ -54,6 +52,14 @@ public class DeckConstruction : Scene<MainTransitionData> {
         transitionData = data;
         PopulateCollection();
         PopulateDeckDisplay();
+    }
+
+    internal override void OnExit()
+    {
+        foreach(Card card in transitionData.deck)
+        {
+            card.collectionMode = false;
+        }
     }
 
     void PopulateDeckDisplay()
@@ -118,6 +124,11 @@ public class DeckConstruction : Scene<MainTransitionData> {
             if (i != currentPageNum) collectionPages[i].SetActive(false);
             else collectionPages[i].SetActive(true);
         }
+        if (currentPageNum >= collectionPages.Count - 1) nextPageButton.SetActive(false);
+        else nextPageButton.SetActive(true);
+        if (currentPageNum == 0) prevPageButton.SetActive(false);
+        else prevPageButton.SetActive(true);
+
         pageCounter.text = "Page " + (currentPageNum + 1) + "/" + collectionPages.Count;
     }
 
@@ -146,6 +157,14 @@ public class DeckConstruction : Scene<MainTransitionData> {
             (index / deckDisplayCols) * deckDisplaySpacing.y,
             index * deckDisplaySpacing.z);
     }
+    
+    void SortDeck()
+    {
+        for (int i = 0; i < transitionData.deck.Count; i++)
+        {
+            transitionData.deck[i].Reposition(GetDeckPosition(i), true);
+        }
+    }
 
     public void OnCardClicked(Card card)
     {
@@ -153,11 +172,8 @@ public class DeckConstruction : Scene<MainTransitionData> {
         {
             transitionData.deck.Remove(card);
             card.DestroyPhysicalCard();
-            for (int i = 0; i < transitionData.deck.Count; i++)
-            {
-                transitionData.deck[i].Reposition(GetDeckPosition(i), true);
-            }
-            if(clumpedCollection[card.cardType] == null)
+            SortDeck();
+            if(!clumpedCollection.ContainsKey(card.cardType))
             {
                 int collectionIndex = clumpedCollection.Count;
                 Transform currentPage;
@@ -165,9 +181,11 @@ public class DeckConstruction : Scene<MainTransitionData> {
                 {
                     currentPage =
                         GameObject.Instantiate(collectionPage, collectionZone).transform;
+                    collectionPages.Add(currentPage.gameObject);
                 }
                 else currentPage = collectionPages[collectionPages.Count - 1].transform;
                 AddCollectionEntry(card.cardType, 1, collectionIndex, currentPage);
+                SetCollectionPage(currentPageNum);
             }
             else
             {
@@ -180,16 +198,14 @@ public class DeckConstruction : Scene<MainTransitionData> {
             transitionData.deck.Add(newCardInDeck);
             newCardInDeck.CreatePhysicalCard(deckZone);
             newCardInDeck.collectionMode = true;
-            for (int i = 0; i < transitionData.deck.Count; i++)
-            {
-                transitionData.deck[i].Reposition(GetDeckPosition(i), true);
-            }
+            SortDeck();
             bool lastCopy = !clumpedCollection[card.cardType].Remove();
             if (lastCopy)
             {
                 card.DestroyPhysicalCard();
                 clumpedCollection.Remove(card.cardType);
                 List<Card.CardType> keys = new List<Card.CardType>(clumpedCollection.Keys);
+                Debug.Log(keys.Count);
                 for (int i = 0; i < keys.Count; i++)
                 {
                     Card collectionCard = clumpedCollection[keys[i]].card;
@@ -198,11 +214,13 @@ public class DeckConstruction : Scene<MainTransitionData> {
                         .transform;
                     collectionCard.Reposition(GetCollectionPosition(i), true);
                 }
-                if(keys.Count + 1 <
-                    (collectionPages.Count * collectionDisplayCols * collectionDisplayRows))
+                if(keys.Count ==
+                    ((collectionPages.Count-1) * collectionDisplayCols * collectionDisplayRows))
                 {
-                    GameObject.Destroy(collectionPages[collectionPages.Count - 1].gameObject);
+                    Destroy(collectionPages[collectionPages.Count - 1].gameObject);
                     collectionPages.RemoveAt(collectionPages.Count - 1);
+                    if (currentPageNum == collectionPages.Count) PrevPage();
+                    else SetCollectionPage(currentPageNum);
                 }
             }
         }
@@ -211,23 +229,29 @@ public class DeckConstruction : Scene<MainTransitionData> {
 
     void AssessDeckReadiness()
     {
-        deckCounter.text = transitionData.deck.Count + "/" + minDeckSize;
-        if (transitionData.deck.Count < minDeckSize)
+        deckCounter.text = transitionData.deck.Count + "/" + transitionData.minDeckSize;
+        if (transitionData.deck.Count < transitionData.minDeckSize)
         {
             deckCounter.color = Color.yellow;
-            submitDeckButton.gameObject.GetComponent<Image>().color = Color.yellow;
+            ColorBlock colors = submitDeckButton.colors;
+            colors.normalColor = Color.yellow;
+            submitDeckButton.colors = colors;
             submitDeckButton.enabled = false;
         }
-        else if (transitionData.deck.Count > maxDeckSize)
+        else if (transitionData.deck.Count > transitionData.maxDeckSize)
         {
             deckCounter.color = Color.red;
-            submitDeckButton.gameObject.GetComponent<Image>().color = Color.red;
+            ColorBlock colors = submitDeckButton.colors;
+            colors.normalColor = Color.red;
+            submitDeckButton.colors = colors;
             submitDeckButton.enabled = false;
         }
         else
         {
             deckCounter.color = Color.green;
-            submitDeckButton.gameObject.GetComponent<Image>().color = Color.green;
+            ColorBlock colors = submitDeckButton.colors;
+            colors.normalColor = Color.green;
+            submitDeckButton.colors = colors;
             submitDeckButton.enabled = true;
         }
     }
@@ -235,15 +259,11 @@ public class DeckConstruction : Scene<MainTransitionData> {
     public void NextPage()
     {
         SetCollectionPage(currentPageNum + 1);
-        if (currentPageNum >= collectionPages.Count - 1) nextPageButton.SetActive(false);
-        prevPageButton.SetActive(true);
     }
 
     public void PrevPage()
     {
         SetCollectionPage(currentPageNum - 1);
-        if (currentPageNum == 0) prevPageButton.SetActive(false);
-        nextPageButton.SetActive(true);
     }
 
     public void SubmitDeck()
