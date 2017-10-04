@@ -311,6 +311,10 @@ public class Player {
                 DiscardCardFromPlay(cardsInPlay[i]);
             }
         }
+        for (int i = movementCardsSelected.Count -1 ; i >= 0; i--)
+        {
+            movementCardsSelected[i].controller.UnselectMovementCard();
+        }
         movesAvailable = 0;
     }
 

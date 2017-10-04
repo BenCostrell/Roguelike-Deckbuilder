@@ -12,6 +12,6 @@ public class Shield : Card
     public override void OnPlay()
     {
         base.OnPlay();
-        player.GainShield(1);
+        player.GainShield(2);
     }
 }

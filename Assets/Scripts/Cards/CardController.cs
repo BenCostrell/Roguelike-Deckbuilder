@@ -147,11 +147,16 @@ public class CardController : MonoBehaviour
         }
         else if (card is MovementCard)
         {
-            DisplayAtBasePos();
-            card.OnUnselect();
-            currentlySelectedCards.Remove(card);
-            selected = false;
+            UnselectMovementCard();
         }
+    }
+
+    public void UnselectMovementCard()
+    {
+        DisplayAtBasePos();
+        card.OnUnselect();
+        currentlySelectedCards.Remove(card);
+        selected = false;
     }
 
     public void SelectCard()

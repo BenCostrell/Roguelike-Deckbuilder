@@ -1963,10 +1963,10 @@ MonoBehaviour:
     m_SelectOnRight: {fileID: 0}
   m_Transition: 1
   m_Colors:
-    m_NormalColor: {r: 0.99665314, g: 1, b: 0.75735295, a: 1}
-    m_HighlightedColor: {r: 0.9730197, g: 1, b: 0.4044118, a: 1}
-    m_PressedColor: {r: 0.90344834, g: 1, b: 0, a: 1}
-    m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
+    m_NormalColor: {r: 0.9862069, g: 1, b: 0, a: 1}
+    m_HighlightedColor: {r: 0.2, g: 0.8, b: 1, a: 1}
+    m_PressedColor: {r: 1, g: 0, b: 0.101960786, a: 1}
+    m_DisabledColor: {r: 0.7352941, g: 0.7352941, b: 0.7352941, a: 0.509}
     m_ColorMultiplier: 1
     m_FadeDuration: 0.1
   m_SpriteState:
@@ -2404,8 +2404,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 18ed4f4c88dfaa6489db59aef733335e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  spawnPointX: 0
-  spawnPointY: 0
 --- !u!114 &114700667873565656
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2494,7 +2492,7 @@ MonoBehaviour:
   playAllButton: {fileID: 114390455966772958}
   unitUI: {fileID: 1371859541257298}
   unitUIRemainingHealthObj: {fileID: 1114225324873210}
-  unitUIRemainingHealthBody: {fileID: 224377198781307118}
+  unitUIRemainingHealthBody: {fileID: 224579548303754144}
   unitUISprite: {fileID: 114304965975682228}
   unitUIName: {fileID: 114332377690488142}
   unitUIHealthCounter: {fileID: 114310763924324144}
@@ -2658,10 +2656,10 @@ MonoBehaviour:
     m_SelectOnRight: {fileID: 0}
   m_Transition: 1
   m_Colors:
-    m_NormalColor: {r: 0.75735295, g: 1, b: 0.769067, a: 1}
-    m_HighlightedColor: {r: 0.58823526, g: 1, b: 0.591075, a: 1}
-    m_PressedColor: {r: 0, g: 1, b: 0.13103461, a: 1}
-    m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
+    m_NormalColor: {r: 0, g: 0.9191176, b: 0.044371273, a: 1}
+    m_HighlightedColor: {r: 0.2, g: 0.8, b: 1, a: 1}
+    m_PressedColor: {r: 1, g: 0, b: 0.101960786, a: 1}
+    m_DisabledColor: {r: 0.7352941, g: 0.7352941, b: 0.7352941, a: 0.509}
     m_ColorMultiplier: 1
     m_FadeDuration: 0.1
   m_SpriteState:

@@ -64,9 +64,7 @@ public class UIManager : MonoBehaviour {
         }
     }
     private List<int> endTurnLockIDs;
-    private bool endTurnLocked;
     private List<int> playAllLockIDs;
-    private bool playAllLocked;
 
     // Use this for initialization
     void Awake() {
@@ -82,9 +80,7 @@ public class UIManager : MonoBehaviour {
     {
         unitUI.SetActive(false);
         unitUIHealthBarBaseSize = unitUIRemainingHealthBody.sizeDelta;
-
-        playerUIHealthBarBaseSize = 
-            playerUIRemainingHealthBody.sizeDelta;
+        playerUIHealthBarBaseSize = playerUIRemainingHealthBody.sizeDelta;
         playerUIKeyIcon.color = new Color(1, 1, 1, 0.125f);
 
         endTurnLockIDs = new List<int>();
@@ -175,9 +171,8 @@ public class UIManager : MonoBehaviour {
 
     public void DisableEndTurn(int lockID)
     {
-        endTurnLocked = true;
         endTurnLockIDs.Add(lockID);
-        endTurnButton.enabled = false;
+        endTurnButton.interactable = false;
         
     }
 
@@ -188,44 +183,38 @@ public class UIManager : MonoBehaviour {
             endTurnLockIDs.Remove(lockID);
             if (endTurnLockIDs.Count == 0)
             {
-                endTurnLocked = false;
-                endTurnButton.enabled = true;
+                endTurnButton.interactable = true;
             }
         }
     }
 
     public void ForceUnlockEndTurn()
     {
-        endTurnLocked = false;
-        endTurnButton.enabled = true;
+        endTurnButton.interactable = false;
         endTurnLockIDs = new List<int>();
     }
 
     public void DisablePlayAll(int lockID)
     {
-        playAllLocked = true;
         playAllLockIDs.Add(lockID);
-        playAllButton.enabled = false;
+        playAllButton.interactable = false;
     }
 
-    public bool EnablePlayAll(int lockID)
+    public void EnablePlayAll(int lockID)
     {
         if (playAllLockIDs.Contains(lockID))
         {
             playAllLockIDs.Remove(lockID);
             if (playAllLockIDs.Count == 0)
             {
-                playAllLocked = false;
-                playAllButton.enabled = true;
+                playAllButton.interactable = true;
             }
         }
-        return playAllLocked;
     }
 
     public void ForceUnlockPlayAll()
     {
-        playAllLocked = false;
-        playAllButton.enabled = true;
+        playAllButton.interactable = true;
         playAllLockIDs = new List<int>();
     }
 

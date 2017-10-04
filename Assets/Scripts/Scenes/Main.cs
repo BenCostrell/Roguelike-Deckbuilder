@@ -4,10 +4,6 @@ using UnityEngine;
 
 public class Main : Scene<MainTransitionData> {
 
-    [SerializeField]
-    private int spawnPointX;
-    [SerializeField]
-    private int spawnPointY;
     public Camera mainCamera { get; private set; }
     public TaskManager taskManager { get; private set; }
     public int levelNum { get; private set; }
