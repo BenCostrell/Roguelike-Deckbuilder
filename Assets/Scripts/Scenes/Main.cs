@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class Main : Scene<MainTransitionData> {
 
-    public Camera mainCamera { get; private set; }
     public TaskManager taskManager { get; private set; }
     public int levelNum { get; private set; }
     public DungeonDeck dungeonDeck { get; private set; }

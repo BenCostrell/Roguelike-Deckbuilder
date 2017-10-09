@@ -17,6 +17,14 @@ public class MonsterConfig : ScriptableObject
     public float MonstersPerLevel { get { return monstersPerLevel; } }
 
     [SerializeField]
+    private int dungeonTimerThreshold;
+    public int DungeonTimerThreshold { get { return dungeonTimerThreshold; } }
+
+    [SerializeField]
+    private float addMonsterCardDuration;
+    public float AddMonsterCardDuration { get { return addMonsterCardDuration; } }
+
+    [SerializeField]
     private int minDistFromMonsters;
     public int MinDistFromMonsters { get { return minDistFromMonsters; } }
 

@@ -30,7 +30,18 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 886a3f65389ce9a4098d1a4886c28cc9, type: 2}
   - {fileID: 11400000, guid: 52b0fe0bcceca5042b249450754ea2f8, type: 2}
   - {fileID: 11400000, guid: 892f7c9919eb27d4b9b14f3d99019209, type: 2}
-  startingDeck: []
+  - {fileID: 11400000, guid: b7cad2d23af6f1b40bb129b527aa7c3b, type: 2}
+  startingDeck:
+  - {fileID: 11400000, guid: bd31b52cd16140d4ca5756d38c69abfe, type: 2}
+  - {fileID: 11400000, guid: bd31b52cd16140d4ca5756d38c69abfe, type: 2}
+  - {fileID: 11400000, guid: bd31b52cd16140d4ca5756d38c69abfe, type: 2}
+  - {fileID: 11400000, guid: bd31b52cd16140d4ca5756d38c69abfe, type: 2}
+  - {fileID: 11400000, guid: bd31b52cd16140d4ca5756d38c69abfe, type: 2}
+  - {fileID: 11400000, guid: bd31b52cd16140d4ca5756d38c69abfe, type: 2}
+  - {fileID: 11400000, guid: bd31b52cd16140d4ca5756d38c69abfe, type: 2}
+  - {fileID: 11400000, guid: bd31b52cd16140d4ca5756d38c69abfe, type: 2}
+  - {fileID: 11400000, guid: b7cffbf5124cb0f479a4b2b5ddbf7f72, type: 2}
+  - {fileID: 11400000, guid: b7cffbf5124cb0f479a4b2b5ddbf7f72, type: 2}
   handCardSpacing: {x: 1.8, y: 0, z: 0}
   inPlaySpacing: {x: 1, y: 0, z: -2}
   onHoverScaleUp: 2

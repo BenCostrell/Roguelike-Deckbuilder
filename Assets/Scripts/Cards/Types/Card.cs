@@ -27,7 +27,8 @@ public abstract class Card {
         Flamekin,
         Blank,
         SpikeTrap,
-        Shield
+        Shield,
+        Tick
     }
     public int tier { get; protected set; }
     public Sprite sprite { get; protected set; }

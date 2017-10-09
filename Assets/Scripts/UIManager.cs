@@ -17,6 +17,8 @@ public class UIManager : MonoBehaviour {
     public GameObject dungeonDiscardZone;
     public GameObject dungeonPlayZone;
     [SerializeField]
+    private Image dungeonTimer;
+    [SerializeField]
     private Button endTurnButton;
     [SerializeField]
     private Button playAllButton;
@@ -65,6 +67,8 @@ public class UIManager : MonoBehaviour {
     }
     private List<int> endTurnLockIDs;
     private List<int> playAllLockIDs;
+    public Vector3 dungeonTimerPos { get { return dungeonTimer.transform.position; } }
+    public Vector3 dungeonDeckPos { get { return dungeonDeckZone.transform.position; } }
 
     // Use this for initialization
     void Awake() {
@@ -228,5 +232,10 @@ public class UIManager : MonoBehaviour {
             shieldIcon.SetActive(true);
             shieldCounter.text = shieldAmount.ToString();
         }
+    }
+
+    public void UpdateDungeonTimer(float fillAmt)
+    {
+        dungeonTimer.fillAmount = fillAmt;
     }
 }

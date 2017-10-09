@@ -11,17 +11,22 @@ public class DungeonDeck
     public List<Card> cardsInFlux;
     private const int baseCardsPerRound = 5;
     private int cardsPerRound;
+    private int dungeonTimerCount;
+    private int dungeonTimerThreshold;
 
     public DungeonDeck(List<Card> baseDeck)
     {
         fullDeck = baseDeck;
-        deck = fullDeck;
+        deck = new List<Card>(fullDeck);
         playedCards = new List<Card>();
         discardPile = new List<Card>();
         cardsInFlux = new List<Card>();
         cardsPerRound = baseCardsPerRound;
         Services.UIManager.UpdateDungeonDeckCounter(deck.Count);
         Services.UIManager.UpdateDungeonDiscardCounter(0);
+        dungeonTimerCount = 0;
+        dungeonTimerThreshold = Services.MonsterConfig.DungeonTimerThreshold;
+        UpdateDungeonTimer();
     }
 
     Card GetRandomCardFromDeck()
@@ -55,7 +60,7 @@ public class DungeonDeck
 
     public TaskTree TakeDungeonTurn()
     {
-        for (int i = playedCards.Count-1; i >= 0; i--)
+        for (int i = playedCards.Count - 1; i >= 0; i--)
         {
             DiscardCard(playedCards[i]);
         }
@@ -69,4 +74,112 @@ public class DungeonDeck
         card.OnDiscard();
         Services.UIManager.UpdateDiscardCounter(discardPile.Count);
     }
+
+    void UpdateDungeonTimer()
+    {
+        Services.UIManager.UpdateDungeonTimer((float)dungeonTimerCount / dungeonTimerThreshold);
+    }
+
+    public TaskTree AlterDungeonTimerCount(int amt)
+    {
+        return new TaskTree(new AlterDungeonTimerTask(this, amt));
+    }
+
+    public bool ActuallyAlterDungeonTimerCount(int amt)
+    {
+        bool addMonster = false;
+        dungeonTimerCount += amt;
+        if (dungeonTimerCount >= dungeonTimerThreshold)
+        {
+            dungeonTimerCount -= dungeonTimerThreshold;
+            addMonster = true;
+        }
+        UpdateDungeonTimer();
+        return addMonster;
+    }
+
+    public MonsterCard GetNewMonsterCard()
+    {
+        List<Card.CardType> monsterTypes = new List<Card.CardType>();
+        foreach (Card card in fullDeck)
+        {
+            if (card is MonsterCard && !monsterTypes.Contains(card.cardType)) 
+                monsterTypes.Add(card.cardType);
+        }
+        MonsterCard newMonsterCard = Services.CardConfig.CreateCardOfType(
+            monsterTypes[Random.Range(0, monsterTypes.Count)]) as MonsterCard;
+        return newMonsterCard;
+    }
+
+    public void AddCard(Card card)
+    {
+        discardPile.Add(card);
+    }
 }
+
+public class AlterDungeonTimerTask : Task
+{
+    private int amt;
+    private DungeonDeck dungeonDeck;
+    private float timeElapsed;
+    private float duration;
+    private bool addMonster;
+    private MonsterCard newMonsterCard;
+    private Vector3 initialPos;
+    private Vector3 targetPos;
+    private Vector3 initialScale;
+
+    public AlterDungeonTimerTask(DungeonDeck dungeonDeck_, int amt_)
+    {
+        dungeonDeck = dungeonDeck_;
+        amt = amt_;
+    }
+
+    protected override void Init()
+    {
+        if (dungeonDeck.ActuallyAlterDungeonTimerCount(amt))
+        {
+            addMonster = true;
+            timeElapsed = 0;
+            duration = Services.MonsterConfig.AddMonsterCardDuration;
+            newMonsterCard = dungeonDeck.GetNewMonsterCard();
+            initialPos = Services.GameManager.currentCamera.ScreenToWorldPoint(
+                Services.UIManager.dungeonTimerPos);
+            newMonsterCard.CreatePhysicalCard(Services.Main.transform);
+            newMonsterCard.Reposition(initialPos, true);
+            targetPos = Services.UIManager.dungeonDeckPos;
+            initialScale = newMonsterCard.controller.transform.localScale;
+        }
+        else
+        {
+            addMonster = false;
+            SetStatus(TaskStatus.Success);
+        }
+    }
+
+    internal override void Update()
+    {
+        timeElapsed += Time.deltaTime;
+
+        newMonsterCard.Reposition(Vector3.Lerp(
+            initialPos, 
+            targetPos,
+            Easing.QuadEaseIn(timeElapsed / duration)), false);
+        newMonsterCard.controller.transform.localScale = Vector3.Lerp(
+            initialScale, 
+            Vector3.zero,
+            Easing.QuadEaseIn(timeElapsed / duration));
+
+        if (timeElapsed >= duration) SetStatus(TaskStatus.Success);
+    }
+
+    protected override void OnSuccess()
+    {
+        if (addMonster)
+        {
+            dungeonDeck.AddCard(newMonsterCard);
+            newMonsterCard.DestroyPhysicalCard();
+        }
+    }
+}
+

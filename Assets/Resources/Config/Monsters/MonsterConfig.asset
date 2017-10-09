@@ -19,6 +19,8 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 216ecc07299b1e74ebd3c7a64d203ea9, type: 2}
   baseMonstersPerLevel: 2
   monstersPerLevel: 0.5
+  dungeonTimerThreshold: 10
+  addMonsterCardDuration: 1
   minDistFromMonsters: 4
   minDistFromCards: 3
   minDistFromPlayer: 5
