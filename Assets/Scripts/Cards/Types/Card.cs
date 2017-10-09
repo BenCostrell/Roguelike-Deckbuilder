@@ -86,7 +86,7 @@ public abstract class Card {
         playable = false;
         if (!collectionMode && !deckViewMode && controller.transform.parent != Services.UIManager.inPlayZone)
         {
-            controller.color = Color.gray;
+            controller.OnCardDisable();
         }
     }
 

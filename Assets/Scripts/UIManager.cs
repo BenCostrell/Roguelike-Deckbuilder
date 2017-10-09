@@ -85,6 +85,8 @@ public class UIManager : MonoBehaviour {
 
         endTurnLockIDs = new List<int>();
         playAllLockIDs = new List<int>();
+
+        playerUIKeyIcon.gameObject.SetActive(false);
     }
 
     public void UpdateDeckCounter(int cardsInDeck)

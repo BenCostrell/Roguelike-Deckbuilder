@@ -6,17 +6,17 @@ using UnityEngine.UI;
 public class LevelTransition : Scene<MainTransitionData> {
 
     [SerializeField]
-    private GameObject levelTitle;
+    private Text levelTitle;
     [SerializeField]
     private GameObject deckArea;
     [SerializeField]
     private GameObject monsterArea;
     [SerializeField]
-    private GameObject playerUIHPCounter;
+    private Text playerUIHPCounter;
     [SerializeField]
-    private GameObject startButton;
+    private Button startButton;
     [SerializeField]
-    private GameObject finalScore;
+    private Text finalScore;
     [SerializeField]
     private int levelsPerMonsterTierIncrease;
     [SerializeField]
@@ -92,21 +92,21 @@ public class LevelTransition : Scene<MainTransitionData> {
         Services.GameManager.currentCamera = GetComponentInChildren<Camera>();
         if (!data.gameOver)
         {
-            levelTitle.GetComponent<Text>().text = "LEVEL " + data.levelNum;
-            finalScore.SetActive(false);
+            levelTitle.text = "LEVEL " + data.levelNum;
+            finalScore.gameObject.SetActive(false);
+            if (data.deck.Count > data.maxDeckSize || data.deck.Count < data.minDeckSize)
+            {
+                startButton.interactable = false;
+                startButton.GetComponentInChildren<Text>().text = "INVALID DECK";
+                startButton.GetComponentInChildren<Text>().fontSize = 40;
+            }
         }
         else
         {
-            levelTitle.GetComponent<Text>().text = "GAME OVER";
-            finalScore.GetComponent<Text>().text = "YOU MADE IT TO LEVEL " + data.levelNum;
+            levelTitle.text = "GAME OVER";
+            finalScore.text = "YOU MADE IT TO LEVEL " + data.levelNum;
+        }
 
-        }
-        if (data.deck.Count > data.maxDeckSize || data.deck.Count < data.minDeckSize)
-        {
-            startButton.GetComponent<Button>().interactable = false;
-            startButton.GetComponentInChildren<Text>().text = "INVALID DECK";
-            startButton.GetComponentInChildren<Text>().fontSize = 40;
-        }
         SetPlayerUI();
     }
 
@@ -151,7 +151,7 @@ public class LevelTransition : Scene<MainTransitionData> {
 
     void SetPlayerUI()
     {
-        playerUIHPCounter.GetComponent<Text>().text = data.maxHealth + "/" + data.maxHealth;
+        playerUIHPCounter.text = data.maxHealth + "/" + data.maxHealth;
     }
 
     public void EditDeck()

@@ -1257,12 +1257,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cc7ba16e165393e419aac12e2a369291, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  levelTitle: {fileID: 1532650887079856}
+  levelTitle: {fileID: 114719067136348552}
   deckArea: {fileID: 1580920249358822}
   monsterArea: {fileID: 1729813888778190}
-  playerUIHPCounter: {fileID: 1284066224895094}
-  startButton: {fileID: 1367365119249966}
-  finalScore: {fileID: 1119837825984826}
+  playerUIHPCounter: {fileID: 114227641584554658}
+  startButton: {fileID: 114703316896227496}
+  finalScore: {fileID: 114458081514363854}
   levelsPerMonsterTierIncrease: 3
   deckDisplayOffset: {x: 0, y: 0, z: 0}
   deckDisplaySpacing: {x: 1, y: 0, z: -2}

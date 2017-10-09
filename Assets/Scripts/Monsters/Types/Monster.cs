@@ -98,8 +98,8 @@ public abstract class Monster {
 
     public virtual TaskTree Move()
     {
-        List<Tile> shortestPathToPlayer =
-            AStarSearch.ShortestPath(currentTile, player.currentTile, false);
+        List<Tile> shortestPathToPlayer = 
+            AStarSearch.ShortestPath(currentTile, player.currentTile);
         List<Tile> pathToMoveAlong = new List<Tile>();
         int movesLeft = movementSpeed;
         for (int i = shortestPathToPlayer.Count - 1; i >= 1; i--)

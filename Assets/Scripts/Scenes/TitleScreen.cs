@@ -23,13 +23,15 @@ public class TitleScreen : Scene<MainTransitionData> {
     {
         Services.EventManager.Unregister<ButtonPressed>(StartGame);
         List<Card> startingDeck = new List<Card>();
+        List<Card> startingCollection = new List<Card>();
         foreach (CardInfo cardInfo in Services.CardConfig.StartingDeck)
         {
             Card card = Services.CardConfig.CreateCardOfType(cardInfo.CardType);
             startingDeck.Add(card);
         }
+        //startingCollection.Add(Services.CardConfig.CreateCardOfType(Card.CardType.SpikeTrap));
         Services.SceneStackManager.Swap<LevelTransition>(
-            new MainTransitionData(startingDeck, new List<Card>(), new List<Card>(),
+            new MainTransitionData(startingDeck, new List<Card>(), startingCollection,
             Services.GameManager.playerStartingHealth, 1, false));
     }
 }

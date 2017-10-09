@@ -76,7 +76,7 @@ public class Player {
 
     public void Initialize(Tile tile, MainTransitionData data)
     {
-        hasKey = false;
+        hasKey = true;
         movementLockIDs = new List<int>();
         handLockIDs = new List<int>();
         nonMovementLockIDs = new List<int>();
@@ -219,14 +219,14 @@ public class Player {
     List<Tile> GetShortestPath(Tile tile)
     {
         List<Tile> shortestPathToTile =
-            AStarSearch.ShortestPath(currentTile, tile, false);
+            AStarSearch.ShortestPath(currentTile, tile, false, true);
         return shortestPathToTile;
     }
 
     public void ShowAvailableMoves()
     {
         List<Tile> availableTiles = 
-            AStarSearch.FindAllAvailableGoals(currentTile, movesAvailable, false);
+            AStarSearch.FindAllAvailableGoals(currentTile, movesAvailable, false, true);
         foreach(Tile tile in Services.MapManager.mapDict.Values)
         {
             if (availableTiles.Contains(tile)) tile.controller.ShowAsAvailable();

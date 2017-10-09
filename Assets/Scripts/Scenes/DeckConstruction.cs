@@ -205,7 +205,6 @@ public class DeckConstruction : Scene<MainTransitionData> {
                 card.DestroyPhysicalCard();
                 clumpedCollection.Remove(card.cardType);
                 List<Card.CardType> keys = new List<Card.CardType>(clumpedCollection.Keys);
-                Debug.Log(keys.Count);
                 for (int i = 0; i < keys.Count; i++)
                 {
                     Card collectionCard = clumpedCollection[keys[i]].card;
@@ -233,26 +232,17 @@ public class DeckConstruction : Scene<MainTransitionData> {
         if (transitionData.deck.Count < transitionData.minDeckSize)
         {
             deckCounter.color = Color.yellow;
-            ColorBlock colors = submitDeckButton.colors;
-            colors.normalColor = Color.yellow;
-            submitDeckButton.colors = colors;
-            submitDeckButton.enabled = false;
+            submitDeckButton.interactable = false;
         }
         else if (transitionData.deck.Count > transitionData.maxDeckSize)
         {
             deckCounter.color = Color.red;
-            ColorBlock colors = submitDeckButton.colors;
-            colors.normalColor = Color.red;
-            submitDeckButton.colors = colors;
-            submitDeckButton.enabled = false;
+            submitDeckButton.interactable = false;
         }
         else
         {
             deckCounter.color = Color.green;
-            ColorBlock colors = submitDeckButton.colors;
-            colors.normalColor = Color.green;
-            submitDeckButton.colors = colors;
-            submitDeckButton.enabled = true;
+            submitDeckButton.interactable = true;
         }
     }
 

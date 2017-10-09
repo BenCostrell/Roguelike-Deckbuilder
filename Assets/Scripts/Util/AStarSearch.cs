@@ -51,7 +51,17 @@ public static class AStarSearch
     }
 
 
+    public static List<Tile> ShortestPath(Tile start, Tile goal)
+    {
+        return ShortestPath(start, goal, false, false);
+    }
+
     public static List<Tile> ShortestPath(Tile start, Tile goal, bool raw)
+    {
+        return ShortestPath(start, goal, raw, false);
+    }
+
+    public static List<Tile> ShortestPath(Tile start, Tile goal, bool raw, bool avoidTraps)
     {
         List<Tile> path = new List<Tile>();
         Dictionary<Tile, Tile> cameFrom = new Dictionary<Tile, Tile>();
@@ -73,7 +83,8 @@ public static class AStarSearch
             if (current == goal) break;
             foreach (Tile next in current.neighbors)
             {
-                if (!next.IsImpassable() || raw)
+                if ((!next.IsImpassable() && !(next.containedMapObject != null && 
+                    next.containedMapObject is Trap && avoidTraps && next != goal)) || raw)
                 {
                     float newCost;
                     if (raw)
@@ -106,7 +117,18 @@ public static class AStarSearch
         return path;
     }
 
+    public static List<Tile> FindAllAvailableGoals(Tile start, int movesAvailable)
+    {
+        return FindAllAvailableGoals(start, movesAvailable, false, false);
+    }
+
     public static List<Tile> FindAllAvailableGoals(Tile start, int movesAvailable, bool raw)
+    {
+        return FindAllAvailableGoals(start, movesAvailable, raw, false);
+    }
+
+    public static List<Tile> FindAllAvailableGoals(Tile start, int movesAvailable, bool raw, 
+        bool avoidTraps)
     {
         List<Tile> availableGoals = new List<Tile>();
         if (movesAvailable == 0) return availableGoals;
@@ -124,24 +146,28 @@ public static class AStarSearch
             if (costSoFar[current] <= movesAvailable)
             {
                 if (current != start) availableGoals.Add(current);
-                foreach (Tile next in current.neighbors)
+                if (!(current.containedMapObject != null && current.containedMapObject is Trap 
+                    && avoidTraps))
                 {
-                    if (!next.IsImpassable() || raw)
+                    foreach (Tile next in current.neighbors)
                     {
-                        int newCost;
-                        if (raw)
+                        if (!next.IsImpassable() || raw)
                         {
-                            newCost = costSoFar[current] + 1;
-                        }
-                        else
-                        {
-                            newCost = costSoFar[current] + next.movementCost;
-                        }
-                        if (!costSoFar.ContainsKey(next) || newCost < costSoFar[next])
-                        {
-                            costSoFar[next] = newCost;
-                            frontier.Enqueue(next);
-                            cameFrom[next] = current;
+                            int newCost;
+                            if (raw)
+                            {
+                                newCost = costSoFar[current] + 1;
+                            }
+                            else
+                            {
+                                newCost = costSoFar[current] + next.movementCost;
+                            }
+                            if (!costSoFar.ContainsKey(next) || newCost < costSoFar[next])
+                            {
+                                costSoFar[next] = newCost;
+                                frontier.Enqueue(next);
+                                cameFrom[next] = current;
+                            }
                         }
                     }
                 }

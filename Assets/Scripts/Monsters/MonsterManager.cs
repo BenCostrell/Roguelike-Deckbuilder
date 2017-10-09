@@ -9,15 +9,15 @@ public class MonsterManager
     public Monster SpawnMonster(Monster.MonsterType monsterType)
     {
         Monster monster = CreateMonsterOfType(monsterType);
-        Tile playersTargetTile;
-        if (!Services.GameManager.player.hasKey)
-        {
-            playersTargetTile = Services.MapManager.keyTile;
-        }
-        else
-        {
-            playersTargetTile = Services.MapManager.playerSpawnTile;
-        }
+        Tile playersTargetTile = Services.MapManager.keyTile;
+        //if (!Services.GameManager.player.hasKey)
+        //{
+        //    playersTargetTile = Services.MapManager.keyTile;
+        //}
+        //else
+        //{
+        //    playersTargetTile = Services.MapManager.playerSpawnTile;
+        //}
         List<Tile> playersPathToTarget = AStarSearch.ShortestPath(
             Services.GameManager.player.currentTile,
             playersTargetTile, true);
@@ -33,7 +33,7 @@ public class MonsterManager
                 playersPathToTarget[Services.MonsterConfig.MinDistFromMonsters - 1];
         }
         List<Tile> potentialSpawnPoints = AStarSearch.FindAllAvailableGoals(spawnCenterPoint,
-            Services.MonsterConfig.SpawnRange, false);
+            Services.MonsterConfig.SpawnRange, true);
         for (int i = potentialSpawnPoints.Count - 1; i >= 0; i--)
         {
             if (potentialSpawnPoints[i].containedMonster != null ||

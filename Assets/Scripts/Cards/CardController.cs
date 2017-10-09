@@ -114,20 +114,23 @@ public class CardController : MonoBehaviour
     {
         if (!selected)
         {
-            if (card.deckViewMode || card.collectionMode)
-            {
-                DisplayInDeckViewMode();
-            }
-            else if (card.playable && !Input.GetMouseButton(0) || card.chest != null)
-            {
-                DisplayAtBasePos();
-                if(!(card is MovementCard)) card.OnUnselect();
-            }
             if (player.selectingCards)
             {
                 OnHoverExitForCardSelection();
             }
-
+            else if (card.deckViewMode || card.collectionMode)
+            {
+                DisplayInDeckViewMode();
+            }
+            else if (card.playable && !Input.GetMouseButton(0))
+            {
+                DisplayAtBasePos();
+                if(!(card is MovementCard)) card.OnUnselect();
+            }
+            else if (card.chest != null)
+            {
+                DisplayAtBasePos();
+            }
         }
     }
 
@@ -218,6 +221,7 @@ public class CardController : MonoBehaviour
                     color = Color.red;
                     if (card is TileTargetedCard)
                     {
+                        transform.localScale = baseScale * Services.CardConfig.OnHoverScaleUp;
                         SetCardFrameStatus(true);
                         Services.EventManager.Unregister<TileSelected>(OnTileSelected);
                     }
@@ -228,6 +232,7 @@ public class CardController : MonoBehaviour
                     color = Services.CardConfig.PlayableColor;
                     if (card is TileTargetedCard)
                     {
+                        transform.localScale = baseScale;
                         SetCardFrameStatus(false);
                         Services.EventManager.Register<TileSelected>(OnTileSelected);
                     }
@@ -237,6 +242,7 @@ public class CardController : MonoBehaviour
                     color = Color.white;
                     if (card is TileTargetedCard)
                     {
+                        transform.localScale = baseScale * Services.CardConfig.OnHoverScaleUp;
                         SetCardFrameStatus(true);
                         Services.EventManager.Unregister<TileSelected>(OnTileSelected);
                     }
@@ -361,5 +367,11 @@ public class CardController : MonoBehaviour
         selected = false;
         currentlySelectedCards.Remove(card);
         Services.EventManager.Unregister<TileSelected>(OnTileSelected);
+    }
+
+    public void OnCardDisable()
+    {
+        color = Color.gray;
+        color = Color.gray; //looks silly but it's so gray becomes the "base color"
     }
 }

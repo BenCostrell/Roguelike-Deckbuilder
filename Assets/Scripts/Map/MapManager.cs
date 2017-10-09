@@ -143,18 +143,20 @@ public class MapManager : MonoBehaviour {
             playerSpawnTile = mapDict[new Coord(startRoom.Left, startRoom.Bottom)];
             keyTile = mapDict[new Coord(startRoom.Right - 1, startRoom.Top - 1)];
         }
-        bool exitCreated = false;
-        foreach (Tile tile in startRoom.tiles)
-        {
-            if (!exitCreated && tile.coord.Distance(playerSpawnTile.coord) == 1)
-            {
-                tile.isExit = true;
-                tile.SetSprite(exitDoorSprite, Quaternion.identity);
-                exitCreated = true;
-            }
-        }
+        //bool exitCreated = false;
+        //foreach (Tile tile in startRoom.tiles)
+        //{
+        //    if (!exitCreated && tile.coord.Distance(playerSpawnTile.coord) == 1)
+        //    {
+        //        tile.isExit = true;
+        //        tile.SetSprite(exitDoorSprite, Quaternion.identity);
+        //        exitCreated = true;
+        //    }
+        //}
 
-        PlaceKey(keyTile);
+        //PlaceKey(keyTile);
+        keyTile.isExit = true;
+        keyTile.SetSprite(exitDoorSprite, Quaternion.identity);
         #endregion
         GenerateChests(levelNum);
     }

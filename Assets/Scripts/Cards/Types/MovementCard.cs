@@ -10,7 +10,7 @@ public abstract class MovementCard : Card
 
     public override bool CanPlay()
     {
-        return AStarSearch.FindAllAvailableGoals(player.currentTile, range, false).Count > 0;
+        return AStarSearch.FindAllAvailableGoals(player.currentTile, range).Count > 0;
     }
 
     public override void OnSelect()

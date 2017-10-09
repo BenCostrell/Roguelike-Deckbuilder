@@ -35,7 +35,7 @@ MonoBehaviour:
   inPlaySpacing: {x: 1, y: 0, z: -2}
   onHoverScaleUp: 2
   onHoverOffset: {x: 0, y: 3.1, z: -2}
-  onHoverOffsetDeckViewMode: {x: 0, y: 0, z: -100}
+  onHoverOffsetDeckViewMode: {x: 0, y: -1, z: -100}
   onHoverOffsetChestMode: {x: 0, y: 0, z: -2}
   cardPlayThresholdYPos: 3.5
   playableColor: {r: 0.44766432, g: 1, b: 0.30590397, a: 1}
