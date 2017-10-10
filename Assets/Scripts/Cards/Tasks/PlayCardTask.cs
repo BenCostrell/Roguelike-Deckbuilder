@@ -11,6 +11,7 @@ public class PlayCardTask : Task
     private Vector3 initialScale;
     private Vector3 targetScale;
     private int lockID;
+    private RectTransform rect;
 
     public PlayCardTask(Card card_)
     {
@@ -21,9 +22,10 @@ public class PlayCardTask : Task
     {
         timeElapsed = 0;
         duration = Services.CardConfig.PlayAnimDur;
+        rect = card.controller.GetComponent<RectTransform>();
         card.controller.color = Color.white;
-        card.controller.transform.parent = Services.UIManager.inPlayZone.transform;
-        initialPos = card.controller.transform.localPosition;
+        card.controller.transform.SetParent(Services.UIManager.inPlayZone.transform);
+        initialPos = rect.anchoredPosition;
         Services.GameManager.player.hand.Remove(card);
         Services.GameManager.player.cardsInFlux.Add(card);
         Services.UIManager.SortHand(Services.GameManager.player.hand);
@@ -42,7 +44,7 @@ public class PlayCardTask : Task
         timeElapsed += Time.deltaTime;
 
         card.Reposition(Vector3.Lerp(initialPos, targetPos,
-            Easing.QuadEaseOut(timeElapsed / duration)), false);
+            Easing.QuadEaseOut(timeElapsed / duration)), false, true);
         card.controller.transform.localScale = Vector3.Lerp(initialScale, targetScale,
             Easing.QuadEaseOut(timeElapsed / duration));
 
@@ -56,5 +58,6 @@ public class PlayCardTask : Task
         card.OnPlay();
         card.Reposition(targetPos, true);
         Services.GameManager.player.UnlockEverything(lockID);
+        Services.UIManager.SortInPlayZone(Services.GameManager.player.cardsInPlay);
     }
 }

@@ -77,9 +77,14 @@ public abstract class Card {
 
     public virtual void OnUnselect() { }
 
-    public void Reposition(Vector3 pos, bool changeBasPos)
+    public void Reposition(Vector3 pos, bool changeBasePos)
     {
-        controller.Reposition(pos, changeBasPos);
+        controller.Reposition(pos, changeBasePos);
+    }
+
+    public void Reposition(Vector3 pos, bool changeBasePos, bool front)
+    {
+        controller.Reposition(pos, changeBasePos, front);
     }
 
     public void Disable()

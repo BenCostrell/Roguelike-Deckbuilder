@@ -143,10 +143,9 @@ public class AlterDungeonTimerTask : Task
             timeElapsed = 0;
             duration = Services.MonsterConfig.AddMonsterCardDuration;
             newMonsterCard = dungeonDeck.GetNewMonsterCard();
-            initialPos = Services.GameManager.currentCamera.ScreenToWorldPoint(
-                Services.UIManager.dungeonTimerPos);
-            newMonsterCard.CreatePhysicalCard(Services.Main.transform);
-            newMonsterCard.Reposition(initialPos, true);
+            initialPos = Services.UIManager.dungeonTimerPos;
+            newMonsterCard.CreatePhysicalCard(Services.UIManager.bottomCorner);
+            newMonsterCard.Reposition(initialPos, true, true);
             targetPos = Services.UIManager.dungeonDeckPos;
             initialScale = newMonsterCard.controller.transform.localScale;
         }
@@ -164,11 +163,11 @@ public class AlterDungeonTimerTask : Task
         newMonsterCard.Reposition(Vector3.Lerp(
             initialPos, 
             targetPos,
-            Easing.QuadEaseIn(timeElapsed / duration)), false);
+            Easing.QuartEaseIn(timeElapsed / duration)), false, true);
         newMonsterCard.controller.transform.localScale = Vector3.Lerp(
             initialScale, 
             Vector3.zero,
-            Easing.QuadEaseIn(timeElapsed / duration));
+            Easing.QuartEaseIn(timeElapsed / duration));
 
         if (timeElapsed >= duration) SetStatus(TaskStatus.Success);
     }

@@ -5,15 +5,21 @@ using UnityEngine.UI;
 
 public class UIManager : MonoBehaviour {
 
-    public Text deckCounter;
+    [SerializeField]
+    private Text deckCounter;
     public GameObject deckZone;
     public GameObject inPlayZone;
     public GameObject handZone;
-    public Text discardCounter;
+    public Transform chestCardArea;
+    public Transform bottomCorner;
+    [SerializeField]
+    private Text discardCounter;
     public GameObject discardZone;
-    public Text dungeonDeckCounter;
+    [SerializeField]
+    private Text dungeonDeckCounter;
     public GameObject dungeonDeckZone;
-    public Text dungeonDiscardCounter;
+    [SerializeField]
+    private Text dungeonDiscardCounter;
     public GameObject dungeonDiscardZone;
     public GameObject dungeonPlayZone;
     [SerializeField]
@@ -118,6 +124,8 @@ public class UIManager : MonoBehaviour {
         for (int i = 0; i < cardsInHand.Count; i++)
         {
             cardsInHand[i].Reposition(GetCardHandPosition(i), true);
+            cardsInHand[i].controller.baseSiblingIndex = 
+                cardsInHand[i].controller.transform.GetSiblingIndex();
         }
     }
 
@@ -136,6 +144,8 @@ public class UIManager : MonoBehaviour {
         for (int i = 0; i < cardsInPlay.Count; i++)
         {
             cardsInPlay[i].Reposition(GetInPlayCardPosition(i), true);
+            cardsInPlay[i].controller.transform.SetSiblingIndex(i);
+            cardsInPlay[i].controller.baseSiblingIndex = i;
         }
     }
 

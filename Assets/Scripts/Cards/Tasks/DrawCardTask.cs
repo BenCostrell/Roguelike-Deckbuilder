@@ -56,7 +56,7 @@ public class DrawCardTask : Task
         zoomScale = Services.CardConfig.DrawAnimScale * initialScale;
         initialPos = new Vector3(rawDiff.x, rawDiff.y, targetPos.z);
         midpointPos = initialPos + Services.CardConfig.DrawAnimMidpointOffset;
-        card.Reposition(initialPos, false);
+        card.Reposition(initialPos, false, true);
         Services.SoundManager.CreateAndPlayAudio(Services.AudioConfig.CardDrawAudio);
     }
 
@@ -83,7 +83,7 @@ public class DrawCardTask : Task
                 (duration - timeToMidpoint)));
         }
        
-        card.Reposition(pos, false);
+        card.Reposition(pos, false, true);
 
         if (timeElapsed >= duration) SetStatus(TaskStatus.Success);
     }

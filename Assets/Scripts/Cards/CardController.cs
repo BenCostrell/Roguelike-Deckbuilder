@@ -2,57 +2,60 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
 
-public class CardController : MonoBehaviour
+public class CardController : MonoBehaviour, IPointerClickHandler,IPointerEnterHandler,IPointerExitHandler
 {
     public Card card { get; private set; }
     private Vector3 basePos;
+    [HideInInspector]
     public Vector3 baseScale;
-    private int baseSortingOrder;
-    public SpriteRenderer sr { get; private set; }
+    private Transform baseParent;
+    private RectTransform rect;
+    public Image frame { get; private set; }
     public Color color
     {
         get
         {
-            return sr.color;
+            return frame.color;
         }
         set
         {
-            prevColor = sr.color;
-            sr.color = value;
+            prevColor = frame.color;
+            frame.color = value;
         }
     }
     public Color prevColor { get; private set; }
-    private SpriteRenderer imageSr;
-    private Vector3 imageBaseLocalPos;
-    private TextMesh[] textMeshes;
+    private Image art;
+    private Vector3 artBaseLocalPos;
+    private Text nameText;
+    private Text effectText;
     private Vector3 mouseRelativePos;
-    private BoxCollider2D[] colliders;
     public bool selected;
     public static List<Card> currentlySelectedCards = new List<Card>();
     private bool inDiscardZone;
     private bool selectedLastFrame;
     private Player player { get { return Services.GameManager.player; } }
+    public int baseSiblingIndex;
 
     // Use this for initialization
     public void Init(Card card_)
     {
         card = card_;
-        colliders = GetComponents<BoxCollider2D>();
-        textMeshes = GetComponentsInChildren<TextMesh>();
-        textMeshes[0].text = card.info.Name;
-        textMeshes[1].text = card.info.CardText;
+        baseParent = transform.parent;
+        rect = GetComponent<RectTransform>();
+        Text[] textElements = GetComponentsInChildren<Text>();
+        Image[] imageElements = GetComponentsInChildren<Image>();
+        nameText = textElements[0];
+        effectText = textElements[1];
+        frame = imageElements[1];
+        art = imageElements[2];
+        nameText.text = card.info.Name;
+        effectText.text = card.info.CardText;
+        art.sprite = card.sprite;
+        artBaseLocalPos = art.transform.localPosition;
         baseScale = transform.localScale;
-        sr = GetComponent<SpriteRenderer>();
-        imageSr = GetComponentsInChildren<SpriteRenderer>()[1];
-        imageSr.sprite = card.sprite;
-        imageBaseLocalPos = imageSr.transform.localPosition;
-        baseSortingOrder = sr.sortingOrder;
-        foreach(TextMesh mesh in textMeshes)
-        {
-            mesh.gameObject.GetComponent<MeshRenderer>().sortingLayerID = sr.sortingLayerID;
-            mesh.gameObject.GetComponent<MeshRenderer>().sortingOrder = sr.sortingOrder + 1;
-        }
+        baseSiblingIndex = rect.GetSiblingIndex();
     }
 
     // Update is called once per frame
@@ -68,17 +71,20 @@ public class CardController : MonoBehaviour
 
     public void Reposition(Vector3 pos, bool changeBasePos)
     {
-        transform.localPosition = pos;
-        if (changeBasePos) basePos = pos;
-        sr.sortingOrder = baseSortingOrder + Mathf.CeilToInt(-transform.position.z/2);
-        imageSr.sortingOrder = sr.sortingOrder + 1;
-        foreach (TextMesh mesh in textMeshes)
-        {
-            mesh.gameObject.GetComponent<MeshRenderer>().sortingOrder = sr.sortingOrder + 1;
-        }
+        Reposition(pos, changeBasePos, false);
     }
 
-    private void OnMouseEnter()
+    public void Reposition(Vector3 pos, bool changeBasePos, bool front)
+    {
+        transform.localPosition= pos;
+        if (changeBasePos) {
+            basePos = pos;
+        }
+        if (front) rect.SetAsLastSibling();
+        else rect.SetSiblingIndex(baseSiblingIndex);
+    }
+
+    public void OnPointerEnter(PointerEventData eventData)
     {
         if (((currentlySelectedCards.Count == 0) ||
             (player.movementCardsSelected.Count != 0)) && 
@@ -88,19 +94,24 @@ public class CardController : MonoBehaviour
             {
 
                 transform.localScale = Services.CardConfig.OnHoverScaleUp * baseScale;
-                Reposition(basePos + Services.CardConfig.OnHoverOffsetDeckViewMode, false);
+                Vector3 offset = Services.CardConfig.OnHoverOffsetDeckViewMode;
+                if(transform.position.y < 200)
+                {
+                    offset = new Vector3(offset.x, -offset.y, offset.z);
+                }
+                Reposition(basePos + offset, false, true);
 
             }
             else if (card.playable && !selected)
             {
                 transform.localScale = Services.CardConfig.OnHoverScaleUp * baseScale;
-                Reposition(basePos + Services.CardConfig.OnHoverOffset, false);
+                Reposition(basePos + Services.CardConfig.OnHoverOffset, false, true);
                 if(!(card is MovementCard)) card.OnSelect();
             }
             else if (card.chest != null)
             {
                 transform.localScale = Services.CardConfig.OnHoverScaleUp * baseScale;
-                Reposition(basePos + Services.CardConfig.OnHoverOffsetChestMode, false);
+                Reposition(basePos + Services.CardConfig.OnHoverOffsetChestMode, false, true);
 
             }
             if (player.selectingCards)
@@ -110,7 +121,7 @@ public class CardController : MonoBehaviour
         }
     }
 
-    private void OnMouseExit()
+    public void OnPointerExit(PointerEventData eventData)
     {
         if (!selected)
         {
@@ -134,7 +145,7 @@ public class CardController : MonoBehaviour
         }
     }
 
-    private void OnMouseDown()
+    public void OnPointerClick(PointerEventData eventData)
     {
         if (card.deckViewMode) { } //nothing right now
         else if (card.collectionMode)
@@ -166,17 +177,17 @@ public class CardController : MonoBehaviour
     {
         selected = true;
         currentlySelectedCards.Add(card);
-        Vector3 mousePos =
-            Services.GameManager.currentCamera.ScreenToWorldPoint(Input.mousePosition);
-        mouseRelativePos = new Vector3(
-            mousePos.x - transform.localPosition.x,
-            mousePos.y - transform.localPosition.y,
-            0);
+        Vector3 mousePos = Input.mousePosition;
+        mouseRelativePos = mousePos - transform.position;
         if (card is MovementCard && card.playable)
         {
             color = (Color.blue + Color.white) / 2;
             transform.localScale = baseScale * 1.1f;
-            Reposition(basePos + Services.CardConfig.OnHoverOffset, false);
+            Reposition(basePos + Services.CardConfig.OnHoverOffset, false, true);
+        }
+        else
+        {
+            transform.SetParent(Services.UIManager.bottomCorner);
         }
         if (card.playable)
         {
@@ -196,27 +207,13 @@ public class CardController : MonoBehaviour
         transform.localScale = Services.CardConfig.OnHoverScaleUp * baseScale;
         if (card.playable || card.deckViewMode)
         {
-            Vector3 mousePos = 
-                Services.GameManager.currentCamera.ScreenToWorldPoint(Input.mousePosition);
-            Vector3 newPos = new Vector3(
-                mousePos.x - mouseRelativePos.x,
-                mousePos.y - mouseRelativePos.y,
-                basePos.z);
-            if (card.deckViewMode)
-            {
-                newPos = new Vector3(
-                    newPos.x, 
-                    newPos.y, 
-                    Services.CardConfig.OnHoverOffsetDeckViewMode.z);
-            }
-            else
-            {
-                newPos += new Vector3(0, 0, Services.CardConfig.OnHoverOffset.z);
-            }
-                Reposition(newPos, false);
+            Vector3 mousePos = Input.mousePosition;
+            Vector3 newPos = mousePos - mouseRelativePos;
+            Reposition(newPos, false, true);
             if (card.playable)
             {
-                if (Services.UIManager.discardZone.GetComponent<Collider2D>().bounds.Contains(transform.position))
+                if (Services.UIManager.discardZone.GetComponent<RectTransform>().rect.Contains(
+                    transform.position))
                 {
                     color = Color.red;
                     if (card is TileTargetedCard)
@@ -226,7 +223,7 @@ public class CardController : MonoBehaviour
                         Services.EventManager.Unregister<TileSelected>(OnTileSelected);
                     }
                 }
-                else if (transform.localPosition.y >= Services.CardConfig.CardPlayThresholdYPos
+                else if (rect.anchoredPosition.y >= Services.CardConfig.CardPlayThresholdYPos
                     && card.CanPlay())
                 {
                     color = Services.CardConfig.PlayableColor;
@@ -253,25 +250,20 @@ public class CardController : MonoBehaviour
 
     void SetCardFrameStatus(bool status)
     {
-        foreach (TextMesh tm in textMeshes)
-        {
-            tm.gameObject.SetActive(status);
-        }
-        sr.enabled = status;
-        colliders[0].enabled = status;
+        nameText.enabled = status;
+        effectText.enabled = status;
+        frame.enabled = status;
         if (status)
         {
-            imageSr.transform.localPosition = imageBaseLocalPos;
+            art.GetComponent<RectTransform>().anchoredPosition = artBaseLocalPos;
         }
         else
         {
-            Vector3 mousePosition = 
-                Services.GameManager.currentCamera.ScreenToWorldPoint(Input.mousePosition);
-            Vector3 mouseLocalPos = transform.InverseTransformPoint(mousePosition);
-            imageSr.transform.localPosition = new Vector3(
+            Vector3 mousePosition = Input.mousePosition;
+            Vector3 mouseLocalPos = rect.InverseTransformPoint(mousePosition);
+            art.GetComponent<RectTransform>().anchoredPosition = new Vector2(
                 mouseLocalPos.x,
-                mouseLocalPos.y,
-                0);
+                mouseLocalPos.y);
         }
     }
 
@@ -287,13 +279,14 @@ public class CardController : MonoBehaviour
     {
         card.OnUnselect();
         SetCardFrameStatus(true);
-        if (Services.UIManager.discardZone.GetComponent<Collider2D>().bounds.Contains(transform.position))
+        if (Services.UIManager.discardZone.GetComponent<RectTransform>().rect.Contains(
+            Services.GameManager.currentCamera.WorldToScreenPoint(transform.position)))
         {
             player.DiscardCardFromHand(card);
             return false;
         }
         else if (card.playable && card.CanPlay() && (forcePlay ||
-            (transform.localPosition.y >= Services.CardConfig.CardPlayThresholdYPos &&
+            (rect.anchoredPosition.y >= Services.CardConfig.CardPlayThresholdYPos &&
             !(card is TileTargetedCard))))
         {
             Services.Main.taskManager.AddTask(player.PlayCard(card));
@@ -309,7 +302,7 @@ public class CardController : MonoBehaviour
     public void DisplayInPlay()
     {
         color = Color.white;
-        transform.parent = Services.UIManager.inPlayZone.transform;
+        transform.SetParent(Services.UIManager.inPlayZone.transform);
         transform.localScale = baseScale;
     }
 
@@ -317,6 +310,7 @@ public class CardController : MonoBehaviour
     {
         color = Color.white;
         transform.localScale = baseScale;
+        transform.SetParent(baseParent);
         Reposition(basePos, false);
     }
 

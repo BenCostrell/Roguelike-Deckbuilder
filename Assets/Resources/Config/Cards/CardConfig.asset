@@ -42,22 +42,22 @@ MonoBehaviour:
   - {fileID: 11400000, guid: bd31b52cd16140d4ca5756d38c69abfe, type: 2}
   - {fileID: 11400000, guid: b7cffbf5124cb0f479a4b2b5ddbf7f72, type: 2}
   - {fileID: 11400000, guid: b7cffbf5124cb0f479a4b2b5ddbf7f72, type: 2}
-  handCardSpacing: {x: 1.8, y: 0, z: 0}
-  inPlaySpacing: {x: 1, y: 0, z: -2}
+  handCardSpacing: {x: 140, y: 0, z: 0}
+  inPlaySpacing: {x: 100, y: 0, z: 0}
   onHoverScaleUp: 2
-  onHoverOffset: {x: 0, y: 3.1, z: -2}
-  onHoverOffsetDeckViewMode: {x: 0, y: -1, z: -100}
-  onHoverOffsetChestMode: {x: 0, y: 0, z: -2}
+  onHoverOffset: {x: 0, y: 180, z: 0}
+  onHoverOffsetDeckViewMode: {x: 0, y: -70, z: 0}
+  onHoverOffsetChestMode: {x: 0, y: 0, z: 0}
   cardPlayThresholdYPos: 3.5
   playableColor: {r: 0.44766432, g: 1, b: 0.30590397, a: 1}
   drawAnimDur: 0.3
   drawAnimTimeToMidpoint: 0.2
   drawAnimScale: 2
-  drawAnimMidpointOffset: {x: -1, y: -3, z: 0}
+  drawAnimMidpointOffset: {x: 0, y: -120, z: 0}
   playAnimDur: 0.3
   acquireAnimDur: 0.5
   minSpawnDistFromMonsters: 1
   minSpawnDistFromItems: 8
   minSpawnCol: 5
   cardOnBoardOffset: {x: -0, y: -0.3, z: 0}
-  cardOnBoardHoverOffset: {x: 1, y: -1.5, z: -2}
+  cardOnBoardHoverOffset: {x: 1, y: -1.5, z: 0}

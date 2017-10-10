@@ -20,9 +20,9 @@ public class AcquireCardTask : Task
     {
         timeElapsed = 0;
         duration = Services.CardConfig.AcquireAnimDur;
-        card.controller.transform.parent = Services.UIManager.discardZone.transform;
-        initialPos = card.controller.transform.localPosition;
-        targetPos = Vector3.zero;
+        card.controller.transform.SetParent(Services.UIManager.bottomCorner);
+        initialPos = card.controller.transform.position;
+        targetPos = Services.UIManager.discardZone.transform.position;
         initialScale = card.controller.transform.localScale;
         targetScale = Vector3.zero;
         //card.GetPickedUp();
@@ -33,7 +33,7 @@ public class AcquireCardTask : Task
         timeElapsed += Time.deltaTime;
 
         card.Reposition(Vector3.Lerp(initialPos, targetPos, 
-            Easing.QuartEaseIn(timeElapsed / duration)), false);
+            Easing.QuartEaseIn(timeElapsed / duration)), false, true);
         card.controller.transform.localScale = Vector3.Lerp(initialScale, targetScale,
             Easing.QuartEaseIn(timeElapsed / duration));
 

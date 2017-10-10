@@ -8,9 +8,9 @@ public class LevelTransition : Scene<MainTransitionData> {
     [SerializeField]
     private Text levelTitle;
     [SerializeField]
-    private GameObject deckArea;
+    private Transform deckArea;
     [SerializeField]
-    private GameObject monsterArea;
+    private Transform dungeonDeckArea;
     [SerializeField]
     private Text playerUIHPCounter;
     [SerializeField]
@@ -38,8 +38,8 @@ public class LevelTransition : Scene<MainTransitionData> {
         Services.SoundManager.SetMusicVolume(0.05f);
         for (int i = 0; i < data.deck.Count; i++)
         {
-            data.deck[i].CreatePhysicalCard(transform);
-            data.deck[i].Reposition(deckArea.transform.position +
+            data.deck[i].CreatePhysicalCard(deckArea.transform);
+            data.deck[i].Reposition(
                 deckDisplayOffset +
                 (deckDisplaySpacing * (i % maxCardsPerRow)) +
                 (deckDisplaySpacingPerRow * (i / maxCardsPerRow)),
@@ -54,8 +54,8 @@ public class LevelTransition : Scene<MainTransitionData> {
 
             for (int j = 0; j < monsterCards.Count; j++)
             {
-                monsterCards[j].CreatePhysicalCard(transform);
-                monsterCards[j].Reposition(monsterArea.transform.position +
+                monsterCards[j].CreatePhysicalCard(dungeonDeckArea.transform);
+                monsterCards[j].Reposition(
                     deckDisplayOffset +
                     (deckDisplaySpacing * (j % maxCardsPerRow)) +
                     (deckDisplaySpacingPerRow * (j / maxCardsPerRow)),

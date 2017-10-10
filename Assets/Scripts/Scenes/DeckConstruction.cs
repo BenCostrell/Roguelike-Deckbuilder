@@ -11,6 +11,8 @@ public class DeckConstruction : Scene<MainTransitionData> {
     [SerializeField]
     private Vector3 deckDisplaySpacing;
     [SerializeField]
+    private Vector3 deckDisplayOffset;
+    [SerializeField]
     private int deckDisplayCols;
     [SerializeField]
     private int deckDisplayRows;
@@ -155,7 +157,7 @@ public class DeckConstruction : Scene<MainTransitionData> {
     {
         return new Vector3(index % deckDisplayCols * deckDisplaySpacing.x,
             (index / deckDisplayCols) * deckDisplaySpacing.y,
-            index * deckDisplaySpacing.z);
+            index * deckDisplaySpacing.z) + deckDisplayOffset;
     }
     
     void SortDeck()
