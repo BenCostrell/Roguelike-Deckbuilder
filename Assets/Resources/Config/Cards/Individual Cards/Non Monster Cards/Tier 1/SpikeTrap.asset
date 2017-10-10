@@ -13,13 +13,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cardType: 17
   name_: Spike Trap
-  cardText: 'Place a spike
-
-    trap within 3 range
-
-    that does 1 damage
-
-    and stops movement.'
+  cardText: Place a spike trap within 3 range that does 1 damage and stops movement.
   sprite: {fileID: 21300000, guid: 5643126b74f5feb43858cc104226c536, type: 3}
   tier: 1
   isMonster: 0

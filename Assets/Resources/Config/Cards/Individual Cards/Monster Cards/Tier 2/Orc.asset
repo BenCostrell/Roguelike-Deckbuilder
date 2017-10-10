@@ -13,8 +13,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cardType: 14
   name_: Orc
-  cardText: "Spawns an \nOrc when \ndrawn."
+  cardText: Spawn an Orc.
   sprite: {fileID: 21300000, guid: c5712e9f56fdbe444ba8a8660ba9f18c, type: 3}
   tier: 2
   isMonster: 1
-  playOnPlayAll: 0
+  onPlayAudio: {fileID: 0}

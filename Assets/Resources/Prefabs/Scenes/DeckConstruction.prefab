@@ -459,8 +459,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2bfb9ff6bed4dbf45aa0352e4fe6adfe, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  deckDisplaySpacing: {x: 130, y: -250, z: -2}
-  deckDisplayOffset: {x: 80, y: 200, z: 0}
+  deckDisplaySpacing: {x: 130, y: -195, z: -2}
+  deckDisplayOffset: {x: 80, y: 230, z: 0}
   deckDisplayCols: 5
   deckDisplayRows: 4
   collectionDisplaySpacing: {x: 150, y: -300, z: 0}

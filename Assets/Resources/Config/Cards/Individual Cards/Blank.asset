@@ -13,7 +13,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cardType: 16
   name_: Nothing!
-  cardText: "Nothing happens! \nPhew."
+  cardText: Nothing happens! Phew.
   sprite: {fileID: 0}
   tier: -1
   isMonster: 0

@@ -212,8 +212,7 @@ public class CardController : MonoBehaviour, IPointerClickHandler,IPointerEnterH
             Reposition(newPos, false, true);
             if (card.playable)
             {
-                if (Services.UIManager.discardZone.GetComponent<RectTransform>().rect.Contains(
-                    transform.position))
+                if (IsInDiscardZone())
                 {
                     color = Color.red;
                     if (card is TileTargetedCard)
@@ -279,8 +278,7 @@ public class CardController : MonoBehaviour, IPointerClickHandler,IPointerEnterH
     {
         card.OnUnselect();
         SetCardFrameStatus(true);
-        if (Services.UIManager.discardZone.GetComponent<RectTransform>().rect.Contains(
-            Services.GameManager.currentCamera.WorldToScreenPoint(transform.position)))
+        if (IsInDiscardZone())
         {
             player.DiscardCardFromHand(card);
             return false;
@@ -367,5 +365,12 @@ public class CardController : MonoBehaviour, IPointerClickHandler,IPointerEnterH
     {
         color = Color.gray;
         color = Color.gray; //looks silly but it's so gray becomes the "base color"
+    }
+
+    bool IsInDiscardZone()
+    {
+        RectTransform discardRT =
+                    Services.UIManager.discardZone.GetComponent<RectTransform>();
+        return discardRT.rect.Contains(discardRT.InverseTransformPoint(transform.position));
     }
 }

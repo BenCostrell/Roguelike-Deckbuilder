@@ -13,8 +13,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cardType: 8
   name_: Zombie
-  cardText: "Spawns a \nZombie when \ndrawn."
+  cardText: Spawn a Zombie.
   sprite: {fileID: 21300000, guid: dc2602e7456fc1044b3421c0e7e4acdb, type: 3}
   tier: 1
   isMonster: 1
-  playOnPlayAll: 0
+  onPlayAudio: {fileID: 0}

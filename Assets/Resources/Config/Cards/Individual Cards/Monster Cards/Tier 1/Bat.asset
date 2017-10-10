@@ -13,8 +13,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cardType: 13
   name_: Bat
-  cardText: "Spawns a \nBat when \ndrawn"
+  cardText: Spawn a Bat.
   sprite: {fileID: 21300000, guid: f50ad25c92d037e48b63eafa3da8f9fe, type: 3}
   tier: 1
   isMonster: 1
-  playOnPlayAll: 0
+  onPlayAudio: {fileID: 0}

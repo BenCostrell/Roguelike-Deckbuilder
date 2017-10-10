@@ -210,9 +210,9 @@ public class DeckConstruction : Scene<MainTransitionData> {
                 for (int i = 0; i < keys.Count; i++)
                 {
                     Card collectionCard = clumpedCollection[keys[i]].card;
-                    collectionCard.controller.transform.parent =
+                    collectionCard.controller.transform.SetParent(
                         collectionPages[i / (collectionDisplayCols * collectionDisplayRows)]
-                        .transform;
+                        .transform);
                     collectionCard.Reposition(GetCollectionPosition(i), true);
                 }
                 if(keys.Count ==

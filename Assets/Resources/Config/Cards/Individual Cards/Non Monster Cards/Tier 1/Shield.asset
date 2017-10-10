@@ -13,9 +13,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cardType: 18
   name_: Shield
-  cardText: 'Gain 2 shield
-
-    for this turn.'
+  cardText: Gain 2 shield for this turn.
   sprite: {fileID: 21300000, guid: 7b8dd5c5ef9cc2244bebe4276ea8f20c, type: 3}
   tier: 1
   isMonster: 0

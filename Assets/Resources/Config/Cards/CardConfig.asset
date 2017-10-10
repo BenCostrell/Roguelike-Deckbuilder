@@ -48,7 +48,7 @@ MonoBehaviour:
   onHoverOffset: {x: 0, y: 180, z: 0}
   onHoverOffsetDeckViewMode: {x: 0, y: -70, z: 0}
   onHoverOffsetChestMode: {x: 0, y: 0, z: 0}
-  cardPlayThresholdYPos: 3.5
+  cardPlayThresholdYPos: 250
   playableColor: {r: 0.44766432, g: 1, b: 0.30590397, a: 1}
   drawAnimDur: 0.3
   drawAnimTimeToMidpoint: 0.2

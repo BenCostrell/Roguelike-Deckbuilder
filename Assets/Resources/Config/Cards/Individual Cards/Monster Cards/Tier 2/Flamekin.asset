@@ -13,8 +13,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cardType: 15
   name_: Flamekin
-  cardText: "Spawns a \nFlamekin when \ndrawn."
+  cardText: Spawn a Flamekin.
   sprite: {fileID: 21300000, guid: aed0b3f7e5d304642b3e2e7b5866c58c, type: 3}
   tier: 2
   isMonster: 1
-  playOnPlayAll: 0
+  onPlayAudio: {fileID: 0}
