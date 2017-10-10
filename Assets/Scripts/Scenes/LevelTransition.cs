@@ -50,20 +50,19 @@ public class LevelTransition : Scene<MainTransitionData> {
 
         if (!data.gameOver)
         {
-            List<Card> monsterCards = GenerateMonstersForLevel();
+            if (data.dungeonDeck.Count == 0) data.dungeonDeck = GenerateMonstersForLevel();
 
-            for (int j = 0; j < monsterCards.Count; j++)
+            for (int j = 0; j < data.dungeonDeck.Count; j++)
             {
-                monsterCards[j].CreatePhysicalCard(dungeonDeckArea.transform);
-                monsterCards[j].Reposition(
+                data.dungeonDeck[j].CreatePhysicalCard(dungeonDeckArea.transform);
+                data.dungeonDeck[j].Reposition(
                     deckDisplayOffset +
                     (deckDisplaySpacing * (j % maxCardsPerRow)) +
                     (deckDisplaySpacingPerRow * (j / maxCardsPerRow)),
                     true);
-                monsterCards[j].deckViewMode = true;
-                monsterCards[j].Disable();
+                data.dungeonDeck[j].deckViewMode = true;
+                data.dungeonDeck[j].Disable();
             }
-            data.dungeonDeck = monsterCards;
         }
         else
         {
@@ -162,15 +161,6 @@ public class LevelTransition : Scene<MainTransitionData> {
         {
             data.deck[i].deckViewMode = false;
         }
-        // for testing purposes
-        //data.collection = new List<Card>();
-        //for (int i = 0; i < Services.CardConfig.Cards.Length; i++)
-        //{
-        //    data.collection.Add(
-        //        Services.CardConfig.CreateCardOfType(Services.CardConfig.Cards[i].CardType));
-        //    data.collection.Add(
-        //        Services.CardConfig.CreateCardOfType(Services.CardConfig.Cards[i].CardType));
-        //}
         Services.SceneStackManager.Swap<DeckConstruction>(data);
     }
 }

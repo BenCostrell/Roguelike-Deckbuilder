@@ -2405,7 +2405,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   minRoomDimension: 5
   maxRoomDimension: 8
-  levelOneRoomDimension: 8
+  levelOneRoomDimension: 10
   hallwayWidth: 2
   minRoomDist: 3
   maxRoomDist: 5
