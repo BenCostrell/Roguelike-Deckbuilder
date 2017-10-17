@@ -33,7 +33,6 @@ public class PlayCardTask : Task
             .GetInPlayCardPosition(Services.GameManager.player.cardsInPlay.Count + 1);
         initialScale = card.controller.transform.localScale;
         targetScale = card.controller.baseScale;
-        card.Disable();
         lockID = Services.UIManager.nextLockID;
         Services.GameManager.player.LockEverything(lockID);
         Services.SoundManager.CreateAndPlayAudio(Services.AudioConfig.CardPlayAudio, 0.3f);

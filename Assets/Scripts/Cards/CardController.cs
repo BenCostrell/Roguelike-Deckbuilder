@@ -175,10 +175,7 @@ public class CardController : MonoBehaviour, IPointerClickHandler, IPointerEnter
 
     public void UnselectMovementCard()
     {
-        DisplayAtBasePos();
-        card.OnUnselect();
-        player.cardsSelected.Remove(card);
-        selected = false;
+        stateMachine.TransitionTo<Disabled>();
     }
 
     public void SelectCard()
@@ -328,12 +325,12 @@ public class CardController : MonoBehaviour, IPointerClickHandler, IPointerEnter
 
     public void UnselectedForCard()
     {
-        color = prevColor;
+        stateMachine.TransitionTo<SelectableForCardEffect>();
     }
 
     public void SelectedForCard()
     {
-        color = Color.red;
+        stateMachine.TransitionTo<SelectedForCardEffect>();
     }
 
     void OnHoverEnterForCardSelection()
@@ -394,6 +391,12 @@ public class CardController : MonoBehaviour, IPointerClickHandler, IPointerEnter
         stateMachine.TransitionTo<Chest>();
     }
 
+    //for dungeon deck use only
+    public void EnterPlayedMode()
+    {
+        stateMachine.TransitionTo<Played>();
+    }
+
     public void SelectMovementCard()
     {
         Debug.Assert(card is MovementCard);
@@ -413,14 +416,19 @@ public class CardController : MonoBehaviour, IPointerClickHandler, IPointerEnter
         return discardRT.rect.Contains(discardRT.InverseTransformPoint(transform.position));
     }
 
-    private abstract class CardState : FSM<CardController>.State { }
+    private abstract class CardState : FSM<CardController>.State
+    {
+        protected Player player { get { return Context.player; } }
+        protected Card card { get { return Context.card; } }
+        protected Transform transform { get { return Context.transform; } }
+        protected Vector3 baseScale { get { return Context.baseScale; } }
+    }
 
     private abstract class Hoverable : CardState
     {
         public override void OnInputEnter()
         {
-            Context.transform.localScale = Services.CardConfig.OnHoverScaleUp 
-                * Context.baseScale;
+            transform.localScale = Services.CardConfig.OnHoverScaleUp * baseScale;
             AddOffset();
         }
 
@@ -432,8 +440,8 @@ public class CardController : MonoBehaviour, IPointerClickHandler, IPointerEnter
         public override void OnInputExit()
         {
             Context.color = Color.white;
-            Context.transform.localScale = Context.baseScale;
-            Context.transform.SetParent(Context.baseParent);
+            transform.localScale = baseScale;
+            transform.SetParent(Context.baseParent);
             Context.Reposition(Context.basePos, false);
         }
     }
@@ -443,31 +451,29 @@ public class CardController : MonoBehaviour, IPointerClickHandler, IPointerEnter
         public override void OnEnter()
         {
             Context.color = Color.white;
-            Context.transform.localScale = Context.baseScale;
-            Context.transform.SetParent(Context.baseParent);
+            transform.localScale = baseScale;
+            transform.SetParent(Context.baseParent);
+            Context.SetCardFrameStatus(true);
             Context.Reposition(Context.basePos, false);
         }
 
         public override void OnInputDown()
         {
-            if (Context.card is MovementCard)
-                Parent.TransitionTo<MovementCardSelected>();
-            else if (Context.card is TileTargetedCard)
-                Parent.TransitionTo<TargetedCardSelected>();
-            else
-                Parent.TransitionTo<Selected>();
+            if (card is MovementCard) TransitionTo<MovementCardSelected>();
+            else if (card is TileTargetedCard) TransitionTo<TargetedCardSelected>();
+            else TransitionTo<Selected>();
         }
 
-        protected override void AddOffset()
+        public override void OnInputEnter()
         {
-            base.AddOffset();
-            if (!(Context.card is MovementCard)) Context.card.OnSelect();
+            base.OnInputEnter();
+            if (!(card is MovementCard)) card.OnSelect();
         }
 
         public override void OnInputExit()
         {
             base.OnInputExit();
-            if (!(Context.card is MovementCard)) Context.card.OnUnselect();
+            if (!(card is MovementCard)) card.OnUnselect();
         }
     }
 
@@ -476,6 +482,10 @@ public class CardController : MonoBehaviour, IPointerClickHandler, IPointerEnter
         public override void OnEnter()
         {
             Context.color = Color.gray;
+            transform.localScale = baseScale;
+            transform.SetParent(Context.baseParent);
+            Context.SetCardFrameStatus(true);
+            Context.Reposition(Context.basePos, false);
         }
     }
 
@@ -489,7 +499,7 @@ public class CardController : MonoBehaviour, IPointerClickHandler, IPointerEnter
         protected override void AddOffset()
         {
             Vector3 offset = Services.CardConfig.OnHoverOffsetDeckViewMode;
-            if (Context.transform.position.y < 200)
+            if (transform.position.y < 200)
             {
                 offset = new Vector3(offset.x, -offset.y, offset.z);
             }
@@ -501,7 +511,53 @@ public class CardController : MonoBehaviour, IPointerClickHandler, IPointerEnter
     {
         public override void OnInputDown()
         {
-            Services.DeckConstruction.OnCardClicked(Context.card);
+            Services.DeckConstruction.OnCardClicked(card);
+        }
+    }
+
+    private class SelectableForCardEffect : CardState
+    {
+        public override void OnEnter()
+        {
+            Context.color = Color.magenta;
+        }
+
+        public override void OnInputDown()
+        {
+            Services.EventManager.Fire(new CardSelected(card));
+        }
+
+        public override void OnInputEnter()
+        {
+            Context.color = Color.red;
+        }
+
+        public override void OnInputExit()
+        {
+            Context.color = Color.magenta;
+        }
+    }
+
+    private class SelectedForCardEffect : CardState
+    {
+        public override void OnEnter()
+        {
+            Context.color = Color.red;
+        }
+
+        public override void OnInputDown()
+        {
+            Services.EventManager.Fire(new CardSelected(card));
+        }
+
+        public override void OnInputEnter()
+        {
+            Context.color = Color.magenta;
+        }
+
+        public override void OnInputExit()
+        {
+            Context.color = Color.red;
         }
     }
 
@@ -512,10 +568,10 @@ public class CardController : MonoBehaviour, IPointerClickHandler, IPointerEnter
         public override void OnEnter()
         {
             mouseRelativePos = Input.mousePosition - Context.transform.position;
-            Context.transform.SetParent(Services.UIManager.bottomCorner);
-            Context.transform.localScale = Services.CardConfig.OnHoverScaleUp 
-                * Context.baseScale;
-            Context.card.OnSelect();
+            transform.SetParent(Services.UIManager.bottomCorner);
+            transform.localScale = Services.CardConfig.OnHoverScaleUp * baseScale;
+            card.OnSelect();
+            player.cardsSelected.Add(card);
         }
 
         protected void Drag()
@@ -542,23 +598,24 @@ public class CardController : MonoBehaviour, IPointerClickHandler, IPointerEnter
 
         protected virtual void OnPlayed()
         {
-            Services.Main.taskManager.AddTask(Context.player.PlayCard(Context.card));
-            Debug.Log(Context.card.cardType + " on played");
-            TransitionTo<Played>();
+            player.hand.Remove(card);
+            player.cardsInFlux.Add(card);
+            Services.UIManager.SortHand(player.hand);
+            TransitionTo<Playing>();
         }
 
         public override void Update()
         {
             bool buttonDown = Input.GetMouseButtonDown(0);
             Drag();
-            if (buttonDown) Context.card.OnUnselect();
+            if (buttonDown) card.OnUnselect();
             if (Context.IsInDiscardZone())
             {
                 OnDiscardableEffect();
-                if (buttonDown) Context.player.DiscardCardFromHand(Context.card);
+                if (buttonDown) player.DiscardCardFromHand(card);
             }
             else if (Context.rect.anchoredPosition.y >= Services.CardConfig.CardPlayThresholdYPos &&
-                Context.card.CanPlay())
+                card.CanPlay())
             {
                 OnPlayableEffect();
                 if (buttonDown) OnPlayed();
@@ -569,6 +626,11 @@ public class CardController : MonoBehaviour, IPointerClickHandler, IPointerEnter
                 if (buttonDown) TransitionTo<Playable>();
             }
         }
+
+        public override void OnExit()
+        {
+            player.cardsSelected.Remove(card);
+        }
     }
 
     private class MovementCardSelected : CardState
@@ -577,26 +639,34 @@ public class CardController : MonoBehaviour, IPointerClickHandler, IPointerEnter
         {
             Services.EventManager.Register<TileSelected>(OnTileSelected);
             Context.color = (Color.blue + Color.white) / 2;
-            Context.transform.localScale = Context.baseScale * 1.1f;
+            transform.localScale = Context.baseScale * 1.1f;
             Context.Reposition(Context.basePos + Services.CardConfig.OnHoverOffset, false, true);
-            Context.card.OnSelect();
+            card.OnSelect();
+            player.cardsSelected.Add(card);
+            player.movementCardsSelected.Add(card as MovementCard);
         }
 
         public override void OnInputDown()
         {
-            Context.card.OnUnselect();
+            card.OnUnselect();
             TransitionTo<Playable>();
         }
 
         void OnTileSelected(TileSelected e)
         {
-            Context.player.MoveToTile(e.tile);
-            Parent.TransitionTo<Played>();
+            MovementCard moveCard = card as MovementCard;
+            moveCard.OnMovementAct();
+            player.hand.Remove(card);
+            player.cardsInFlux.Add(card);
+            Services.UIManager.SortHand(player.hand);
+            TransitionTo<Playing>();
         }
 
         public override void OnExit()
         {
             Services.EventManager.Unregister<TileSelected>(OnTileSelected);
+            player.cardsSelected.Remove(card);
+            player.movementCardsSelected.Remove(card as MovementCard);
         }
     }
 
@@ -605,7 +675,7 @@ public class CardController : MonoBehaviour, IPointerClickHandler, IPointerEnter
         protected override void OnDiscardableEffect()
         {
             base.OnDiscardableEffect();
-            Context.transform.localScale = Context.baseScale * Services.CardConfig.OnHoverScaleUp;
+            transform.localScale = baseScale * Services.CardConfig.OnHoverScaleUp;
             Context.SetCardFrameStatus(true);
             Services.EventManager.Unregister<TileSelected>(OnTileSelected);
         }
@@ -613,7 +683,7 @@ public class CardController : MonoBehaviour, IPointerClickHandler, IPointerEnter
         protected override void OnPlayableEffect()
         {
             base.OnPlayableEffect();
-            Context.transform.localScale = Context.baseScale;
+            transform.localScale = Context.baseScale;
             Context.SetCardFrameStatus(false);
             Services.EventManager.Register<TileSelected>(OnTileSelected);
         }
@@ -621,7 +691,7 @@ public class CardController : MonoBehaviour, IPointerClickHandler, IPointerEnter
         protected override void OnUnplayableEffect()
         {
             base.OnUnplayableEffect();
-            Context.transform.localScale = Context.baseScale * Services.CardConfig.OnHoverScaleUp;
+            transform.localScale = baseScale * Services.CardConfig.OnHoverScaleUp;
             Context.SetCardFrameStatus(true);
             Services.EventManager.Unregister<TileSelected>(OnTileSelected);
         }
@@ -631,8 +701,8 @@ public class CardController : MonoBehaviour, IPointerClickHandler, IPointerEnter
         void OnTileSelected(TileSelected e)
         {
             Tile tileSelected = e.tile;
-            TileTargetedCard targetedCard = Context.card as TileTargetedCard;
-            Context.card.OnUnselect();
+            TileTargetedCard targetedCard = card as TileTargetedCard;
+            card.OnUnselect();
             if (targetedCard.IsTargetValid(tileSelected))
             {
                 targetedCard.OnTargetSelected(tileSelected);
@@ -643,6 +713,7 @@ public class CardController : MonoBehaviour, IPointerClickHandler, IPointerEnter
 
         public override void OnExit()
         {
+            base.OnExit();
             Services.EventManager.Unregister<TileSelected>(OnTileSelected);
         }
     }
@@ -654,23 +725,117 @@ public class CardController : MonoBehaviour, IPointerClickHandler, IPointerEnter
         {
             Context.color = Color.white;
             Context.SetCardFrameStatus(true);
-            Context.transform.localScale = Context.baseScale;
-            Debug.Log(Context.card.cardType + " entering played");
+            transform.localScale = Context.baseScale;
         }
     }
 
+    private class Playing : CardState
+    {
+        private float timeElapsed;
+        private float duration;
+        private Vector3 initialPos;
+        private Vector3 targetPos;
+        private Vector3 initialScale;
+        private Vector3 targetScale;
+        private int lockID;
+        private RectTransform rect;
+
+        public override void OnEnter()
+        {
+            timeElapsed = 0;
+            duration = Services.CardConfig.PlayAnimDur;
+            rect = Context.GetComponent<RectTransform>();
+            Context.color = Color.white;
+            transform.SetParent(Services.UIManager.inPlayZone.transform);
+            initialPos = rect.anchoredPosition;
+            targetPos = Services.UIManager.GetInPlayCardPosition(player.cardsInPlay.Count + 1);
+            initialScale = transform.localScale;
+            targetScale = baseScale;
+            lockID = Services.UIManager.nextLockID;
+            player.LockEverything(lockID);
+            Services.SoundManager.CreateAndPlayAudio(Services.AudioConfig.CardPlayAudio, 0.3f);
+        }
+
+        public override void Update()
+        {
+            timeElapsed += Time.deltaTime;
+
+            card.Reposition(Vector3.Lerp(initialPos, targetPos,
+                Easing.QuadEaseOut(timeElapsed / duration)), false, true);
+            transform.localScale = Vector3.Lerp(initialScale, targetScale,
+                Easing.QuadEaseOut(timeElapsed / duration));
+
+            if (timeElapsed >= duration) OnSuccess();
+        }
+
+        void OnSuccess()
+        {
+            player.cardsInFlux.Remove(card);
+            player.cardsInPlay.Add(card);
+            card.OnPlay();
+            card.Reposition(targetPos, true);
+            player.UnlockEverything(lockID);
+            Services.UIManager.SortInPlayZone(player.cardsInPlay);
+            TransitionTo<Played>();
+        }
+    }
+
+
     private class Chest : Hoverable
     {
+        public override void OnEnter()
+        {
+            Context.color = Color.white;
+        }
+
         public override void OnInputDown()
         {
-            Context.card.chest.OnCardPicked(Context.card);
-            TransitionTo<Disabled>();
+            card.chest.OnCardPicked(Context.card);
+            TransitionTo<Acquisition>();
         }
 
         protected override void AddOffset()
         {
-            Context.Reposition(Context.basePos + 
-                Services.CardConfig.OnHoverOffsetChestMode, false, true);
+            Context.Reposition(
+                Context.basePos + Services.CardConfig.OnHoverOffsetChestMode, false, true);
+        }
+    }
+
+    private class Acquisition : CardState
+    {
+        private float timeElapsed;
+        private float duration;
+        private Vector3 initialPos;
+        private Vector3 targetPos;
+        private Vector3 initialScale;
+        private Vector3 targetScale;
+
+        public override void OnEnter()
+        {
+            timeElapsed = 0;
+            duration = Services.CardConfig.AcquireAnimDur;
+            transform.SetParent(Services.UIManager.bottomCorner);
+            initialPos = transform.position;
+            targetPos = Services.UIManager.discardZone.transform.position;
+            initialScale = card.controller.transform.localScale;
+            targetScale = Vector3.zero;
+        }
+
+        public override void Update()
+        {
+            timeElapsed += Time.deltaTime;
+
+            card.Reposition(Vector3.Lerp(initialPos, targetPos,
+                Easing.QuartEaseIn(timeElapsed / duration)), false, true);
+            transform.localScale = Vector3.Lerp(initialScale, targetScale,
+                Easing.QuartEaseIn(timeElapsed / duration));
+
+            if (timeElapsed >= duration) OnSuccess();
+        }
+
+        void OnSuccess()
+        {
+            card.DestroyPhysicalCard();
         }
     }
 

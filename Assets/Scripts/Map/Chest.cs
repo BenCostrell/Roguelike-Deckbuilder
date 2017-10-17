@@ -43,13 +43,14 @@ public class Chest : MonoBehaviour {
 
         for(int i = 0; i < cardsInChest.Count; i++)
         {
-            cardsInChest[i].CreatePhysicalCard(Services.UIManager.chestCardArea);
-            cardsInChest[i].controller.EnterChestMode();
-            cardsInChest[i].Reposition(leftmostCardPosition + i * cardSpacing, true);
-            cardsInChest[i].chest = this;
-            cardsInChest[i].controller.baseScale *= scaleFactor;
-            cardsInChest[i].controller.transform.localScale = 
-                cardsInChest[i].controller.baseScale;
+            Card cardInChest = cardsInChest[i];
+            cardInChest.CreatePhysicalCard(Services.UIManager.chestCardArea);
+            CardController cardCont = cardsInChest[i].controller;
+            cardCont.EnterChestMode();
+            cardInChest.chest = this;
+            cardInChest.Reposition(leftmostCardPosition + i * cardSpacing, true);
+            cardCont.baseScale *= scaleFactor;
+            cardCont.transform.localScale = cardCont.baseScale;
         }
         lockID = Services.UIManager.nextLockID;
         Services.GameManager.player.LockEverything(lockID);

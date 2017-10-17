@@ -52,14 +52,6 @@ public class Tile
 
     public void OnSelect()
     {
-        Debug.Log("movement cards selected count: " + player.movementCardsSelected.Count);
-        Debug.Log("cards selected count: " + player.cardsSelected.Count);
-        if (this != player.currentTile &&
-            ((player.cardsSelected.Count == 0) ||
-            player.movementCardsSelected.Count != 0))
-        {
-            player.MoveToTile(this);
-        }
         Services.EventManager.Fire(new TileSelected(this));
     }
 

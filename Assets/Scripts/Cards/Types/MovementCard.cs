@@ -15,7 +15,6 @@ public abstract class MovementCard : Card
 
     public override void OnSelect()
     {
-        player.movementCardsSelected.Add(this);
         player.movesAvailable += range;
         lockId = Services.UIManager.nextLockID;
         player.DisableNonMovementCards(lockId);
@@ -23,20 +22,12 @@ public abstract class MovementCard : Card
 
     public override void OnUnselect()
     {
-        CleanupUnselection();
         player.movesAvailable -= range;
+        player.EnableNonMovementCards(lockId);
     }
 
     public void OnMovementAct()
     {
-        controller.selected = false;
-        player.cardsSelected.Remove(this);
-        CleanupUnselection();
-    }
-
-    void CleanupUnselection()
-    {
-        player.movementCardsSelected.Remove(this);
         player.EnableNonMovementCards(lockId);
     }
 

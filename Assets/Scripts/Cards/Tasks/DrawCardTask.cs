@@ -39,7 +39,6 @@ public class DrawCardTask : Task
             rawDiff = Services.UIManager.deckZone.transform.position -
                 Services.UIManager.handZone.transform.position;
             card.CreatePhysicalCard(Services.UIManager.handZone.transform);
-            card.Disable();
         }
         else
         {
@@ -50,6 +49,7 @@ public class DrawCardTask : Task
             rawDiff = Services.UIManager.dungeonDeckZone.transform.position -
                 Services.UIManager.dungeonPlayZone.transform.position;
             card.CreatePhysicalCard(Services.UIManager.dungeonPlayZone.transform);
+            card.controller.EnterPlayedMode();
         }
         
         initialScale = card.controller.transform.localScale;

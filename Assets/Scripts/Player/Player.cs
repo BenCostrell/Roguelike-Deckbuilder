@@ -95,6 +95,7 @@ public class Player {
         currentHealth = maxHealth;
         controller.UpdateHealthUI();
         shield = 0;
+        Services.EventManager.Register<TileSelected>(OnTileSelected);
     }
 
     void InitializeSprite(Tile tile)
@@ -192,35 +193,32 @@ public class Player {
         return stopped;
     }
 
+    void OnTileSelected(TileSelected e)
+    {
+        if (!e.tile.IsImpassable() && !movementLocked)
+        {
+            List<Tile> shortestPath = GetShortestPath(e.tile);
+            if (CanMoveAlongPath(shortestPath)) MoveToTile(shortestPath);
+        }
+    }
+
     public bool CanMoveAlongPath(List<Tile> path)
     {
         return ((path.Count <= movesAvailable && !movementLocked));
     }
 
-    public void MoveToTile(Tile tile)
+    public bool CanMoveToTile(Tile tile)
     {
-        if (!tile.IsImpassable())
-        {
-            List<Tile> shortestPath = GetShortestPath(tile);
-            if (CanMoveAlongPath(shortestPath))
-            {
-                movesAvailable -= MovementCost(shortestPath);
-                HideAvailableMoves();
-                if(movementCardsSelected.Count != 0)
-                {
-                    TaskTree movementCardPlays = new TaskTree(new EmptyTask());
-                    for (int i = movementCardsSelected.Count - 1; i >= 0; i--)
-                    {
-                        MovementCard card = movementCardsSelected[i];
-                        movementCardPlays.Then(PlayCard(card));
-                        card.OnMovementAct();
-                    }
-                    Services.Main.taskManager.AddTask(movementCardPlays);
-                }
-                Services.Main.taskManager.AddTask(
-                    new MoveObjectAlongPath(controller.gameObject, shortestPath));
-            }
-        }
+        List<Tile> shortestPath = GetShortestPath(tile);
+        return CanMoveAlongPath(shortestPath);
+    }
+
+    public void MoveToTile(List<Tile> path)
+    {
+        movesAvailable -= MovementCost(path);
+        HideAvailableMoves();
+        Services.Main.taskManager.AddTask(
+            new MoveObjectAlongPath(controller.gameObject, path));
     }
 
     List<Tile> GetShortestPath(Tile tile)
@@ -261,7 +259,7 @@ public class Player {
 
     public void OnTileHover(Tile hoveredTile)
     {
-        if ((!targeting || movementCardsSelected != null) && !moving && !hoveredTile.IsImpassable())
+        if ((!targeting || movementCardsSelected.Count > 0) && !moving && !hoveredTile.IsImpassable())
         {
             List<Tile> pathToTile = GetShortestPath(hoveredTile);
             if (CanMoveAlongPath(pathToTile))
@@ -318,7 +316,7 @@ public class Player {
                 DiscardCardFromPlay(cardsInPlay[i]);
             }
         }
-        for (int i = movementCardsSelected.Count -1 ; i >= 0; i--)
+        for (int i = movementCardsSelected.Count - 1; i >= 0; i--)
         {
             movementCardsSelected[i].controller.UnselectMovementCard();
         }
@@ -405,7 +403,7 @@ public class Player {
     {
         discardPile.Add(card);
         Services.UIManager.UpdateDiscardCounter(discardPile.Count);
-        Services.Main.taskManager.AddTask(new AcquireCardTask(card));
+        //Services.Main.taskManager.AddTask(new AcquireCardTask(card));
     }
 
     void PickUpKey(Tile tile)
@@ -510,5 +508,13 @@ public class Player {
     void SetShield(int shieldValue)
     {
         shield = shieldValue;
+    }
+
+    public void EnterCardSelectionMode()
+    {
+        for (int i = 0; i < hand.Count; i++)
+        {
+            hand[i].controller.UnselectedForCard();
+        }
     }
 }
