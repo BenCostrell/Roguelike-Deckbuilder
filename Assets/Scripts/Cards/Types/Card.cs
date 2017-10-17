@@ -89,17 +89,19 @@ public abstract class Card {
 
     public void Disable()
     {
-        playable = false;
-        if (!collectionMode && !deckViewMode && controller.transform.parent != Services.UIManager.inPlayZone)
-        {
-            controller.OnCardDisable();
-        }
+        //playable = false;
+        //if (!collectionMode && !deckViewMode && controller.transform.parent != Services.UIManager.inPlayZone)
+        //{
+        //    controller.OnCardDisable();
+        //}
+        controller.Disable();
     }
 
     public void Enable()
     {
-        playable = true;
-        controller.color = Color.white;
+        //playable = true;
+        //controller.color = Color.white;
+        controller.Enable();
     }
 
     protected virtual void InitValues()

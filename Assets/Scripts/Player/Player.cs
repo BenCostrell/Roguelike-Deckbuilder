@@ -72,14 +72,21 @@ public class Player {
     private List<int> movementLockIDs;
     private List<int> handLockIDs;
     private List<int> nonMovementLockIDs;
-    public List<MovementCard> movementCardsSelected = new List<MovementCard>();
+    public List<MovementCard> movementCardsSelected;
+    public List<Card> cardsSelected;
 
-    public void Initialize(Tile tile, MainTransitionData data)
+    public Player()
     {
         hasKey = true;
         movementLockIDs = new List<int>();
         handLockIDs = new List<int>();
         nonMovementLockIDs = new List<int>();
+        cardsSelected = new List<Card>();
+        movementCardsSelected = new List<MovementCard>();
+    }
+
+    public void Initialize(Tile tile, MainTransitionData data)
+    {
         InitializeSprite(tile);
         InitializeDeck(data.deck);
         ForceUnlockEverything();
@@ -286,7 +293,7 @@ public class Player {
             {
                 MovementCard movementCard = hand[i] as MovementCard;
                 if (!movementCardsSelected.Contains(movementCard))
-                    movementCard.controller.SelectCard();
+                    movementCard.controller.SelectMovementCard();
             }
         }
     }

@@ -30,7 +30,7 @@ public abstract class MovementCard : Card
     public void OnMovementAct()
     {
         controller.selected = false;
-        CardController.currentlySelectedCards.Remove(this);
+        player.cardsSelected.Remove(this);
         CleanupUnselection();
     }
 

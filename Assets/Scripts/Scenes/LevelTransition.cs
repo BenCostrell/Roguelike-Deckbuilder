@@ -44,8 +44,7 @@ public class LevelTransition : Scene<MainTransitionData> {
                 (deckDisplaySpacing * (i % maxCardsPerRow)) +
                 (deckDisplaySpacingPerRow * (i / maxCardsPerRow)),
                 true);
-            data.deck[i].deckViewMode = true;
-            data.deck[i].Disable();
+            data.deck[i].controller.EnterDeckViewMode();
         }
 
         if (!data.gameOver)
@@ -60,8 +59,7 @@ public class LevelTransition : Scene<MainTransitionData> {
                     (deckDisplaySpacing * (j % maxCardsPerRow)) +
                     (deckDisplaySpacingPerRow * (j / maxCardsPerRow)),
                     true);
-                data.dungeonDeck[j].deckViewMode = true;
-                data.dungeonDeck[j].Disable();
+                data.dungeonDeck[j].controller.EnterDeckViewMode();
             }
         }
         else
@@ -115,12 +113,10 @@ public class LevelTransition : Scene<MainTransitionData> {
         int numMonsters = Mathf.Min(
             Mathf.FloorToInt((Services.MonsterConfig.MonstersPerLevel * data.levelNum)
             + Services.MonsterConfig.BaseMonstersPerLevel), dungeonDeckSize);
-        int numBlanks = Mathf.Max(0, dungeonDeckSize - numMonsters);
-        for (int i = 0; i < numBlanks; i++)
+        int numTicks = Mathf.Max(0, dungeonDeckSize - numMonsters);
+        for (int i = 0; i < numTicks; i++)
         {
-            //monsterCards.Add(Services.CardConfig.CreateCardOfType(Card.CardType.Blank));
             monsterCards.Add(Services.CardConfig.CreateCardOfType(Card.CardType.Tick));
-
         }
         int highestTier = Mathf.Min(data.levelNum / levelsPerMonsterTierIncrease, 
             Services.CardConfig.HighestTierOfCardsAvailable(true));

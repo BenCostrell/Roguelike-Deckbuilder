@@ -122,12 +122,15 @@ public class AlterDungeonTimerTask : Task
     private int amt;
     private DungeonDeck dungeonDeck;
     private float timeElapsed;
+    private float midpointDuration;
     private float duration;
     private bool addMonster;
     private MonsterCard newMonsterCard;
     private Vector3 initialPos;
     private Vector3 targetPos;
     private Vector3 initialScale;
+    private Vector3 midpointPos;
+    private Vector3 midpointScale;
 
     public AlterDungeonTimerTask(DungeonDeck dungeonDeck_, int amt_)
     {
@@ -142,12 +145,16 @@ public class AlterDungeonTimerTask : Task
             addMonster = true;
             timeElapsed = 0;
             duration = Services.MonsterConfig.AddMonsterCardDuration;
+            midpointDuration = duration 
+                * Services.MonsterConfig.AddMonsterCardMidpointTimeProportion;
             newMonsterCard = dungeonDeck.GetNewMonsterCard();
             initialPos = Services.UIManager.dungeonTimerPos;
             newMonsterCard.CreatePhysicalCard(Services.UIManager.bottomCorner);
             newMonsterCard.Reposition(initialPos, true, true);
+            midpointPos = initialPos + Services.MonsterConfig.AddMonsterCardMidpointOffset;
             targetPos = Services.UIManager.dungeonDeckPos;
             initialScale = newMonsterCard.controller.transform.localScale;
+            midpointScale = initialScale * Services.MonsterConfig.AddMonsterCardScaleUpFactor;
         }
         else
         {
@@ -160,14 +167,31 @@ public class AlterDungeonTimerTask : Task
     {
         timeElapsed += Time.deltaTime;
 
-        newMonsterCard.Reposition(Vector3.Lerp(
-            initialPos, 
-            targetPos,
-            Easing.QuartEaseIn(timeElapsed / duration)), false, true);
-        newMonsterCard.controller.transform.localScale = Vector3.Lerp(
-            initialScale, 
-            Vector3.zero,
-            Easing.QuartEaseIn(timeElapsed / duration));
+        if (timeElapsed <= midpointDuration)
+        {
+            newMonsterCard.Reposition(Vector3.Lerp(
+                initialPos,
+                midpointPos,
+                Easing.QuartEaseOut(timeElapsed / midpointDuration)), false, true);
+            newMonsterCard.controller.transform.localScale = Vector3.Lerp(
+                initialScale,
+                midpointScale,
+                Easing.QuartEaseOut(timeElapsed / midpointDuration));
+        }
+        else
+        {
+            newMonsterCard.Reposition(Vector3.Lerp(
+                midpointPos,
+                targetPos,
+                Easing.QuartEaseIn(
+                    (timeElapsed - midpointDuration) / (duration - midpointDuration))),
+                false, true);
+            newMonsterCard.controller.transform.localScale = Vector3.Lerp(
+                midpointScale,
+                Vector3.zero,
+                Easing.QuartEaseIn(
+                    (timeElapsed - midpointDuration) / (duration - midpointDuration)));
+        }
 
         if (timeElapsed >= duration) SetStatus(TaskStatus.Success);
     }

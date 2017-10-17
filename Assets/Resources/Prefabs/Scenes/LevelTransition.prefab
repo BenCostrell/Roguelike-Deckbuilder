@@ -1296,7 +1296,7 @@ MonoBehaviour:
   deckDisplaySpacing: {x: 70, y: 0, z: -2}
   deckDisplaySpacingPerRow: {x: 0, y: -50, z: -35}
   maxCardsPerRow: 10
-  dungeonDeckSize: 15
+  dungeonDeckSize: 20
 --- !u!114 &114918929741127194
 MonoBehaviour:
   m_ObjectHideFlags: 1

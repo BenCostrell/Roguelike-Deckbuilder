@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 
-public class CardController : MonoBehaviour, IPointerClickHandler,IPointerEnterHandler,IPointerExitHandler
+public class CardController : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler, IPointerExitHandler
 {
     public Card card { get; private set; }
     private Vector3 basePos;
@@ -37,6 +37,7 @@ public class CardController : MonoBehaviour, IPointerClickHandler,IPointerEnterH
     private bool selectedLastFrame;
     private Player player { get { return Services.GameManager.player; } }
     public int baseSiblingIndex;
+    private FSM<CardController> stateMachine;
 
     // Use this for initialization
     public void Init(Card card_)
@@ -56,17 +57,21 @@ public class CardController : MonoBehaviour, IPointerClickHandler,IPointerEnterH
         artBaseLocalPos = art.transform.localPosition;
         baseScale = transform.localScale;
         baseSiblingIndex = rect.GetSiblingIndex();
+        stateMachine = new FSM<CardController>(this);
+        //send machine to first state
+        stateMachine.InitializeState<Disabled>();
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (selected && !(card is MovementCard))
-        {
-            Drag();
-            if (Input.GetMouseButtonDown(0) && selectedLastFrame) PlaceCard();
-        }
-        selectedLastFrame = selected;
+        stateMachine.Update();
+        //if (selected && !(card is MovementCard))
+        //{
+        //    Drag();
+        //    if (Input.GetMouseButtonDown(0) && selectedLastFrame) PlaceCard();
+        //}
+        //selectedLastFrame = selected;
     }
 
     public void Reposition(Vector3 pos, bool changeBasePos)
@@ -86,97 +91,100 @@ public class CardController : MonoBehaviour, IPointerClickHandler,IPointerEnterH
 
     public void OnPointerEnter(PointerEventData eventData)
     {
-        if (((currentlySelectedCards.Count == 0) ||
-            (player.movementCardsSelected.Count != 0)) && 
-            !Input.GetMouseButton(0))
-        {
-            if (card.deckViewMode || card.collectionMode)
-            {
+        stateMachine.OnInputEnter();
+        //if (((player.cardsSelected.Count == 0) ||
+        //    (player.movementCardsSelected.Count != 0)) && 
+        //    !Input.GetMouseButton(0))
+        //{
+        //    if (card.deckViewMode || card.collectionMode)
+        //    {
 
-                transform.localScale = Services.CardConfig.OnHoverScaleUp * baseScale;
-                Vector3 offset = Services.CardConfig.OnHoverOffsetDeckViewMode;
-                if(transform.position.y < 200)
-                {
-                    offset = new Vector3(offset.x, -offset.y, offset.z);
-                }
-                Reposition(basePos + offset, false, true);
+        //        transform.localScale = Services.CardConfig.OnHoverScaleUp * baseScale;
+        //        Vector3 offset = Services.CardConfig.OnHoverOffsetDeckViewMode;
+        //        if(transform.position.y < 200)
+        //        {
+        //            offset = new Vector3(offset.x, -offset.y, offset.z);
+        //        }
+        //        Reposition(basePos + offset, false, true);
 
-            }
-            else if (card.playable && !selected)
-            {
-                transform.localScale = Services.CardConfig.OnHoverScaleUp * baseScale;
-                Reposition(basePos + Services.CardConfig.OnHoverOffset, false, true);
-                if(!(card is MovementCard)) card.OnSelect();
-            }
-            else if (card.chest != null)
-            {
-                transform.localScale = Services.CardConfig.OnHoverScaleUp * baseScale;
-                Reposition(basePos + Services.CardConfig.OnHoverOffsetChestMode, false, true);
+        //    }
+        //    else if (card.playable && !selected)
+        //    {
+        //        transform.localScale = Services.CardConfig.OnHoverScaleUp * baseScale;
+        //        Reposition(basePos + Services.CardConfig.OnHoverOffset, false, true);
+        //        if(!(card is MovementCard)) card.OnSelect();
+        //    }
+        //    else if (card.chest != null)
+        //    {
+        //        transform.localScale = Services.CardConfig.OnHoverScaleUp * baseScale;
+        //        Reposition(basePos + Services.CardConfig.OnHoverOffsetChestMode, false, true);
 
-            }
-            if (player.selectingCards)
-            {
-                OnHoverEnterForCardSelection();
-            }
-        }
+        //    }
+        //    if (player.selectingCards)
+        //    {
+        //        OnHoverEnterForCardSelection();
+        //    }
+        //}
     }
 
     public void OnPointerExit(PointerEventData eventData)
     {
-        if (!selected)
-        {
-            if (player.selectingCards)
-            {
-                OnHoverExitForCardSelection();
-            }
-            else if (card.deckViewMode || card.collectionMode)
-            {
-                DisplayInDeckViewMode();
-            }
-            else if (card.playable && !Input.GetMouseButton(0))
-            {
-                DisplayAtBasePos();
-                if(!(card is MovementCard)) card.OnUnselect();
-            }
-            else if (card.chest != null)
-            {
-                DisplayAtBasePos();
-            }
-        }
+        stateMachine.OnInputExit();
+        //if (!selected)
+        //{
+        //    if (player.selectingCards)
+        //    {
+        //        OnHoverExitForCardSelection();
+        //    }
+        //    else if (card.deckViewMode || card.collectionMode)
+        //    {
+        //        DisplayInDeckViewMode();
+        //    }
+        //    else if (card.playable && !Input.GetMouseButton(0))
+        //    {
+        //        DisplayAtBasePos();
+        //        if(!(card is MovementCard)) card.OnUnselect();
+        //    }
+        //    else if (card.chest != null)
+        //    {
+        //        DisplayAtBasePos();
+        //    }
+        //}
     }
 
     public void OnPointerClick(PointerEventData eventData)
     {
-        if (card.deckViewMode) { } //nothing right now
-        else if (card.collectionMode)
-        {
-            Services.DeckConstruction.OnCardClicked(card);
-        }
-        else if (player.selectingCards) {
-            Services.EventManager.Fire(new CardSelected(card));
-        }
-        else if (!selected)
-        {
-            SelectCard();
-        }
-        else if (card is MovementCard)
-        {
-            UnselectMovementCard();
-        }
+        stateMachine.OnInputDown();
+        //if (card.deckViewMode) { } //nothing right now
+        //else if (card.collectionMode)
+        //{
+        //    Services.DeckConstruction.OnCardClicked(card);
+        //}
+        //else if (player.selectingCards) {
+        //    Services.EventManager.Fire(new CardSelected(card));
+        //}
+        //else if (!selected)
+        //{
+        //    SelectCard();
+        //}
+        //else if (card is MovementCard)
+        //{
+        //    UnselectMovementCard();
+        //}
     }
 
     public void UnselectMovementCard()
     {
         DisplayAtBasePos();
         card.OnUnselect();
-        currentlySelectedCards.Remove(card);
+        player.cardsSelected.Remove(card);
         selected = false;
     }
 
     public void SelectCard()
     {
         selected = true;
-        currentlySelectedCards.Add(card);
+        player.cardsSelected.Add(card);
         Vector3 mousePos = Input.mousePosition;
         mouseRelativePos = mousePos - transform.position;
         if (card is MovementCard && card.playable)
@@ -197,7 +205,7 @@ public class CardController : MonoBehaviour, IPointerClickHandler,IPointerEnterH
         {
             card.chest.OnCardPicked(card);
             selected = false;
-            currentlySelectedCards.Remove(card);
+            player.cardsSelected.Remove(card);
         }
 
     }
@@ -247,7 +255,7 @@ public class CardController : MonoBehaviour, IPointerClickHandler,IPointerEnterH
         }
     }
 
-    void SetCardFrameStatus(bool status)
+    public void SetCardFrameStatus(bool status)
     {
         nameText.enabled = status;
         effectText.enabled = status;
@@ -269,7 +277,7 @@ public class CardController : MonoBehaviour, IPointerClickHandler,IPointerEnterH
     void PlaceCard()
     {
         selected = false;
-        currentlySelectedCards.Remove(card);
+        player.cardsSelected.Remove(card);
         TryToPlayCard(false);
         
     }
@@ -357,8 +365,39 @@ public class CardController : MonoBehaviour, IPointerClickHandler,IPointerEnterH
             DisplayAtBasePos();
         }
         selected = false;
-        currentlySelectedCards.Remove(card);
+        player.cardsSelected.Remove(card);
         Services.EventManager.Unregister<TileSelected>(OnTileSelected);
+    }
+
+    public void Disable()
+    {
+        stateMachine.TransitionTo<Disabled>();
+    }
+
+    public void Enable()
+    {
+        stateMachine.TransitionTo<Playable>();
+    }
+
+    public void EnterDeckBuildingMode()
+    {
+        stateMachine.TransitionTo<Deckbuilding>();
+    }
+
+    public void EnterDeckViewMode()
+    {
+        stateMachine.TransitionTo<DeckView>();
+    }
+
+    public void EnterChestMode()
+    {
+        stateMachine.TransitionTo<Chest>();
+    }
+
+    public void SelectMovementCard()
+    {
+        Debug.Assert(card is MovementCard);
+        stateMachine.TransitionTo<MovementCardSelected>();
     }
 
     public void OnCardDisable()
@@ -367,10 +406,277 @@ public class CardController : MonoBehaviour, IPointerClickHandler,IPointerEnterH
         color = Color.gray; //looks silly but it's so gray becomes the "base color"
     }
 
-    bool IsInDiscardZone()
+    public bool IsInDiscardZone()
     {
         RectTransform discardRT =
                     Services.UIManager.discardZone.GetComponent<RectTransform>();
         return discardRT.rect.Contains(discardRT.InverseTransformPoint(transform.position));
     }
+
+    private abstract class CardState : FSM<CardController>.State { }
+
+    private abstract class Hoverable : CardState
+    {
+        public override void OnInputEnter()
+        {
+            Context.transform.localScale = Services.CardConfig.OnHoverScaleUp 
+                * Context.baseScale;
+            AddOffset();
+        }
+
+        protected virtual void AddOffset()
+        {
+            Context.Reposition(Context.basePos + Services.CardConfig.OnHoverOffset, false, true);
+        }
+
+        public override void OnInputExit()
+        {
+            Context.color = Color.white;
+            Context.transform.localScale = Context.baseScale;
+            Context.transform.SetParent(Context.baseParent);
+            Context.Reposition(Context.basePos, false);
+        }
+    }
+
+    private class Playable : Hoverable
+    {
+        public override void OnEnter()
+        {
+            Context.color = Color.white;
+            Context.transform.localScale = Context.baseScale;
+            Context.transform.SetParent(Context.baseParent);
+            Context.Reposition(Context.basePos, false);
+        }
+
+        public override void OnInputDown()
+        {
+            if (Context.card is MovementCard)
+                Parent.TransitionTo<MovementCardSelected>();
+            else if (Context.card is TileTargetedCard)
+                Parent.TransitionTo<TargetedCardSelected>();
+            else
+                Parent.TransitionTo<Selected>();
+        }
+
+        protected override void AddOffset()
+        {
+            base.AddOffset();
+            if (!(Context.card is MovementCard)) Context.card.OnSelect();
+        }
+
+        public override void OnInputExit()
+        {
+            base.OnInputExit();
+            if (!(Context.card is MovementCard)) Context.card.OnUnselect();
+        }
+    }
+
+    private class Disabled : CardState
+    {
+        public override void OnEnter()
+        {
+            Context.color = Color.gray;
+        }
+    }
+
+    private class DeckView : Hoverable
+    {
+        public override void OnEnter()
+        {
+            Context.color = Color.white;
+        }
+
+        protected override void AddOffset()
+        {
+            Vector3 offset = Services.CardConfig.OnHoverOffsetDeckViewMode;
+            if (Context.transform.position.y < 200)
+            {
+                offset = new Vector3(offset.x, -offset.y, offset.z);
+            }
+            Context.Reposition(Context.basePos + offset, false, true);
+        }
+    }
+
+    private class Deckbuilding : DeckView
+    {
+        public override void OnInputDown()
+        {
+            Services.DeckConstruction.OnCardClicked(Context.card);
+        }
+    }
+
+    private class Selected : CardState
+    {
+        private Vector3 mouseRelativePos;
+
+        public override void OnEnter()
+        {
+            mouseRelativePos = Input.mousePosition - Context.transform.position;
+            Context.transform.SetParent(Services.UIManager.bottomCorner);
+            Context.transform.localScale = Services.CardConfig.OnHoverScaleUp 
+                * Context.baseScale;
+            Context.card.OnSelect();
+        }
+
+        protected void Drag()
+        {
+            Vector3 mousePos = Input.mousePosition;
+            Vector3 newPos = mousePos - mouseRelativePos;
+            Context.Reposition(newPos, false, true);
+        }
+
+        protected virtual void OnDiscardableEffect()
+        {
+            Context.color = Color.red;
+        }
+
+        protected virtual void OnPlayableEffect()
+        {
+            Context.color = Services.CardConfig.PlayableColor;
+        }
+
+        protected virtual void OnUnplayableEffect()
+        {
+            Context.color = Color.white;
+        }
+
+        protected virtual void OnPlayed()
+        {
+            Services.Main.taskManager.AddTask(Context.player.PlayCard(Context.card));
+            Debug.Log(Context.card.cardType + " on played");
+            TransitionTo<Played>();
+        }
+
+        public override void Update()
+        {
+            bool buttonDown = Input.GetMouseButtonDown(0);
+            Drag();
+            if (buttonDown) Context.card.OnUnselect();
+            if (Context.IsInDiscardZone())
+            {
+                OnDiscardableEffect();
+                if (buttonDown) Context.player.DiscardCardFromHand(Context.card);
+            }
+            else if (Context.rect.anchoredPosition.y >= Services.CardConfig.CardPlayThresholdYPos &&
+                Context.card.CanPlay())
+            {
+                OnPlayableEffect();
+                if (buttonDown) OnPlayed();
+            }
+            else
+            {
+                OnUnplayableEffect();
+                if (buttonDown) TransitionTo<Playable>();
+            }
+        }
+    }
+
+    private class MovementCardSelected : CardState
+    {
+        public override void OnEnter()
+        {
+            Services.EventManager.Register<TileSelected>(OnTileSelected);
+            Context.color = (Color.blue + Color.white) / 2;
+            Context.transform.localScale = Context.baseScale * 1.1f;
+            Context.Reposition(Context.basePos + Services.CardConfig.OnHoverOffset, false, true);
+            Context.card.OnSelect();
+        }
+
+        public override void OnInputDown()
+        {
+            Context.card.OnUnselect();
+            TransitionTo<Playable>();
+        }
+
+        void OnTileSelected(TileSelected e)
+        {
+            Context.player.MoveToTile(e.tile);
+            Parent.TransitionTo<Played>();
+        }
+
+        public override void OnExit()
+        {
+            Services.EventManager.Unregister<TileSelected>(OnTileSelected);
+        }
+    }
+
+    private class TargetedCardSelected : Selected
+    {
+        protected override void OnDiscardableEffect()
+        {
+            base.OnDiscardableEffect();
+            Context.transform.localScale = Context.baseScale * Services.CardConfig.OnHoverScaleUp;
+            Context.SetCardFrameStatus(true);
+            Services.EventManager.Unregister<TileSelected>(OnTileSelected);
+        }
+
+        protected override void OnPlayableEffect()
+        {
+            base.OnPlayableEffect();
+            Context.transform.localScale = Context.baseScale;
+            Context.SetCardFrameStatus(false);
+            Services.EventManager.Register<TileSelected>(OnTileSelected);
+        }
+
+        protected override void OnUnplayableEffect()
+        {
+            base.OnUnplayableEffect();
+            Context.transform.localScale = Context.baseScale * Services.CardConfig.OnHoverScaleUp;
+            Context.SetCardFrameStatus(true);
+            Services.EventManager.Unregister<TileSelected>(OnTileSelected);
+        }
+
+        protected override void OnPlayed() { }
+
+        void OnTileSelected(TileSelected e)
+        {
+            Tile tileSelected = e.tile;
+            TileTargetedCard targetedCard = Context.card as TileTargetedCard;
+            Context.card.OnUnselect();
+            if (targetedCard.IsTargetValid(tileSelected))
+            {
+                targetedCard.OnTargetSelected(tileSelected);
+                base.OnPlayed();
+            }
+            else TransitionTo<Playable>();
+        }
+
+        public override void OnExit()
+        {
+            Services.EventManager.Unregister<TileSelected>(OnTileSelected);
+        }
+    }
+
+
+    private class Played : CardState
+    {
+        public override void OnEnter()
+        {
+            Context.color = Color.white;
+            Context.SetCardFrameStatus(true);
+            Context.transform.localScale = Context.baseScale;
+            Debug.Log(Context.card.cardType + " entering played");
+        }
+    }
+
+    private class Chest : Hoverable
+    {
+        public override void OnInputDown()
+        {
+            Context.card.chest.OnCardPicked(Context.card);
+            TransitionTo<Disabled>();
+        }
+
+        protected override void AddOffset()
+        {
+            Context.Reposition(Context.basePos + 
+                Services.CardConfig.OnHoverOffsetChestMode, false, true);
+        }
+    }
+
 }
+
+
+
+
+

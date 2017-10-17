@@ -18,6 +18,7 @@ public class Tile
     public bool locked;
     public readonly bool isRoom;
     public bool monsterMovementTarget;
+    private Player player { get { return Services.GameManager.player; } }
 
     public Tile(Coord coord_, bool isExit_, bool isRoom_)
     {
@@ -41,7 +42,7 @@ public class Tile
     public void OnHoverEnter()
     {
         hovered = true;
-        Services.GameManager.player.OnTileHover(this);
+        player.OnTileHover(this);
     }
 
     public void OnHoverExit()
@@ -51,11 +52,13 @@ public class Tile
 
     public void OnSelect()
     {
-        if (this != Services.GameManager.player.currentTile &&
-            ((CardController.currentlySelectedCards.Count == 0) ||
-            Services.GameManager.player.movementCardsSelected.Count != 0))
+        Debug.Log("movement cards selected count: " + player.movementCardsSelected.Count);
+        Debug.Log("cards selected count: " + player.cardsSelected.Count);
+        if (this != player.currentTile &&
+            ((player.cardsSelected.Count == 0) ||
+            player.movementCardsSelected.Count != 0))
         {
-            Services.GameManager.player.MoveToTile(this);
+            player.MoveToTile(this);
         }
         Services.EventManager.Fire(new TileSelected(this));
     }

@@ -44,6 +44,7 @@ public class Chest : MonoBehaviour {
         for(int i = 0; i < cardsInChest.Count; i++)
         {
             cardsInChest[i].CreatePhysicalCard(Services.UIManager.chestCardArea);
+            cardsInChest[i].controller.EnterChestMode();
             cardsInChest[i].Reposition(leftmostCardPosition + i * cardSpacing, true);
             cardsInChest[i].chest = this;
             cardsInChest[i].controller.baseScale *= scaleFactor;

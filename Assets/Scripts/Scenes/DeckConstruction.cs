@@ -70,9 +70,8 @@ public class DeckConstruction : Scene<MainTransitionData> {
         {
             Card card = transitionData.deck[i];
             card.CreatePhysicalCard(deckZone);
+            card.controller.EnterDeckBuildingMode();
             card.Reposition(GetDeckPosition(i), true);
-            card.collectionMode = true;
-            card.Disable();
         }
         AssessDeckReadiness();
     }
@@ -139,9 +138,8 @@ public class DeckConstruction : Scene<MainTransitionData> {
         Card card = Services.CardConfig.CreateCardOfType(type);
         clumpedCollection[type] = new CardCount(count, card);
         card.CreatePhysicalCard(currentPage);
+        card.controller.EnterDeckBuildingMode();
         card.Reposition(GetCollectionPosition(index), true);
-        card.collectionMode = true;
-        card.Disable();
         clumpedCollection[type].CreateCounter(card.controller.transform);
     }
 
@@ -199,7 +197,7 @@ public class DeckConstruction : Scene<MainTransitionData> {
             Card newCardInDeck = Services.CardConfig.CreateCardOfType(card.cardType);
             transitionData.deck.Add(newCardInDeck);
             newCardInDeck.CreatePhysicalCard(deckZone);
-            newCardInDeck.collectionMode = true;
+            newCardInDeck.controller.EnterDeckBuildingMode();
             SortDeck();
             bool lastCopy = !clumpedCollection[card.cardType].Remove();
             if (lastCopy)

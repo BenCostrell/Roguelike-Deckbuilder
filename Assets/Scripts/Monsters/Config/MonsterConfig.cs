@@ -25,6 +25,18 @@ public class MonsterConfig : ScriptableObject
     public float AddMonsterCardDuration { get { return addMonsterCardDuration; } }
 
     [SerializeField]
+    private float addMonsterCardMidpointTimeProportion;
+    public float AddMonsterCardMidpointTimeProportion { get { return addMonsterCardMidpointTimeProportion; } }
+
+    [SerializeField]
+    private float addMonsterCardScaleUpFactor;
+    public float AddMonsterCardScaleUpFactor { get { return addMonsterCardScaleUpFactor; } }
+
+    [SerializeField]
+    private Vector3 addMonsterCardMidpointOffset;
+    public Vector3 AddMonsterCardMidpointOffset { get { return addMonsterCardMidpointOffset; } }
+
+    [SerializeField]
     private int minDistFromMonsters;
     public int MinDistFromMonsters { get { return minDistFromMonsters; } }
 
