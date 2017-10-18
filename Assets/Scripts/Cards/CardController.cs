@@ -840,6 +840,7 @@ public class CardController : MonoBehaviour, IPointerClickHandler, IPointerEnter
         void OnSuccess()
         {
             card.DestroyPhysicalCard();
+            Services.EventManager.Fire(new AcquisitionComplete());
         }
     }
 

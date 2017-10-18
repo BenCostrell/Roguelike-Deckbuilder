@@ -9,6 +9,8 @@ public class Main : Scene<MainTransitionData> {
     public DungeonDeck dungeonDeck { get; private set; }
     public List<Card> collection { get; private set; }
 
+    private int lockId;
+
     private void Awake()
     {
         taskManager = new TaskManager();
@@ -62,6 +64,25 @@ public class Main : Scene<MainTransitionData> {
 
     public void ExitLevel()
     {
+        lockId = Services.UIManager.nextLockID;
+        Services.GameManager.player.LockEverything(lockId);
+        Services.UIManager.ToggleLevelComplete(true);
+    }
+
+    public void CreateBonusChest()
+    {
+        Services.UIManager.ToggleLevelCompleteText(false);
+        Chest chest = Instantiate(Services.Prefabs.Chest, Vector3.zero, 
+            Quaternion.identity, transform).GetComponent<Chest>();
+        chest.tier = 1;
+        chest.OpenChest();
+        Services.EventManager.Register<AcquisitionComplete>(GoToLevelTransitionScene);
+    }
+
+    void GoToLevelTransitionScene(AcquisitionComplete e)
+    {
+        Services.EventManager.Unregister<AcquisitionComplete>(GoToLevelTransitionScene);
+        Services.GameManager.player.UnlockEverything(lockId);
         Services.SceneStackManager.Swap<LevelTransition>(new MainTransitionData(
             Services.GameManager.player.fullDeck,
             new List<Card>(),

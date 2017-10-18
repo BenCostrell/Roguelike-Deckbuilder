@@ -61,6 +61,10 @@ public class UIManager : MonoBehaviour {
     private GameObject shieldIcon;
     [SerializeField]
     private Text shieldCounter;
+    [SerializeField]
+    private GameObject levelCompleteUI;
+    [SerializeField]
+    private GameObject levelCompleteText;
     private Vector2 playerUIHealthBarBaseSize;
     private int nextLockID_;
     public int nextLockID
@@ -97,6 +101,7 @@ public class UIManager : MonoBehaviour {
         playAllLockIDs = new List<int>();
 
         playerUIKeyIcon.gameObject.SetActive(false);
+        levelCompleteUI.gameObject.SetActive(false);
     }
 
     public void UpdateDeckCounter(int cardsInDeck)
@@ -247,5 +252,15 @@ public class UIManager : MonoBehaviour {
     public void UpdateDungeonTimer(float fillAmt)
     {
         dungeonTimer.fillAmount = fillAmt;
+    }
+
+    public void ToggleLevelComplete(bool status)
+    {
+        levelCompleteUI.SetActive(status);
+    }
+
+    public void ToggleLevelCompleteText(bool status)
+    {
+        levelCompleteText.SetActive(status);
     }
 }
