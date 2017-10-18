@@ -9,12 +9,12 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 73947de0df966ea409e713726a341966, type: 3}
-  m_Name: Bloodlust
+  m_Name: Scream
   m_EditorClassIdentifier: 
-  cardType: 10
-  name_: Bloodlust
-  cardText: Move 1 space for each attack card in your hand +1.
-  sprite: {fileID: 21300000, guid: 6653aea189d461046a6d1fbd4921882f, type: 3}
-  tier: 1
+  cardType: 21
+  name_: Scream
+  cardText: Cause all monsters to flee up to X spaces, where X is their movement speed.
+  sprite: {fileID: 21300000, guid: 601af7eb65bbc4d4387b4cbc17c79f3f, type: 3}
+  tier: 0
   isMonster: 0
   onPlayAudio: {fileID: 0}

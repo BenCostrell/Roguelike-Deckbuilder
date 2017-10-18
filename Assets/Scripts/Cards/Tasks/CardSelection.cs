@@ -46,6 +46,7 @@ public class CardSelection : Task
     {
         //Services.GameManager.player.UnlockEverything(lockID);
         card.OnSelectionComplete(cardsSelected);
+        Services.GameManager.player.ExitCardSelectionMode();
         Services.EventManager.Unregister<CardSelected>(OnCardSelected);
         //Services.GameManager.player.selectingCards = false;
     }

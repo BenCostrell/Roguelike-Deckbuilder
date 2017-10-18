@@ -118,4 +118,32 @@ public abstract class Monster {
         else return new TaskTree(new EmptyTask());
     }
 
+    public TaskTree MoveAwayFromPlayer(int numMovesAllowed)
+    {
+        List<Tile> availableTiles = 
+            AStarSearch.FindAllAvailableGoals(currentTile, numMovesAllowed);
+        Tile farthestTile = null;
+        int farthestDistance = 0;
+        for (int i = 0; i < availableTiles.Count; i++)
+        {
+            Tile tile = availableTiles[i];
+            List<Tile> shortestPathFromPlayer = AStarSearch.ShortestPath(
+                Services.GameManager.player.currentTile, tile);
+            if(shortestPathFromPlayer.Count > farthestDistance)
+            {
+                farthestTile = tile;
+                farthestDistance = shortestPathFromPlayer.Count;
+            }
+        }
+        if (farthestTile != null && farthestDistance != 0)
+        {
+            List<Tile> shortestPathToTarget =
+                AStarSearch.ShortestPath(currentTile, farthestTile);
+            targetTile = farthestTile;
+            return new TaskTree(new MoveObjectAlongPath(controller.gameObject,
+                shortestPathToTarget));
+        }
+        else return new TaskTree(new EmptyTask());
+    }
+
 }

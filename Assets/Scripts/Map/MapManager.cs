@@ -667,7 +667,6 @@ public class MapManager : MonoBehaviour {
         int numLowTierCards = Mathf.RoundToInt(ratioOfLowTierCards * numChests);
         int numHighTierCards = numChests - numLowTierCards;
 
-
         GenerateChestsOfTier(numLowTierCards, lowEndTier);
         GenerateChestsOfTier(numHighTierCards, highEndTier);
     }

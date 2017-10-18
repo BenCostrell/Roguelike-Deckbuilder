@@ -28,7 +28,9 @@ public abstract class Card {
         Blank,
         SpikeTrap,
         Shield,
-        Tick
+        Tick,
+        Swipe,
+        Scream
     }
     public int tier { get; protected set; }
     public Sprite sprite { get; protected set; }

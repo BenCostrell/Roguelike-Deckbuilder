@@ -204,7 +204,7 @@ public class Player {
 
     public bool CanMoveAlongPath(List<Tile> path)
     {
-        return ((path.Count <= movesAvailable && !movementLocked));
+        return ((path.Count <= movesAvailable && path.Count > 0 && !movementLocked));
     }
 
     public bool CanMoveToTile(Tile tile)
@@ -515,6 +515,14 @@ public class Player {
         for (int i = 0; i < hand.Count; i++)
         {
             hand[i].controller.UnselectedForCard();
+        }
+    }
+
+    public void ExitCardSelectionMode()
+    {
+        for (int i = 0; i < hand.Count; i++)
+        {
+            hand[i].controller.Enable();
         }
     }
 }

@@ -455,6 +455,7 @@ public class CardController : MonoBehaviour, IPointerClickHandler, IPointerEnter
             transform.SetParent(Context.baseParent);
             Context.SetCardFrameStatus(true);
             Context.Reposition(Context.basePos, false);
+            //Debug.Log(card.cardType + " entering playable state at time " + Time.time);
         }
 
         public override void OnInputDown()
@@ -696,7 +697,10 @@ public class CardController : MonoBehaviour, IPointerClickHandler, IPointerEnter
             Services.EventManager.Unregister<TileSelected>(OnTileSelected);
         }
 
-        protected override void OnPlayed() { }
+        protected override void OnPlayed()
+        {
+            TransitionTo<Playable>();
+        }
 
         void OnTileSelected(TileSelected e)
         {

@@ -147,6 +147,10 @@ public class CardConfig : ScriptableObject
                 return new Shield();
             case Card.CardType.Tick:
                 return new Tick();
+            case Card.CardType.Swipe:
+                return new Swipe();
+            case Card.CardType.Scream:
+                return new Scream();
             default:
                 return null;
         }
