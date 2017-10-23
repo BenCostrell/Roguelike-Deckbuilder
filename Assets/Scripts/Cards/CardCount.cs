@@ -4,7 +4,7 @@ using UnityEngine.UI;
 
 public class CardCount
 {
-    private int count;
+    public int count { get; private set; }
     private bool infinite;
     private Text counter;
     private readonly Vector3 offset = new Vector3(0, -200f, 0);

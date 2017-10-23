@@ -5,7 +5,7 @@ using System.Collections.Generic;
 public class CardSelection : Task
 {
     private List<Card> cardsSelected;
-    //private int lockID;
+    private int lockID;
     private CardSelectionCard card;
 
     public CardSelection(CardSelectionCard card_)
@@ -15,9 +15,8 @@ public class CardSelection : Task
 
     protected override void Init()
     {
-        //lockID = Services.UIManager.nextLockID;
-        //Services.GameManager.player.LockEverything(lockID);
-        //Services.GameManager.player.selectingCards = true;
+        lockID = Services.UIManager.nextLockID;
+        Services.GameManager.player.LockEverything(lockID);
         Services.GameManager.player.EnterCardSelectionMode();
         Services.EventManager.Register<CardSelected>(OnCardSelected);
         cardsSelected = new List<Card>();
@@ -44,7 +43,7 @@ public class CardSelection : Task
 
     protected override void OnSuccess()
     {
-        //Services.GameManager.player.UnlockEverything(lockID);
+        Services.GameManager.player.UnlockEverything(lockID);
         card.OnSelectionComplete(cardsSelected);
         Services.GameManager.player.ExitCardSelectionMode();
         Services.EventManager.Unregister<CardSelected>(OnCardSelected);

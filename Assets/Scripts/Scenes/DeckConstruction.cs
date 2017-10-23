@@ -258,6 +258,23 @@ public class DeckConstruction : Scene<MainTransitionData> {
 
     public void SubmitDeck()
     {
+        TranslateClumpedCollection();
         Services.SceneStackManager.Swap<LevelTransition>(transitionData);
+    }
+
+    void TranslateClumpedCollection()
+    {
+        List<Card> collection = new List<Card>();
+        foreach (KeyValuePair<Card.CardType, CardCount> entry in clumpedCollection)
+        {
+            if (entry.Key != Card.CardType.Punch && entry.Key != Card.CardType.Step)
+            {
+                for (int i = 0; i < entry.Value.count; i++)
+                {
+                    collection.Add(Services.CardConfig.CreateCardOfType(entry.Key));
+                }
+            }
+        }
+        transitionData.collection = collection;
     }
 }
