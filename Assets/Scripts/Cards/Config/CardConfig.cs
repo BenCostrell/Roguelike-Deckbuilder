@@ -62,6 +62,10 @@ public class CardConfig : ScriptableObject
     public Vector3 DrawAnimMidpointOffset { get { return drawAnimMidpointOffset; } }
 
     [SerializeField]
+    private Vector3 dungeonDrawAnimMidpointOffset;
+    public Vector3 DungeonDrawAnimMidpointOffset { get { return dungeonDrawAnimMidpointOffset; } }
+
+    [SerializeField]
     private float playAnimDur;
     public float PlayAnimDur { get { return playAnimDur; } }
 
@@ -88,6 +92,10 @@ public class CardConfig : ScriptableObject
     [SerializeField]
     private Vector3 cardOnBoardHoverOffset;
     public Vector3 CardOnBoardHoverOffset { get { return cardOnBoardHoverOffset; } }
+
+    [SerializeField]
+    private Color dungeonCardColor;
+    public Color DungeonCardColor { get { return dungeonCardColor; } }
 
 
     public CardInfo GetCardOfType(Card.CardType cardType)

@@ -55,7 +55,14 @@ public class DrawCardTask : Task
         initialScale = card.controller.transform.localScale;
         zoomScale = Services.CardConfig.DrawAnimScale * initialScale;
         initialPos = new Vector3(rawDiff.x, rawDiff.y, targetPos.z);
-        midpointPos = initialPos + Services.CardConfig.DrawAnimMidpointOffset;
+        if (playerDeck)
+        {
+            midpointPos = initialPos + Services.CardConfig.DrawAnimMidpointOffset;
+        }
+        else
+        {
+            midpointPos = initialPos + Services.CardConfig.DungeonDrawAnimMidpointOffset;
+        }
         card.Reposition(initialPos, false, true);
         Services.SoundManager.CreateAndPlayAudio(Services.AudioConfig.CardDrawAudio);
     }

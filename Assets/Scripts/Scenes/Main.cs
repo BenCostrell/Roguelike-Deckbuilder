@@ -8,6 +8,8 @@ public class Main : Scene<MainTransitionData> {
     public int levelNum { get; private set; }
     public DungeonDeck dungeonDeck { get; private set; }
     public List<Card> collection { get; private set; }
+    private MainTransitionData data;
+    private Player player { get { return Services.GameManager.player; } }
 
     private int lockId;
 
@@ -22,14 +24,20 @@ public class Main : Scene<MainTransitionData> {
         Services.GameManager.currentCamera = GetComponentInChildren<Camera>();
     }
 
-    internal override void OnEnter(MainTransitionData data)
+    internal override void OnEnter(MainTransitionData data_)
     {
+        data = data_;
         levelNum = data.levelNum;
         Services.MapManager.GenerateLevel(levelNum);
         dungeonDeck = new DungeonDeck(data.dungeonDeck);
         collection = data.collection;
-        Services.GameManager.player.Initialize(Services.MapManager.playerSpawnTile, data);
         Services.SoundManager.SetMusicVolume(0.1f);
+        player.Initialize(Services.MapManager.playerSpawnTile, data);
+        GetComponentInChildren<CameraController>().InitCamera();
+        TaskTree startTasks = new TaskTree(
+            new ScrollMessageBanner(Services.UIManager.startBannerMessage));
+        startTasks.Then(player.DrawCards(5));
+        taskManager.AddTask(startTasks);
     }
 
     private void Update()
@@ -47,17 +55,18 @@ public class Main : Scene<MainTransitionData> {
 
     public void EndTurn()
     {
-        Services.GameManager.player.OnTurnEnd();
+        player.OnTurnEnd();
         int lockID = Services.UIManager.nextLockID;
-        Services.GameManager.player.LockEverything(lockID);
+        player.LockEverything(lockID);
         TaskTree endTurnTasks = new TaskTree(new EmptyTask());
         endTurnTasks
+            .Then(new ScrollMessageBanner(Services.UIManager.dungeonTurnMessage))
             .Then(Services.MonsterManager.MonstersMove())
             .Then(Services.MonsterManager.MonstersAttack())
             .Then(dungeonDeck.TakeDungeonTurn())
-            .Then(Services.GameManager.player.OnTurnStart())
-            .Then(new ParameterizedActionTask<int>(
-                Services.GameManager.player.UnlockEverything, lockID));
+            .Then(new ScrollMessageBanner(Services.UIManager.playerTurnMessage))
+            .Then(player.OnTurnStart())
+            .Then(new ParameterizedActionTask<int>(player.UnlockEverything, lockID));
 
         taskManager.AddTask(endTurnTasks);
     }
@@ -65,13 +74,13 @@ public class Main : Scene<MainTransitionData> {
     public void ExitLevel()
     {
         lockId = Services.UIManager.nextLockID;
-        Services.GameManager.player.LockEverything(lockId);
+        player.LockEverything(lockId);
         Services.UIManager.ToggleLevelComplete(true);
     }
 
     public void CreateBonusChest()
     {
-        Services.UIManager.ToggleLevelCompleteText(false);
+        Services.UIManager.ToggleLevelComplete(false);
         Chest chest = Instantiate(Services.Prefabs.Chest, Vector3.zero, 
             Quaternion.identity, transform).GetComponent<Chest>();
         chest.tier = 1;
@@ -82,17 +91,17 @@ public class Main : Scene<MainTransitionData> {
     void GoToLevelTransitionScene(AcquisitionComplete e)
     {
         Services.EventManager.Unregister<AcquisitionComplete>(GoToLevelTransitionScene);
-        Services.GameManager.player.UnlockEverything(lockId);
+        player.UnlockEverything(lockId);
         Services.SceneStackManager.Swap<LevelTransition>(new MainTransitionData(
-            Services.GameManager.player.fullDeck,
+            player.fullDeck,
             new List<Card>(),
             collection,
-            Services.GameManager.player.maxHealth + 1,
+            player.maxHealth + 1,
             levelNum + 1, false));
     }
 
     public void PlayAll()
     {
-        Services.GameManager.player.PlayAll();
+        player.PlayAll();
     }
 }

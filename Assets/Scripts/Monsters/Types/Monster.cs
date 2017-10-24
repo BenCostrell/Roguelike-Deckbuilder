@@ -101,8 +101,9 @@ public abstract class Monster {
         List<Tile> shortestPathToPlayer = 
             AStarSearch.ShortestPath(currentTile, player.currentTile);
         List<Tile> pathToMoveAlong = new List<Tile>();
+        int indexToGoUntil = shortestPathToPlayer[0] == player.currentTile ? 1 : 0;
         int movesLeft = movementSpeed;
-        for (int i = shortestPathToPlayer.Count - 1; i >= 1; i--)
+        for (int i = shortestPathToPlayer.Count - 1; i >= indexToGoUntil; i--)
         {
             if (movesLeft == 0) break;
             pathToMoveAlong.Add(shortestPathToPlayer[i]);
@@ -122,6 +123,7 @@ public abstract class Monster {
     {
         List<Tile> availableTiles = 
             AStarSearch.FindAllAvailableGoals(currentTile, numMovesAllowed);
+        availableTiles.Add(currentTile);
         Tile farthestTile = null;
         int farthestDistance = 0;
         for (int i = 0; i < availableTiles.Count; i++)
@@ -135,7 +137,7 @@ public abstract class Monster {
                 farthestDistance = shortestPathFromPlayer.Count;
             }
         }
-        if (farthestTile != null && farthestDistance != 0)
+        if (farthestTile != null && farthestDistance != 0 && farthestTile != currentTile)
         {
             List<Tile> shortestPathToTarget =
                 AStarSearch.ShortestPath(currentTile, farthestTile);

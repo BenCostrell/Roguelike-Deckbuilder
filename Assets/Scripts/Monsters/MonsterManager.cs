@@ -1,10 +1,12 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 public class MonsterManager
 {
     public List<Monster> monsters = new List<Monster>();
+    private Player player { get { return Services.GameManager.player; } }
 
     public Monster SpawnMonster(Monster.MonsterType monsterType)
     {
@@ -19,7 +21,7 @@ public class MonsterManager
         //    playersTargetTile = Services.MapManager.playerSpawnTile;
         //}
         List<Tile> playersPathToTarget = AStarSearch.ShortestPath(
-            Services.GameManager.player.currentTile,
+            player.currentTile,
             playersTargetTile, true);
         playersPathToTarget.Reverse();
         Tile spawnCenterPoint;
@@ -37,7 +39,7 @@ public class MonsterManager
         for (int i = potentialSpawnPoints.Count - 1; i >= 0; i--)
         {
             if (potentialSpawnPoints[i].containedMonster != null ||
-                Services.GameManager.player.currentTile == potentialSpawnPoints[i] ||
+                player.currentTile == potentialSpawnPoints[i] ||
                 potentialSpawnPoints[i].containedMapObject != null)
                 potentialSpawnPoints.Remove(potentialSpawnPoints[i]);
         }
@@ -88,8 +90,7 @@ public class MonsterManager
         List<Monster> monstersInRange = new List<Monster>();
         for (int i = 0; i < monsters.Count; i++)
         {
-            if (monsters[i].currentTile.coord.Distance(
-                Services.GameManager.player.currentTile.coord) <= range)
+            if (monsters[i].currentTile.coord.Distance(player.currentTile.coord) <= range)
             {
                 monstersInRange.Add(monsters[i]);
             }
@@ -111,9 +112,12 @@ public class MonsterManager
     {
         TaskTree moveTree = new TaskTree(new EmptyTask());
         moveTree.AddChild(new WaitTask(Services.MonsterConfig.MaxMoveAnimDur));
-        for (int i = 0; i < monsters.Count; i++)
+        List<Monster> sortedMonsters = monsters.OrderBy(monster =>
+        AStarSearch.ShortestPath(monster.currentTile, player.currentTile, true).Count).ToList();
+        for (int i = 0; i < sortedMonsters.Count; i++)
         {
-            if (!monsters[i].IsPlayerInRange()) moveTree.AddChild(monsters[i].Move());
+            if (!sortedMonsters[i].IsPlayerInRange())
+                moveTree.AddChild(sortedMonsters[i].Move());
         }
         return moveTree;
     }

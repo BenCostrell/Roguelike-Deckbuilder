@@ -21,11 +21,9 @@ public class CardController : MonoBehaviour, IPointerClickHandler, IPointerEnter
         }
         set
         {
-            prevColor = frame.color;
             frame.color = value;
         }
     }
-    public Color prevColor { get; private set; }
     private Image art;
     private Vector3 artBaseLocalPos;
     private Text nameText;
@@ -38,6 +36,7 @@ public class CardController : MonoBehaviour, IPointerClickHandler, IPointerEnter
     private Player player { get { return Services.GameManager.player; } }
     public int baseSiblingIndex;
     private FSM<CardController> stateMachine;
+    private Color baseColor;
 
     // Use this for initialization
     public void Init(Card card_)
@@ -50,6 +49,7 @@ public class CardController : MonoBehaviour, IPointerClickHandler, IPointerEnter
         nameText = textElements[0];
         effectText = textElements[1];
         frame = imageElements[1];
+        baseColor = card.GetCardFrameColor();
         art = imageElements[2];
         nameText.text = card.info.Name;
         effectText.text = card.info.CardText;
@@ -66,12 +66,6 @@ public class CardController : MonoBehaviour, IPointerClickHandler, IPointerEnter
     void Update()
     {
         stateMachine.Update();
-        //if (selected && !(card is MovementCard))
-        //{
-        //    Drag();
-        //    if (Input.GetMouseButtonDown(0) && selectedLastFrame) PlaceCard();
-        //}
-        //selectedLastFrame = selected;
     }
 
     public void Reposition(Vector3 pos, bool changeBasePos)
@@ -92,164 +86,21 @@ public class CardController : MonoBehaviour, IPointerClickHandler, IPointerEnter
     public void OnPointerEnter(PointerEventData eventData)
     {
         stateMachine.OnInputEnter();
-        //if (((player.cardsSelected.Count == 0) ||
-        //    (player.movementCardsSelected.Count != 0)) && 
-        //    !Input.GetMouseButton(0))
-        //{
-        //    if (card.deckViewMode || card.collectionMode)
-        //    {
-
-        //        transform.localScale = Services.CardConfig.OnHoverScaleUp * baseScale;
-        //        Vector3 offset = Services.CardConfig.OnHoverOffsetDeckViewMode;
-        //        if(transform.position.y < 200)
-        //        {
-        //            offset = new Vector3(offset.x, -offset.y, offset.z);
-        //        }
-        //        Reposition(basePos + offset, false, true);
-
-        //    }
-        //    else if (card.playable && !selected)
-        //    {
-        //        transform.localScale = Services.CardConfig.OnHoverScaleUp * baseScale;
-        //        Reposition(basePos + Services.CardConfig.OnHoverOffset, false, true);
-        //        if(!(card is MovementCard)) card.OnSelect();
-        //    }
-        //    else if (card.chest != null)
-        //    {
-        //        transform.localScale = Services.CardConfig.OnHoverScaleUp * baseScale;
-        //        Reposition(basePos + Services.CardConfig.OnHoverOffsetChestMode, false, true);
-
-        //    }
-        //    if (player.selectingCards)
-        //    {
-        //        OnHoverEnterForCardSelection();
-        //    }
-        //}
     }
 
     public void OnPointerExit(PointerEventData eventData)
     {
         stateMachine.OnInputExit();
-        //if (!selected)
-        //{
-        //    if (player.selectingCards)
-        //    {
-        //        OnHoverExitForCardSelection();
-        //    }
-        //    else if (card.deckViewMode || card.collectionMode)
-        //    {
-        //        DisplayInDeckViewMode();
-        //    }
-        //    else if (card.playable && !Input.GetMouseButton(0))
-        //    {
-        //        DisplayAtBasePos();
-        //        if(!(card is MovementCard)) card.OnUnselect();
-        //    }
-        //    else if (card.chest != null)
-        //    {
-        //        DisplayAtBasePos();
-        //    }
-        //}
     }
 
     public void OnPointerClick(PointerEventData eventData)
     {
         stateMachine.OnInputDown();
-        //if (card.deckViewMode) { } //nothing right now
-        //else if (card.collectionMode)
-        //{
-        //    Services.DeckConstruction.OnCardClicked(card);
-        //}
-        //else if (player.selectingCards) {
-        //    Services.EventManager.Fire(new CardSelected(card));
-        //}
-        //else if (!selected)
-        //{
-        //    SelectCard();
-        //}
-        //else if (card is MovementCard)
-        //{
-        //    UnselectMovementCard();
-        //}
     }
 
     public void UnselectMovementCard()
     {
         stateMachine.TransitionTo<Disabled>();
-    }
-
-    public void SelectCard()
-    {
-        selected = true;
-        player.cardsSelected.Add(card);
-        Vector3 mousePos = Input.mousePosition;
-        mouseRelativePos = mousePos - transform.position;
-        if (card is MovementCard && card.playable)
-        {
-            color = (Color.blue + Color.white) / 2;
-            transform.localScale = baseScale * 1.1f;
-            Reposition(basePos + Services.CardConfig.OnHoverOffset, false, true);
-        }
-        else
-        {
-            transform.SetParent(Services.UIManager.bottomCorner);
-        }
-        if (card.playable)
-        {
-            card.OnSelect();
-        }
-        if (card.chest != null)
-        {
-            card.chest.OnCardPicked(card);
-            selected = false;
-            player.cardsSelected.Remove(card);
-        }
-
-    }
-
-    void Drag()
-    {
-        transform.localScale = Services.CardConfig.OnHoverScaleUp * baseScale;
-        if (card.playable || card.deckViewMode)
-        {
-            Vector3 mousePos = Input.mousePosition;
-            Vector3 newPos = mousePos - mouseRelativePos;
-            Reposition(newPos, false, true);
-            if (card.playable)
-            {
-                if (IsInDiscardZone())
-                {
-                    color = Color.red;
-                    if (card is TileTargetedCard)
-                    {
-                        transform.localScale = baseScale * Services.CardConfig.OnHoverScaleUp;
-                        SetCardFrameStatus(true);
-                        Services.EventManager.Unregister<TileSelected>(OnTileSelected);
-                    }
-                }
-                else if (rect.anchoredPosition.y >= Services.CardConfig.CardPlayThresholdYPos
-                    && card.CanPlay())
-                {
-                    color = Services.CardConfig.PlayableColor;
-                    if (card is TileTargetedCard)
-                    {
-                        transform.localScale = baseScale;
-                        SetCardFrameStatus(false);
-                        Services.EventManager.Register<TileSelected>(OnTileSelected);
-                    }
-                }
-                else
-                {
-                    color = Color.white;
-                    if (card is TileTargetedCard)
-                    {
-                        transform.localScale = baseScale * Services.CardConfig.OnHoverScaleUp;
-                        SetCardFrameStatus(true);
-                        Services.EventManager.Unregister<TileSelected>(OnTileSelected);
-                    }
-                }
-            }
-        }
     }
 
     public void SetCardFrameStatus(bool status)
@@ -271,56 +122,11 @@ public class CardController : MonoBehaviour, IPointerClickHandler, IPointerEnter
         }
     }
 
-    void PlaceCard()
-    {
-        selected = false;
-        player.cardsSelected.Remove(card);
-        TryToPlayCard(false);
-        
-    }
-
-    public bool TryToPlayCard(bool forcePlay)
-    {
-        card.OnUnselect();
-        SetCardFrameStatus(true);
-        if (IsInDiscardZone())
-        {
-            player.DiscardCardFromHand(card);
-            return false;
-        }
-        else if (card.playable && card.CanPlay() && (forcePlay ||
-            (rect.anchoredPosition.y >= Services.CardConfig.CardPlayThresholdYPos &&
-            !(card is TileTargetedCard))))
-        {
-            Services.Main.taskManager.AddTask(player.PlayCard(card));
-            return true;
-        }
-        else
-        {
-            DisplayAtBasePos();
-            return false;
-        }
-    }
-
     public void DisplayInPlay()
     {
-        color = Color.white;
+        color = baseColor;
         transform.SetParent(Services.UIManager.inPlayZone.transform);
         transform.localScale = baseScale;
-    }
-
-    public void DisplayAtBasePos()
-    {
-        color = Color.white;
-        transform.localScale = baseScale;
-        transform.SetParent(baseParent);
-        Reposition(basePos, false);
-    }
-
-    public void DisplayInDeckViewMode()
-    {
-        transform.localScale = baseScale;
-        Reposition(basePos, false);
     }
 
     public void UnselectedForCard()
@@ -331,39 +137,6 @@ public class CardController : MonoBehaviour, IPointerClickHandler, IPointerEnter
     public void SelectedForCard()
     {
         stateMachine.TransitionTo<SelectedForCardEffect>();
-    }
-
-    void OnHoverEnterForCardSelection()
-    {
-        color = (Color.red + Color.white) / 2;
-    }
-
-    void OnHoverExitForCardSelection()
-    {
-        color = prevColor;
-    }
-
-    public void OnTileSelected(TileSelected e)
-    {
-        Tile tileSelected = e.tile;
-        TileTargetedCard targetedCard = card as TileTargetedCard;
-        if (targetedCard.IsTargetValid(tileSelected))
-        {
-            bool successfullyPlayedCard = TryToPlayCard(true);
-            if (successfullyPlayedCard)
-            {
-                targetedCard.OnTargetSelected(tileSelected);
-            }
-        }
-        else
-        {
-            card.OnUnselect();
-            SetCardFrameStatus(true);
-            DisplayAtBasePos();
-        }
-        selected = false;
-        player.cardsSelected.Remove(card);
-        Services.EventManager.Unregister<TileSelected>(OnTileSelected);
     }
 
     public void Disable()
@@ -397,16 +170,15 @@ public class CardController : MonoBehaviour, IPointerClickHandler, IPointerEnter
         stateMachine.TransitionTo<Played>();
     }
 
+    public void EnterAddToDungeonDeckMode()
+    {
+        stateMachine.TransitionTo<AddingToDungeonDeck>();
+    }
+
     public void SelectMovementCard()
     {
         Debug.Assert(card is MovementCard);
         stateMachine.TransitionTo<MovementCardSelected>();
-    }
-
-    public void OnCardDisable()
-    {
-        color = Color.gray;
-        color = Color.gray; //looks silly but it's so gray becomes the "base color"
     }
 
     public bool IsInDiscardZone()
@@ -439,7 +211,7 @@ public class CardController : MonoBehaviour, IPointerClickHandler, IPointerEnter
 
         public override void OnInputExit()
         {
-            Context.color = Color.white;
+            Context.color = Context.baseColor;
             transform.localScale = baseScale;
             transform.SetParent(Context.baseParent);
             Context.Reposition(Context.basePos, false);
@@ -450,7 +222,7 @@ public class CardController : MonoBehaviour, IPointerClickHandler, IPointerEnter
     {
         public override void OnEnter()
         {
-            Context.color = Color.white;
+            Context.color = Context.baseColor;
             transform.localScale = baseScale;
             transform.SetParent(Context.baseParent);
             Context.SetCardFrameStatus(true);
@@ -494,7 +266,7 @@ public class CardController : MonoBehaviour, IPointerClickHandler, IPointerEnter
     {
         public override void OnEnter()
         {
-            Context.color = Color.white;
+            Context.color = Context.baseColor;
         }
 
         protected override void AddOffset()
@@ -594,7 +366,7 @@ public class CardController : MonoBehaviour, IPointerClickHandler, IPointerEnter
 
         protected virtual void OnUnplayableEffect()
         {
-            Context.color = Color.white;
+            Context.color = Context.baseColor;
         }
 
         protected virtual void OnPlayed()
@@ -727,7 +499,7 @@ public class CardController : MonoBehaviour, IPointerClickHandler, IPointerEnter
     {
         public override void OnEnter()
         {
-            Context.color = Color.white;
+            Context.color = Context.baseColor;
             Context.SetCardFrameStatus(true);
             transform.localScale = Context.baseScale;
         }
@@ -749,7 +521,7 @@ public class CardController : MonoBehaviour, IPointerClickHandler, IPointerEnter
             timeElapsed = 0;
             duration = Services.CardConfig.PlayAnimDur;
             rect = Context.GetComponent<RectTransform>();
-            Context.color = Color.white;
+            Context.color = Context.baseColor;
             transform.SetParent(Services.UIManager.inPlayZone.transform);
             initialPos = rect.anchoredPosition;
             targetPos = Services.UIManager.GetInPlayCardPosition(player.cardsInPlay.Count + 1);
@@ -789,7 +561,7 @@ public class CardController : MonoBehaviour, IPointerClickHandler, IPointerEnter
     {
         public override void OnEnter()
         {
-            Context.color = Color.white;
+            Context.color = Context.baseColor;
         }
 
         public override void OnInputDown()
@@ -841,6 +613,14 @@ public class CardController : MonoBehaviour, IPointerClickHandler, IPointerEnter
         {
             card.DestroyPhysicalCard();
             Services.EventManager.Fire(new AcquisitionComplete());
+        }
+    }
+
+    private class AddingToDungeonDeck : CardState
+    {
+        public override void OnEnter()
+        {
+            Context.color = Context.baseColor;
         }
     }
 

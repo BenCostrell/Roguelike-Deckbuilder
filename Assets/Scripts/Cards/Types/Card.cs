@@ -91,18 +91,11 @@ public abstract class Card {
 
     public void Disable()
     {
-        //playable = false;
-        //if (!collectionMode && !deckViewMode && controller.transform.parent != Services.UIManager.inPlayZone)
-        //{
-        //    controller.OnCardDisable();
-        //}
         controller.Disable();
     }
 
     public void Enable()
     {
-        //playable = true;
-        //controller.color = Color.white;
         controller.Enable();
     }
 
@@ -111,5 +104,10 @@ public abstract class Card {
         info = Services.CardConfig.GetCardOfType(cardType);
         tier = info.Tier;
         sprite = info.Sprite;
+    }
+
+    public virtual Color GetCardFrameColor()
+    {
+        return Color.white;
     }
 }

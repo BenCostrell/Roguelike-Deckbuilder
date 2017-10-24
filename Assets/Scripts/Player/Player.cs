@@ -90,7 +90,6 @@ public class Player {
         InitializeSprite(tile);
         InitializeDeck(data.deck);
         ForceUnlockEverything();
-        Services.Main.taskManager.AddTask(DrawCards(5));
         maxHealth = data.maxHealth;
         currentHealth = maxHealth;
         controller.UpdateHealthUI();

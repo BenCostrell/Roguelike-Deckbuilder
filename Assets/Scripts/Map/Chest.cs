@@ -31,6 +31,7 @@ public class Chest : MonoBehaviour {
 
     public void OpenChest()
     {
+        Services.UIManager.ToggleChestArea(true);
         opened = true;
         cardsInChest = new List<Card>();
         List<Card> cardPool = Services.CardConfig.GetAllCardsOfTier(tier, false);
@@ -65,7 +66,7 @@ public class Chest : MonoBehaviour {
         }
 
         Services.GameManager.player.AcquireCard(card);
-
+        Services.UIManager.ToggleChestArea(false);
         Services.GameManager.player.UnlockEverything(lockID);
         Destroy(gameObject);
     }

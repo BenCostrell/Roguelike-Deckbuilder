@@ -11,6 +11,8 @@ public class UIManager : MonoBehaviour {
     public GameObject inPlayZone;
     public GameObject handZone;
     public Transform chestCardArea;
+    [SerializeField]
+    private Image chestAreaImage;
     public Transform bottomCorner;
     [SerializeField]
     private Text discardCounter;
@@ -65,6 +67,10 @@ public class UIManager : MonoBehaviour {
     private GameObject levelCompleteUI;
     [SerializeField]
     private GameObject levelCompleteText;
+    [SerializeField]
+    private Image messageBanner;
+    [SerializeField]
+    private Text messageBannerText;
     private Vector2 playerUIHealthBarBaseSize;
     private int nextLockID_;
     public int nextLockID
@@ -79,6 +85,10 @@ public class UIManager : MonoBehaviour {
     private List<int> playAllLockIDs;
     public Vector3 dungeonTimerPos { get { return dungeonTimer.transform.position; } }
     public Vector3 dungeonDeckPos { get { return dungeonDeckZone.transform.position; } }
+    public float bannerScrollDuration;
+    public string startBannerMessage;
+    public string playerTurnMessage;
+    public string dungeonTurnMessage;
 
     // Use this for initialization
     void Awake() {
@@ -87,12 +97,12 @@ public class UIManager : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		
 	}
     
     void InitUI()
     {
         unitUI.SetActive(false);
+        ToggleChestArea(false);
         unitUIHealthBarBaseSize = unitUIRemainingHealthBody.sizeDelta;
         playerUIHealthBarBaseSize = playerUIRemainingHealthBody.sizeDelta;
         playerUIKeyIcon.color = new Color(1, 1, 1, 0.125f);
@@ -102,6 +112,22 @@ public class UIManager : MonoBehaviour {
 
         playerUIKeyIcon.gameObject.SetActive(false);
         levelCompleteUI.gameObject.SetActive(false);
+    }
+
+    public void SetMessageBanner(string bannerText)
+    {
+        messageBannerText.text = bannerText;
+        messageBanner.gameObject.SetActive(true);
+    }
+
+    public void TurnOffMessageBanner()
+    {
+        messageBanner.gameObject.SetActive(false);
+    }
+
+    public void MoveMessageBanner(Vector2 pos)
+    {
+        messageBanner.rectTransform.anchoredPosition = pos;
     }
 
     public void UpdateDeckCounter(int cardsInDeck)
@@ -179,8 +205,6 @@ public class UIManager : MonoBehaviour {
             playerUIHealthBarBaseSize.y);
         if (curHP == 0) playerUIRemainingHealthObj.SetActive(false);
         else playerUIRemainingHealthObj.SetActive(true);
-        playerUISprite.sprite = 
-            Services.GameManager.player.controller.GetComponent<SpriteRenderer>().sprite;
         if (Services.GameManager.player.hasKey)
             playerUIKeyIcon.color = Color.white;
     }
@@ -262,5 +286,10 @@ public class UIManager : MonoBehaviour {
     public void ToggleLevelCompleteText(bool status)
     {
         levelCompleteText.SetActive(status);
+    }
+
+    public void ToggleChestArea(bool status)
+    {
+        chestAreaImage.gameObject.SetActive(status);
     }
 }

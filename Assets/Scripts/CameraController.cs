@@ -5,8 +5,14 @@ public class CameraController : MonoBehaviour
 {
     private Camera mainCamera;
     private Vector2 basePos;
+    private bool initialized;
     // Use this for initialization
     void Start()
+    {
+        
+    }
+
+    public void InitCamera()
     {
         mainCamera = GetComponent<Camera>();
         basePos = transform.position;
@@ -15,12 +21,13 @@ public class CameraController : MonoBehaviour
             playerPos.x + basePos.x,
             playerPos.y + basePos.y,
             transform.position.z);
+        initialized = true;
     }
 
     // Update is called once per frame
     void Update()
     {
-        if(Services.GameManager.player.controller != null)
+        if(Services.GameManager.player.controller != null && initialized)
             MoveTowardsPlayer();
     }
 

@@ -155,6 +155,7 @@ public class AlterDungeonTimerTask : Task
             targetPos = Services.UIManager.dungeonDeckPos;
             initialScale = newMonsterCard.controller.transform.localScale;
             midpointScale = initialScale * Services.MonsterConfig.AddMonsterCardScaleUpFactor;
+            newMonsterCard.controller.EnterAddToDungeonDeckMode();
         }
         else
         {

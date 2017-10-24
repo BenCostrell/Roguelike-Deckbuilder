@@ -15,4 +15,9 @@ public abstract class MonsterCard : Card
     {
         return Services.MonsterManager.SpawnMonster(monsterToSpawn);
     }
+
+    public override Color GetCardFrameColor()
+    {
+        return Services.CardConfig.DungeonCardColor;
+    }
 }

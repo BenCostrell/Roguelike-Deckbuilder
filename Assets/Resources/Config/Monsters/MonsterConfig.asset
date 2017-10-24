@@ -23,7 +23,7 @@ MonoBehaviour:
   addMonsterCardDuration: 1.5
   addMonsterCardMidpointTimeProportion: 0.6
   addMonsterCardScaleUpFactor: 1.5
-  addMonsterCardMidpointOffset: {x: -150, y: -250, z: 0}
+  addMonsterCardMidpointOffset: {x: 250, y: 0, z: 0}
   minDistFromMonsters: 4
   minDistFromCards: 3
   minDistFromPlayer: 5

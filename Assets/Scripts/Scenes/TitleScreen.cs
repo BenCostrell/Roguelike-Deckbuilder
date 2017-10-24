@@ -11,7 +11,8 @@ public class TitleScreen : Scene<MainTransitionData> {
 	
 	// Update is called once per frame
 	void Update () {
-		
+        if (Input.GetMouseButtonDown(0))
+            Services.EventManager.Fire(new ButtonPressed("X", 1));
 	}
 
     internal override void OnEnter(MainTransitionData data)
@@ -29,7 +30,7 @@ public class TitleScreen : Scene<MainTransitionData> {
             Card card = Services.CardConfig.CreateCardOfType(cardInfo.CardType);
             startingDeck.Add(card);
         }
-        //startingCollection.Add(Services.CardConfig.CreateCardOfType(Card.CardType.Tome));
+        startingCollection.Add(Services.CardConfig.CreateCardOfType(Card.CardType.Scream));
         Services.SceneStackManager.Swap<LevelTransition>(
             new MainTransitionData(startingDeck, new List<Card>(), startingCollection,
             Services.GameManager.playerStartingHealth, 1, false));

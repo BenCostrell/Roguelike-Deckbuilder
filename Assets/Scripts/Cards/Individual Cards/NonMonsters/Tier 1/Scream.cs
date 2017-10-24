@@ -1,5 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 
 public class Scream : Card
 {
@@ -16,9 +18,13 @@ public class Scream : Card
         player.LockEverything(lockid);
         TaskTree moveTree = new TaskTree(new EmptyTask());
         moveTree.AddChild(new WaitTask(Services.MonsterConfig.MaxMoveAnimDur));
-        for (int i = 0; i < Services.MonsterManager.monsters.Count; i++)
+        List<Monster> sortedMonsters = 
+            Services.MonsterManager.monsters.OrderByDescending(monster =>
+            AStarSearch.ShortestPath(monster.currentTile, player.currentTile, true).Count)
+            .ToList();
+        for (int i = 0; i < sortedMonsters.Count; i++)
         {
-            Monster monster = Services.MonsterManager.monsters[i];
+            Monster monster = sortedMonsters[i];
             if (!monster.IsPlayerInRange())
                 moveTree.AddChild(monster.MoveAwayFromPlayer(monster.movementSpeed));
         }

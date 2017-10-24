@@ -15,4 +15,9 @@ public class Tick : Card
         onDrawTasks.Then(Services.Main.dungeonDeck.AlterDungeonTimerCount(1));
         return onDrawTasks;
     }
+
+    public override Color GetCardFrameColor()
+    {
+        return Services.CardConfig.DungeonCardColor;
+    }
 }
