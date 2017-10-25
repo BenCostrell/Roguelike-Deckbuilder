@@ -7,6 +7,7 @@ public class Tick : Card
     {
         cardType = CardType.Tick;
         InitValues();
+        isDungeon = true;
     }
 
     public override TaskTree OnDraw(int deckSize, int discardSize, bool playerDraw)

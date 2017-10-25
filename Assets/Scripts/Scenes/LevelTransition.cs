@@ -72,10 +72,6 @@ public class LevelTransition : Scene<MainTransitionData> {
     {
         if (!data.gameOver)
         {
-            foreach (Card card in data.deck)
-            {
-                card.deckViewMode = false;
-            }
             Services.SceneStackManager.Swap<Main>(data);
         }
         else
@@ -153,10 +149,6 @@ public class LevelTransition : Scene<MainTransitionData> {
 
     public void EditDeck()
     {
-        for (int i = 0; i < data.deck.Count; i++)
-        {
-            data.deck[i].deckViewMode = false;
-        }
         Services.SceneStackManager.Swap<DeckConstruction>(data);
     }
 }

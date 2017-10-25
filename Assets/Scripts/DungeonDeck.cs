@@ -60,19 +60,29 @@ public class DungeonDeck
 
     public TaskTree TakeDungeonTurn()
     {
+        TaskTree turnTasks = new TaskTree(new EmptyTask());
+        float staggerTime = Services.CardConfig.DiscardAnimStaggerTime
+            * (playedCards.Count - 1);
         for (int i = playedCards.Count - 1; i >= 0; i--)
         {
-            DiscardCard(playedCards[i]);
+            turnTasks.AddChild(DiscardCard(playedCards[i], staggerTime));
+            staggerTime -= Services.CardConfig.DiscardAnimStaggerTime;
         }
-        return DrawCards(cardsPerRound);
+        turnTasks.Then(DrawCards(cardsPerRound));
+        return turnTasks;
     }
 
-    void DiscardCard(Card card)
+    TaskTree DiscardCard(Card card, float timeOffset)
     {
         discardPile.Add(card);
         playedCards.Remove(card);
         card.OnDiscard();
-        Services.UIManager.UpdateDiscardCounter(discardPile.Count);
+        TaskTree discardTasks = new TaskTree(new WaitTask(timeOffset));
+        discardTasks.Then(new DiscardCard(card));
+        discardTasks.Then(new ParameterizedActionTask<int>(
+            Services.UIManager.UpdateDungeonDiscardCounter,
+            discardPile.Count));
+        return discardTasks;
     }
 
     void UpdateDungeonTimer()
@@ -114,6 +124,7 @@ public class DungeonDeck
     public void AddCard(Card card)
     {
         discardPile.Add(card);
+        Services.UIManager.UpdateDungeonDiscardCounter(discardPile.Count);
     }
 }
 

@@ -4,6 +4,12 @@ using System.Collections;
 public abstract class MonsterCard : Card
 {
     protected Monster.MonsterType monsterToSpawn;
+    protected override void InitValues()
+    {
+        base.InitValues();
+        isDungeon = true;
+    }
+
     public override TaskTree OnDraw(int deckSize, int discardSize, bool playerDraw)
     {
         TaskTree onDrawTasks = base.OnDraw(deckSize, discardSize, playerDraw);

@@ -95,6 +95,8 @@ public class Player {
         controller.UpdateHealthUI();
         shield = 0;
         Services.EventManager.Register<TileSelected>(OnTileSelected);
+        Services.UIManager.UpdateDeckCounter(remainingDeck.Count);
+        Services.UIManager.UpdateDiscardCounter(discardPile.Count);
     }
 
     void InitializeSprite(Tile tile)
@@ -147,25 +149,54 @@ public class Player {
         return card.OnDraw(remainingDeck.Count, discardPile.Count, true);
     }
 
-    public void DiscardCardFromHand(Card card)
+    public void DiscardQueuedCards()
     {
-        hand.Remove(card);
-        DiscardCard(card);
+        float staggerTime = 0;
+        float totalStaggerTime = (movementCardsSelected.Count - 1) 
+            * Services.CardConfig.DiscardAnimStaggerTime;
+        TaskTree discardTasks = new TaskTree(new EmptyTask());
+        discardTasks.AddChild(new WaitTask(totalStaggerTime));
+        for (int i = 0; i < movementCardsSelected.Count; i++)
+        {
+            MovementCard card = movementCardsSelected[i];
+            discardTasks.AddChild(DiscardQueuedCard(card, staggerTime));
+            staggerTime += Services.CardConfig.DiscardAnimStaggerTime;
+        }
+        movementCardsSelected.Clear();
+        Services.Main.taskManager.AddTask(discardTasks);
         Services.UIManager.SortHand(hand);
     }
 
-    void DiscardCardFromPlay(Card card)
+    public TaskTree DiscardQueuedCard(Card card, float timeOffset)
     {
-        RemoveCardFromPlay(card);
-        DiscardCard(card);
-        Services.UIManager.SortInPlayZone(cardsInPlay);
+        card.OnUnselect();
+        hand.Remove(card);
+        return DiscardCard(card, timeOffset);
     }
 
-    void DiscardCard(Card card)
+    public TaskTree DiscardCardFromHand(Card card, float timeOffset)
+    {
+        hand.Remove(card);
+        Services.UIManager.SortHand(hand);
+        return DiscardCard(card, timeOffset);
+    }
+
+    TaskTree DiscardCardFromPlay(Card card, float timeOffset)
+    {
+        Services.UIManager.SortInPlayZone(cardsInPlay);
+        return DiscardCard(card, timeOffset);
+    }
+
+    TaskTree DiscardCard(Card card, float timeOffset)
     {
         discardPile.Add(card);
         card.OnDiscard();
-        Services.UIManager.UpdateDiscardCounter(discardPile.Count);
+        TaskTree discardCardTasks = new TaskTree(new WaitTask(timeOffset));
+        discardCardTasks.Then(new DiscardCard(card));
+        discardCardTasks.Then(new ParameterizedActionTask<int>(
+            Services.UIManager.UpdateDiscardCounter, 
+            discardPile.Count));
+        return discardCardTasks;
     }
 
     public bool PlaceOnTile(Tile tile, bool end)
@@ -300,26 +331,28 @@ public class Player {
         movesAvailable += moves;
     }
 
-    void RemoveCardFromPlay(Card card)
+    public TaskTree OnTurnEnd()
     {
-        cardsInPlay.Remove(card);
-        Services.UIManager.SortInPlayZone(cardsInPlay);
-    }
-
-    public void OnTurnEnd()
-    {
+        TaskTree turnEndTasks = new TaskTree(new EmptyTask());
+        float totalStaggerTime = Services.CardConfig.DiscardAnimStaggerTime 
+            * (cardsInPlay.Count - 1);
+        float staggerTime = 0;
+        turnEndTasks.AddChild(new WaitTask(totalStaggerTime));
         if (cardsInPlay.Count > 0)
         {
-            for (int i = cardsInPlay.Count - 1; i >= 0; i--)
+            for (int i = 0; i < cardsInPlay.Count; i++)
             {
-                DiscardCardFromPlay(cardsInPlay[i]);
+                turnEndTasks.AddChild(DiscardCardFromPlay(cardsInPlay[i], staggerTime));
+                staggerTime += Services.CardConfig.DiscardAnimStaggerTime;
             }
+            cardsInPlay.Clear();
         }
         for (int i = movementCardsSelected.Count - 1; i >= 0; i--)
         {
             movementCardsSelected[i].controller.UnselectMovementCard();
         }
         movesAvailable = 0;
+        return turnEndTasks;
     }
 
     public TaskTree OnTurnStart()

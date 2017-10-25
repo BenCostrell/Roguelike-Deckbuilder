@@ -5,7 +5,6 @@ using UnityEngine;
 public abstract class Card {
     public CardController controller { get; private set; }
     public CardInfo info { get; protected set; }
-    public bool playable { get; private set; }
     public CardType cardType { get; protected set; }
     public enum CardType
     {
@@ -35,10 +34,9 @@ public abstract class Card {
     public int tier { get; protected set; }
     public Sprite sprite { get; protected set; }
     public Tile currentTile { get; private set; }
-    public bool deckViewMode;
-    public bool collectionMode;
     public Chest chest;
     protected Player player { get { return Services.GameManager.player; } }
+    public bool isDungeon { get; protected set; }
 
     public void CreatePhysicalCard(Transform tform)
     {
@@ -60,14 +58,12 @@ public abstract class Card {
     }
 
     public virtual void OnPlay() {
-        playable = false;
         controller.DisplayInPlay();
     }
 
     public virtual void OnDiscard()
     {
-        playable = false;
-        DestroyPhysicalCard();
+        controller.EnterDiscardMode();
     }
 
     public virtual bool CanPlay()

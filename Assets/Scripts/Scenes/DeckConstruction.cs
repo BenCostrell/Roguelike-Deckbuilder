@@ -58,10 +58,6 @@ public class DeckConstruction : Scene<MainTransitionData> {
 
     internal override void OnExit()
     {
-        foreach(Card card in transitionData.deck)
-        {
-            card.collectionMode = false;
-        }
     }
 
     void PopulateDeckDisplay()

@@ -74,6 +74,14 @@ public class CardConfig : ScriptableObject
     public float AcquireAnimDur { get { return acquireAnimDur; } }
 
     [SerializeField]
+    private float discardAnimDur;
+    public float DiscardAnimDur { get { return discardAnimDur; } }
+
+    [SerializeField]
+    private float discardAnimStaggerTime;
+    public float DiscardAnimStaggerTime { get { return discardAnimStaggerTime; } }
+
+    [SerializeField]
     private int minSpawnDistFromMonsters;
     public int MinSpawnDistFromMonsters { get { return minSpawnDistFromMonsters; } }
 

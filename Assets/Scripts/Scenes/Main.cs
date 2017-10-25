@@ -55,10 +55,8 @@ public class Main : Scene<MainTransitionData> {
 
     public void EndTurn()
     {
-        player.OnTurnEnd();
         int lockID = Services.UIManager.nextLockID;
-        player.LockEverything(lockID);
-        TaskTree endTurnTasks = new TaskTree(new EmptyTask());
+        TaskTree endTurnTasks = player.OnTurnEnd();
         endTurnTasks
             .Then(new ScrollMessageBanner(Services.UIManager.dungeonTurnMessage))
             .Then(Services.MonsterManager.MonstersMove())
@@ -69,6 +67,7 @@ public class Main : Scene<MainTransitionData> {
             .Then(new ParameterizedActionTask<int>(player.UnlockEverything, lockID));
 
         taskManager.AddTask(endTurnTasks);
+        player.LockEverything(lockID);
     }
 
     public void ExitLevel()
@@ -103,5 +102,10 @@ public class Main : Scene<MainTransitionData> {
     public void PlayAll()
     {
         player.PlayAll();
+    }
+
+    public void DiscardQueuedCards()
+    {
+        player.DiscardQueuedCards();
     }
 }

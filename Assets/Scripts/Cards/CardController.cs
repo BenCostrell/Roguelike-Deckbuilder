@@ -175,6 +175,11 @@ public class CardController : MonoBehaviour, IPointerClickHandler, IPointerEnter
         stateMachine.TransitionTo<AddingToDungeonDeck>();
     }
 
+    public void EnterDiscardMode()
+    {
+        stateMachine.TransitionTo<Discarding>();
+    }
+
     public void SelectMovementCard()
     {
         Debug.Assert(card is MovementCard);
@@ -385,7 +390,8 @@ public class CardController : MonoBehaviour, IPointerClickHandler, IPointerEnter
             if (Context.IsInDiscardZone())
             {
                 OnDiscardableEffect();
-                if (buttonDown) player.DiscardCardFromHand(card);
+                if (buttonDown)
+                    Services.Main.taskManager.AddTask(player.DiscardCardFromHand(card, 0));
             }
             else if (Context.rect.anchoredPosition.y >= Services.CardConfig.CardPlayThresholdYPos &&
                 card.CanPlay())
@@ -566,7 +572,7 @@ public class CardController : MonoBehaviour, IPointerClickHandler, IPointerEnter
 
         public override void OnInputDown()
         {
-            card.chest.OnCardPicked(Context.card);
+            card.chest.OnCardPicked(card);
             TransitionTo<Acquisition>();
         }
 
@@ -623,6 +629,16 @@ public class CardController : MonoBehaviour, IPointerClickHandler, IPointerEnter
             Context.color = Context.baseColor;
         }
     }
+
+    private class Discarding : CardState
+    {
+        public override void OnEnter()
+        {
+            Context.color = Context.baseColor;
+        }
+    }
+
+
 
 }
 

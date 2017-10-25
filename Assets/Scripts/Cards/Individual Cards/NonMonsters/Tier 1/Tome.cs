@@ -30,7 +30,7 @@ public class Tome : CardSelectionCard
     {
         foreach(Card card in cardsSelected)
         {
-            player.DiscardCardFromHand(card);
+            Services.Main.taskManager.AddTask(player.DiscardCardFromHand(card, 0));
         }
     }
 }
