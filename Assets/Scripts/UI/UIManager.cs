@@ -6,6 +6,10 @@ using UnityEngine.UI;
 public class UIManager : MonoBehaviour {
 
     [SerializeField]
+    private Sprite cardBackSprite;
+    [SerializeField]
+    private Vector2 pileCardSpacing;
+    [SerializeField]
     private Text deckCounter;
     public GameObject deckZone;
     public GameObject inPlayZone;
@@ -13,7 +17,7 @@ public class UIManager : MonoBehaviour {
     public Transform chestCardArea;
     [SerializeField]
     private Image chestAreaImage;
-    public Transform bottomCorner;
+    public Transform bottomLeft;
     [SerializeField]
     private Text discardCounter;
     public GameObject discardZone;
@@ -29,7 +33,12 @@ public class UIManager : MonoBehaviour {
     [SerializeField]
     private Button endTurnButton;
     [SerializeField]
-    private Button playAllButton;
+    private Button queueButton;
+    private Text queueButtonText;
+    [SerializeField]
+    private Color queueColor;
+    [SerializeField]
+    private Color unqueueColor;
     [SerializeField]
     private GameObject unitUI;
     [SerializeField]
@@ -106,6 +115,7 @@ public class UIManager : MonoBehaviour {
         unitUIHealthBarBaseSize = unitUIRemainingHealthBody.sizeDelta;
         playerUIHealthBarBaseSize = playerUIRemainingHealthBody.sizeDelta;
         playerUIKeyIcon.color = new Color(1, 1, 1, 0.125f);
+        queueButtonText = queueButton.GetComponentInChildren<Text>();
 
         endTurnLockIDs = new List<int>();
         playAllLockIDs = new List<int>();
@@ -133,36 +143,93 @@ public class UIManager : MonoBehaviour {
     public void UpdateDeckCounter(int cardsInDeck)
     {
         deckCounter.text = cardsInDeck.ToString();
+        CreateCardPileUI(cardsInDeck, deckZone.transform);
     }
 
     public void UpdateDungeonDeckCounter(int cardsInDeck)
     {
         dungeonDeckCounter.text = cardsInDeck.ToString();
+        CreateCardPileUI(cardsInDeck, dungeonDeckZone.transform);
     }
 
     public void UpdateDiscardCounter(int cardsInDiscard)
     {
         discardCounter.text = cardsInDiscard.ToString();
+        CreateCardPileUI(cardsInDiscard, discardZone.transform);
     }
 
     public void UpdateDungeonDiscardCounter(int cardsInDiscard)
     {
         dungeonDiscardCounter.text = cardsInDiscard.ToString();
+        CreateCardPileUI(cardsInDiscard, dungeonDiscardZone.transform);
+    }
+
+    void CreateCardPileUI(int cardCount, Transform zone)
+    {
+        Transform pileObjectZone = zone.GetChild(0);
+        Image baseImage = zone.GetComponent<Image>();
+        Image[] currentPileUIUnits = pileObjectZone.GetComponentsInChildren<Image>();
+        int numCurrentUnits = currentPileUIUnits.Length;
+        int targetUnitCount = cardCount - 1;
+        int unitsDestroyed = 0;
+        if (numCurrentUnits > targetUnitCount)
+        {
+            for (int i = 0; i < currentPileUIUnits.Length; i++)
+            {
+                Destroy(currentPileUIUnits[i].gameObject);
+                unitsDestroyed += 1;
+                if (unitsDestroyed == (numCurrentUnits - targetUnitCount)) break;
+            }
+        }
+        else if(targetUnitCount > 0)
+        {
+            Vector2 size = baseImage.GetComponent<RectTransform>().sizeDelta;
+            for (int i = numCurrentUnits - 1; i < targetUnitCount; i++)
+            {
+                GameObject obj = new GameObject();
+                RectTransform rect = obj.AddComponent<RectTransform>();
+                Image img = obj.AddComponent<Image>();
+                obj.transform.SetParent(pileObjectZone);
+                rect.sizeDelta = size;
+                img.sprite = cardBackSprite;
+                rect.localScale = Vector3.one;
+                rect.SetAsFirstSibling();
+                if (zone == dungeonDeckZone.transform || zone == dungeonDiscardZone.transform)
+                {
+                    img.color = baseImage.color;
+                }                
+                rect.anchoredPosition = i * pileCardSpacing;
+            }
+        }
+        
     }
 
     public void SortHand(List<Card> cardsInHand)
     {
         for (int i = 0; i < cardsInHand.Count; i++)
         {
-            cardsInHand[i].Reposition(GetCardHandPosition(i), true);
+            cardsInHand[i].Reposition(GetHandCardPosition(i, cardsInHand.Count), true);
             cardsInHand[i].controller.baseSiblingIndex = 
                 cardsInHand[i].controller.transform.GetSiblingIndex();
+            cardsInHand[i].controller.transform.localRotation = 
+                GetHandCardRotation(i, cardsInHand.Count);
+                
         }
     }
 
-    public Vector3 GetCardHandPosition(int handCountNum)
+    public Vector3 GetHandCardPosition(int handCountIndex, int handCount)
     {
-        return Services.CardConfig.HandCardSpacing * handCountNum;
+        return new Vector3(Services.CardConfig.HandCardSpacing.x * handCountIndex,
+            Services.CardConfig.HandCardSpacing.y 
+            * Mathf.Cos(Services.CardConfig.HandCardFanFactor *
+            GetHandCardRotation(handCountIndex, handCount).eulerAngles.z 
+            * Mathf.Deg2Rad), 0);
+    }
+
+    public Quaternion GetHandCardRotation(int handCountIndex, int handCount)
+    {
+        return Quaternion.Euler(0, 0,
+                -(handCountIndex - handCount / 2) * Services.CardConfig.HandCardRotation);
     }
 
     public Vector3 GetInPlayCardPosition(int inPlayZoneCountNum)
@@ -242,7 +309,7 @@ public class UIManager : MonoBehaviour {
     public void DisablePlayAll(int lockID)
     {
         playAllLockIDs.Add(lockID);
-        playAllButton.interactable = false;
+        queueButton.interactable = false;
     }
 
     public void EnablePlayAll(int lockID)
@@ -252,14 +319,14 @@ public class UIManager : MonoBehaviour {
             playAllLockIDs.Remove(lockID);
             if (playAllLockIDs.Count == 0)
             {
-                playAllButton.interactable = true;
+                queueButton.interactable = true;
             }
         }
     }
 
     public void ForceUnlockPlayAll()
     {
-        playAllButton.interactable = true;
+        queueButton.interactable = true;
         playAllLockIDs = new List<int>();
     }
 
@@ -291,5 +358,14 @@ public class UIManager : MonoBehaviour {
     public void ToggleChestArea(bool status)
     {
         chestAreaImage.gameObject.SetActive(status);
+    }
+
+    public void SetQueueButtonStatus(bool queue)
+    {
+        if (queue)
+        {
+            queueButtonText.text = "QUEUE ALL MOVEMENT";
+        }
+        else queueButtonText.text = "UNQUEUE ALL MOVEMENT";
     }
 }

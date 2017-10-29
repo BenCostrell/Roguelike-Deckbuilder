@@ -22,6 +22,7 @@ public class Main : Scene<MainTransitionData> {
     {
         InitializeMainServices();
         Services.GameManager.currentCamera = GetComponentInChildren<Camera>();
+        Services.GameManager.currentCanvas = GetComponentInChildren<Canvas>();
     }
 
     internal override void OnEnter(MainTransitionData data_)
@@ -99,9 +100,9 @@ public class Main : Scene<MainTransitionData> {
             levelNum + 1, false));
     }
 
-    public void PlayAll()
+    public void QueueAllButtonPress()
     {
-        player.PlayAll();
+        player.OnQueueButtonPressed();
     }
 
     public void DiscardQueuedCards()

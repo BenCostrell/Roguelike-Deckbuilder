@@ -18,6 +18,14 @@ public class CardConfig : ScriptableObject
     public Vector3 HandCardSpacing { get { return handCardSpacing; } }
 
     [SerializeField]
+    private float handCardRotation;
+    public float HandCardRotation { get { return handCardRotation; } }
+
+    [SerializeField]
+    private float handCardFanFactor;
+    public float HandCardFanFactor { get { return handCardFanFactor; } }
+
+    [SerializeField]
     private Vector3 inPlaySpacing;
     public Vector3 InPlaySpacing { get { return inPlaySpacing; } }
 

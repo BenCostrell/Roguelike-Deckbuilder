@@ -72,7 +72,7 @@ public class Player {
     private List<int> movementLockIDs;
     private List<int> handLockIDs;
     private List<int> nonMovementLockIDs;
-    public List<MovementCard> movementCardsSelected;
+    private List<MovementCard> movementCardsSelected;
     public List<Card> cardsSelected;
 
     public Player()
@@ -313,7 +313,37 @@ public class Player {
         return new PlayCardTask(card);
     }
 
-    public void PlayAll()
+    public void SelectMovementCard(MovementCard card)
+    {
+        movementCardsSelected.Add(card);
+        Services.UIManager.SetQueueButtonStatus(CheckQueueButtonStatus());
+    }
+
+    public void UnselectMovementCard(MovementCard card)
+    {
+        movementCardsSelected.Remove(card);
+        Services.UIManager.SetQueueButtonStatus(CheckQueueButtonStatus());
+    }
+
+    bool CheckQueueButtonStatus()
+    {
+        int numMovementCardsInHand = 0;
+        for (int i = 0; i < hand.Count; i++)
+        {
+            if (hand[i] is MovementCard) numMovementCardsInHand += 1;
+        }
+        if (movementCardsSelected.Count == numMovementCardsInHand) return false;
+        else return true;
+    }
+
+    public void OnQueueButtonPressed()
+    {
+        if (CheckQueueButtonStatus()) QueueAll();
+        else UnqueueAll();
+        Services.UIManager.SetQueueButtonStatus(CheckQueueButtonStatus());
+    }
+
+    public void QueueAll()
     {
         for (int i = hand.Count - 1; i >= 0; i--)
         {
@@ -323,6 +353,14 @@ public class Player {
                 if (!movementCardsSelected.Contains(movementCard))
                     movementCard.controller.SelectMovementCard();
             }
+        }
+    }
+
+    public void UnqueueAll()
+    {
+        for (int i = movementCardsSelected.Count - 1; i >= 0; i--)
+        {
+            movementCardsSelected[i].controller.UnselectMovementCard();
         }
     }
 
@@ -347,10 +385,8 @@ public class Player {
             }
             cardsInPlay.Clear();
         }
-        for (int i = movementCardsSelected.Count - 1; i >= 0; i--)
-        {
-            movementCardsSelected[i].controller.UnselectMovementCard();
-        }
+        UnqueueAll();
+        Services.UIManager.SetQueueButtonStatus(true);
         movesAvailable = 0;
         return turnEndTasks;
     }

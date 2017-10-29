@@ -160,7 +160,7 @@ public class AlterDungeonTimerTask : Task
                 * Services.MonsterConfig.AddMonsterCardMidpointTimeProportion;
             newMonsterCard = dungeonDeck.GetNewMonsterCard();
             initialPos = Services.UIManager.dungeonTimerPos;
-            newMonsterCard.CreatePhysicalCard(Services.UIManager.bottomCorner);
+            newMonsterCard.CreatePhysicalCard(Services.UIManager.bottomLeft);
             newMonsterCard.Reposition(initialPos, true, true);
             midpointPos = initialPos + Services.MonsterConfig.AddMonsterCardMidpointOffset;
             targetPos = Services.UIManager.dungeonDeckPos;

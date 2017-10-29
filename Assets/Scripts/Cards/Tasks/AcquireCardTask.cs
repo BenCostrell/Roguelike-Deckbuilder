@@ -20,7 +20,7 @@ public class AcquireCardTask : Task
     {
         timeElapsed = 0;
         duration = Services.CardConfig.AcquireAnimDur;
-        card.controller.transform.SetParent(Services.UIManager.bottomCorner);
+        card.controller.transform.SetParent(Services.UIManager.bottomLeft);
         initialPos = card.controller.transform.position;
         targetPos = Services.UIManager.discardZone.transform.position;
         initialScale = card.controller.transform.localScale;

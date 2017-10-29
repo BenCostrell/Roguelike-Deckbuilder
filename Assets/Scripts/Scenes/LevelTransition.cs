@@ -35,6 +35,8 @@ public class LevelTransition : Scene<MainTransitionData> {
     {
         data = data_;
         InitializeScene();
+        Services.GameManager.currentCamera = GetComponentInChildren<Camera>();
+        Services.GameManager.currentCanvas = GetComponentInChildren<Canvas>();
         Services.SoundManager.SetMusicVolume(0.05f);
         for (int i = 0; i < data.deck.Count; i++)
         {

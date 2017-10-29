@@ -18,6 +18,8 @@ public class TitleScreen : Scene<MainTransitionData> {
     internal override void OnEnter(MainTransitionData data)
     {
         Services.SoundManager.SetMusicVolume(0.02f);
+        Services.GameManager.currentCamera = GetComponentInChildren<Camera>();
+        Services.GameManager.currentCanvas = GetComponentInChildren<Canvas>();
     }
 
     void StartGame(ButtonPressed e)

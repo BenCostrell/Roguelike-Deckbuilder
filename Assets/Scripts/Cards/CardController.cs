@@ -75,7 +75,7 @@ public class CardController : MonoBehaviour, IPointerClickHandler, IPointerEnter
 
     public void Reposition(Vector3 pos, bool changeBasePos, bool front)
     {
-        transform.localPosition= pos;
+        rect.anchoredPosition = pos;
         if (changeBasePos) {
             basePos = pos;
         }
@@ -100,7 +100,8 @@ public class CardController : MonoBehaviour, IPointerClickHandler, IPointerEnter
 
     public void UnselectMovementCard()
     {
-        stateMachine.TransitionTo<Disabled>();
+        card.OnUnselect();
+        stateMachine.TransitionTo<Playable>();
     }
 
     public void SetCardFrameStatus(bool status)
@@ -203,9 +204,18 @@ public class CardController : MonoBehaviour, IPointerClickHandler, IPointerEnter
 
     private abstract class Hoverable : CardState
     {
+        private Quaternion baseRotation;
+
+        public override void OnEnter()
+        {
+            base.OnEnter();
+            baseRotation = transform.localRotation;
+        }
+
         public override void OnInputEnter()
         {
             transform.localScale = Services.CardConfig.OnHoverScaleUp * baseScale;
+            transform.localRotation = Quaternion.identity;
             AddOffset();
         }
 
@@ -218,6 +228,7 @@ public class CardController : MonoBehaviour, IPointerClickHandler, IPointerEnter
         {
             Context.color = Context.baseColor;
             transform.localScale = baseScale;
+            transform.localRotation = baseRotation;
             transform.SetParent(Context.baseParent);
             Context.Reposition(Context.basePos, false);
         }
@@ -227,6 +238,7 @@ public class CardController : MonoBehaviour, IPointerClickHandler, IPointerEnter
     {
         public override void OnEnter()
         {
+            base.OnEnter();
             Context.color = Context.baseColor;
             transform.localScale = baseScale;
             transform.SetParent(Context.baseParent);
@@ -271,6 +283,7 @@ public class CardController : MonoBehaviour, IPointerClickHandler, IPointerEnter
     {
         public override void OnEnter()
         {
+            base.OnEnter();
             Context.color = Context.baseColor;
         }
 
@@ -341,12 +354,14 @@ public class CardController : MonoBehaviour, IPointerClickHandler, IPointerEnter
 
     private class Selected : CardState
     {
-        private Vector3 mouseRelativePos;
+        private Vector2 mouseRelativePos;
 
         public override void OnEnter()
         {
-            mouseRelativePos = Input.mousePosition - Context.transform.position;
-            transform.SetParent(Services.UIManager.bottomCorner);
+            Vector2 mousePos = new Vector2(Input.mousePosition.x * 1600 / Screen.width,
+                Input.mousePosition.y * 900 / Screen.height);
+            transform.SetParent(Services.UIManager.bottomLeft);
+            mouseRelativePos = mousePos - (Vector2)Context.GetComponent<RectTransform>().anchoredPosition;
             transform.localScale = Services.CardConfig.OnHoverScaleUp * baseScale;
             card.OnSelect();
             player.cardsSelected.Add(card);
@@ -354,7 +369,8 @@ public class CardController : MonoBehaviour, IPointerClickHandler, IPointerEnter
 
         protected void Drag()
         {
-            Vector3 mousePos = Input.mousePosition;
+            Vector2 mousePos = new Vector2(Input.mousePosition.x * 1600 / Screen.width,
+                Input.mousePosition.y * 900 / Screen.height);
             Vector3 newPos = mousePos - mouseRelativePos;
             Context.Reposition(newPos, false, true);
         }
@@ -422,7 +438,7 @@ public class CardController : MonoBehaviour, IPointerClickHandler, IPointerEnter
             Context.Reposition(Context.basePos + Services.CardConfig.OnHoverOffset, false, true);
             card.OnSelect();
             player.cardsSelected.Add(card);
-            player.movementCardsSelected.Add(card as MovementCard);
+            player.SelectMovementCard(card as MovementCard);
         }
 
         public override void OnInputDown()
@@ -445,7 +461,7 @@ public class CardController : MonoBehaviour, IPointerClickHandler, IPointerEnter
         {
             Services.EventManager.Unregister<TileSelected>(OnTileSelected);
             player.cardsSelected.Remove(card);
-            player.movementCardsSelected.Remove(card as MovementCard);
+            player.UnselectMovementCard(card as MovementCard);
         }
     }
 
@@ -567,6 +583,7 @@ public class CardController : MonoBehaviour, IPointerClickHandler, IPointerEnter
     {
         public override void OnEnter()
         {
+            base.OnEnter();
             Context.color = Context.baseColor;
         }
 
@@ -596,7 +613,7 @@ public class CardController : MonoBehaviour, IPointerClickHandler, IPointerEnter
         {
             timeElapsed = 0;
             duration = Services.CardConfig.AcquireAnimDur;
-            transform.SetParent(Services.UIManager.bottomCorner);
+            transform.SetParent(Services.UIManager.bottomLeft);
             initialPos = transform.position;
             targetPos = Services.UIManager.discardZone.transform.position;
             initialScale = card.controller.transform.localScale;

@@ -13,6 +13,8 @@ public class GameManager : MonoBehaviour
 
     public Camera currentCamera;
 
+    public Canvas currentCanvas;
+
     void Awake()
     {
         InitializeServices();

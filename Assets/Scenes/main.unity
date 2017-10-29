@@ -138,6 +138,7 @@ MonoBehaviour:
   sceneRoot: {fileID: 975070295}
   playerStartingHealth: 3
   currentCamera: {fileID: 0}
+  currentCanvas: {fileID: 0}
 --- !u!4 &11805883
 Transform:
   m_ObjectHideFlags: 0

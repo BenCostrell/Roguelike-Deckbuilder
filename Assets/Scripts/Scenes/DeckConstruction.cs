@@ -54,6 +54,8 @@ public class DeckConstruction : Scene<MainTransitionData> {
         transitionData = data;
         PopulateCollection();
         PopulateDeckDisplay();
+        Services.GameManager.currentCamera = GetComponentInChildren<Camera>();
+        Services.GameManager.currentCanvas = GetComponentInChildren<Canvas>();
     }
 
     internal override void OnExit()

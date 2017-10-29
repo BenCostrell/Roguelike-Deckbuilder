@@ -12,6 +12,7 @@ public class DrawCardTask : Task
     private Vector3 midpointPos;
     private Vector3 initialScale;
     private Vector3 zoomScale;
+    private Quaternion targetRot;
     private int deckSizeAtTimeOfDraw;
     private int discardSizeAtTimeOfDraw;
     private readonly bool playerDeck;
@@ -34,7 +35,11 @@ public class DrawCardTask : Task
         {
             Services.UIManager.UpdateDeckCounter(deckSizeAtTimeOfDraw);
             Services.UIManager.UpdateDiscardCounter(discardSizeAtTimeOfDraw);
-            targetPos = Services.UIManager.GetCardHandPosition(
+            targetPos = Services.UIManager.GetHandCardPosition(
+                Services.GameManager.player.hand.Count,
+                Services.GameManager.player.hand.Count);
+            targetRot = Services.UIManager.GetHandCardRotation(
+                Services.GameManager.player.hand.Count,
                 Services.GameManager.player.hand.Count);
             rawDiff = Services.UIManager.deckZone.transform.position -
                 Services.UIManager.handZone.transform.position;
@@ -44,14 +49,17 @@ public class DrawCardTask : Task
         {
             Services.UIManager.UpdateDungeonDeckCounter(deckSizeAtTimeOfDraw);
             Services.UIManager.UpdateDungeonDiscardCounter(discardSizeAtTimeOfDraw);
-            targetPos = Services.UIManager.GetCardHandPosition(
+            targetPos = Services.UIManager.GetHandCardPosition(
+                Services.Main.dungeonDeck.playedCards.Count,
+                Services.Main.dungeonDeck.playedCards.Count);
+            targetRot = Services.UIManager.GetHandCardRotation(
+                Services.Main.dungeonDeck.playedCards.Count,
                 Services.Main.dungeonDeck.playedCards.Count);
             rawDiff = Services.UIManager.dungeonDeckZone.transform.position -
                 Services.UIManager.dungeonPlayZone.transform.position;
             card.CreatePhysicalCard(Services.UIManager.dungeonPlayZone.transform);
             card.controller.EnterPlayedMode();
         }
-        
         initialScale = card.controller.transform.localScale;
         zoomScale = Services.CardConfig.DrawAnimScale * initialScale;
         initialPos = new Vector3(rawDiff.x, rawDiff.y, targetPos.z);
@@ -88,6 +96,9 @@ public class DrawCardTask : Task
             card.controller.transform.localScale = Vector3.Lerp(zoomScale, initialScale,
                 Easing.QuadEaseOut((timeElapsed - timeToMidpoint) /
                 (duration - timeToMidpoint)));
+            card.controller.transform.localRotation = Quaternion.Lerp(Quaternion.identity,
+                targetRot, Easing.QuadEaseOut((timeElapsed - timeToMidpoint) /
+                (duration - timeToMidpoint)));
         }
        
         card.Reposition(pos, false, true);
@@ -102,11 +113,13 @@ public class DrawCardTask : Task
         {
             Services.GameManager.player.cardsInFlux.Remove(card);
             Services.GameManager.player.hand.Add(card);
+            Services.UIManager.SortHand(Services.GameManager.player.hand);
         }
         else
         {
             Services.Main.dungeonDeck.cardsInFlux.Remove(card);
             Services.Main.dungeonDeck.playedCards.Add(card);
+            Services.UIManager.SortHand(Services.Main.dungeonDeck.playedCards);
         }
     }
 
