@@ -208,11 +208,15 @@ public class UIManager : MonoBehaviour {
     {
         for (int i = 0; i < cardsInHand.Count; i++)
         {
-            cardsInHand[i].Reposition(GetHandCardPosition(i, cardsInHand.Count), true);
-            cardsInHand[i].controller.baseSiblingIndex = 
-                cardsInHand[i].controller.transform.GetSiblingIndex();
-            cardsInHand[i].controller.transform.localRotation = 
-                GetHandCardRotation(i, cardsInHand.Count);
+            Card card = cardsInHand[i];
+            if (!card.controller.isQueued)
+            {
+                card.Reposition(GetHandCardPosition(i, cardsInHand.Count), true);
+                card.controller.baseSiblingIndex =
+                    card.controller.transform.GetSiblingIndex();
+                card.controller.transform.localRotation =
+                    GetHandCardRotation(i, cardsInHand.Count);
+            }
                 
         }
     }

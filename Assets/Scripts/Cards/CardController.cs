@@ -37,6 +37,7 @@ public class CardController : MonoBehaviour, IPointerClickHandler, IPointerEnter
     public int baseSiblingIndex;
     private FSM<CardController> stateMachine;
     private Color baseColor;
+    public bool isQueued { get { return stateMachine.CurrentState is MovementCardSelected; } }
 
     // Use this for initialization
     public void Init(Card card_)
@@ -238,13 +239,13 @@ public class CardController : MonoBehaviour, IPointerClickHandler, IPointerEnter
     {
         public override void OnEnter()
         {
+            Services.UIManager.SortHand(player.hand);
             base.OnEnter();
             Context.color = Context.baseColor;
             transform.localScale = baseScale;
             transform.SetParent(Context.baseParent);
             Context.SetCardFrameStatus(true);
             Context.Reposition(Context.basePos, false);
-            //Debug.Log(card.cardType + " entering playable state at time " + Time.time);
         }
 
         public override void OnInputDown()
@@ -264,6 +265,15 @@ public class CardController : MonoBehaviour, IPointerClickHandler, IPointerEnter
         {
             base.OnInputExit();
             if (!(card is MovementCard)) card.OnUnselect();
+        }
+
+        protected override void AddOffset()
+        {
+            Vector3 newPos = new Vector3(
+                Context.basePos.x,
+                Services.CardConfig.OnHoverOffset.y,
+                0);
+            Context.Reposition(newPos, false, true);
         }
     }
 
@@ -435,7 +445,12 @@ public class CardController : MonoBehaviour, IPointerClickHandler, IPointerEnter
             Services.EventManager.Register<TileSelected>(OnTileSelected);
             Context.color = (Color.blue + Color.white) / 2;
             transform.localScale = Context.baseScale * 1.1f;
-            Context.Reposition(Context.basePos + Services.CardConfig.OnHoverOffset, false, true);
+            transform.localRotation = Quaternion.identity;
+            Vector3 newPos = new Vector3(
+                Context.basePos.x,
+                Services.CardConfig.OnHoverOffset.y,
+                0);
+            Context.Reposition(newPos, false, true);
             card.OnSelect();
             player.cardsSelected.Add(card);
             player.SelectMovementCard(card as MovementCard);
@@ -524,6 +539,7 @@ public class CardController : MonoBehaviour, IPointerClickHandler, IPointerEnter
             Context.color = Context.baseColor;
             Context.SetCardFrameStatus(true);
             transform.localScale = Context.baseScale;
+            transform.localRotation = Quaternion.identity;
         }
     }
 
