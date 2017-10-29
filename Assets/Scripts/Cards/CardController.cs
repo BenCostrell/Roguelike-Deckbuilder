@@ -54,6 +54,17 @@ public class CardController : MonoBehaviour, IPointerClickHandler, IPointerEnter
         art = imageElements[2];
         nameText.text = card.info.Name;
         effectText.text = card.info.CardText;
+        if(card is MonsterCard)
+        {
+            MonsterCard monsterCard = card as MonsterCard;
+            MonsterInfo monsterInfo = 
+                Services.MonsterConfig.GetMonsterOfType(monsterCard.monsterToSpawn);
+            effectText.text +=
+                "\nHP: " + monsterInfo.StartingHealth +
+                "\nATTACK: " + monsterInfo.AttackDamage +
+                "\nMOVE: " + monsterInfo.MovementSpeed +
+                "\nRANGE: " + monsterInfo.AttackRange;
+        }
         art.sprite = card.sprite;
         artBaseLocalPos = art.transform.localPosition;
         baseScale = transform.localScale;
@@ -182,6 +193,11 @@ public class CardController : MonoBehaviour, IPointerClickHandler, IPointerEnter
         stateMachine.TransitionTo<Discarding>();
     }
 
+    public void EnterDrawingState()
+    {
+        stateMachine.TransitionTo<Drawing>();
+    }
+
     public void SelectMovementCard()
     {
         Debug.Assert(card is MovementCard);
@@ -205,7 +221,7 @@ public class CardController : MonoBehaviour, IPointerClickHandler, IPointerEnter
 
     private abstract class Hoverable : CardState
     {
-        private Quaternion baseRotation;
+        protected Quaternion baseRotation;
 
         public override void OnEnter()
         {
@@ -532,14 +548,31 @@ public class CardController : MonoBehaviour, IPointerClickHandler, IPointerEnter
     }
 
 
-    private class Played : CardState
+    private class Played : Hoverable
     {
         public override void OnEnter()
         {
+            base.OnEnter();
             Context.color = Context.baseColor;
             Context.SetCardFrameStatus(true);
             transform.localScale = Context.baseScale;
-            transform.localRotation = Quaternion.identity;
+            if (!card.isDungeon)
+                transform.localRotation = Quaternion.identity;
+        }
+
+        protected override void AddOffset()
+        {
+            if (!card.isDungeon)
+            {
+                Context.Reposition(Context.basePos, false, true);
+            }
+            else
+            {
+                Vector3 newPos = new Vector3(
+                    Context.basePos.x,
+                    -Services.CardConfig.OnHoverOffset.y + 100, 0);
+                Context.Reposition(newPos, false, true);
+            }
         }
     }
 
@@ -588,6 +621,7 @@ public class CardController : MonoBehaviour, IPointerClickHandler, IPointerEnter
             player.cardsInPlay.Add(card);
             card.OnPlay();
             card.Reposition(targetPos, true);
+            Context.baseParent = transform.parent;
             player.UnlockEverything(lockID);
             Services.UIManager.SortInPlayZone(player.cardsInPlay);
             TransitionTo<Played>();
@@ -664,6 +698,14 @@ public class CardController : MonoBehaviour, IPointerClickHandler, IPointerEnter
     }
 
     private class Discarding : CardState
+    {
+        public override void OnEnter()
+        {
+            Context.color = Context.baseColor;
+        }
+    }
+
+    private class Drawing : CardState
     {
         public override void OnEnter()
         {

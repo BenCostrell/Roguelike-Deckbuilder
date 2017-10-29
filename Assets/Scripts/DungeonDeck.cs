@@ -50,7 +50,16 @@ public class DungeonDeck
         {
             cardDrawTasks.Then(DrawCard(GetRandomCardFromDeck()));
         }
+        cardDrawTasks.Then(new ActionTask(PutCardsInPlayedMode));
         return cardDrawTasks;
+    }
+
+    void PutCardsInPlayedMode()
+    {
+        for (int i = 0; i < playedCards.Count; i++)
+        {
+            playedCards[i].controller.EnterPlayedMode();
+        }
     }
 
     TaskTree DrawCard(Card card)

@@ -58,7 +58,6 @@ public class DrawCardTask : Task
             rawDiff = Services.UIManager.dungeonDeckZone.transform.position -
                 Services.UIManager.dungeonPlayZone.transform.position;
             card.CreatePhysicalCard(Services.UIManager.dungeonPlayZone.transform);
-            card.controller.EnterPlayedMode();
         }
         initialScale = card.controller.transform.localScale;
         zoomScale = Services.CardConfig.DrawAnimScale * initialScale;
@@ -73,6 +72,7 @@ public class DrawCardTask : Task
         }
         card.Reposition(initialPos, false, true);
         Services.SoundManager.CreateAndPlayAudio(Services.AudioConfig.CardDrawAudio);
+        card.controller.EnterDrawingState();
     }
 
     internal override void Update()

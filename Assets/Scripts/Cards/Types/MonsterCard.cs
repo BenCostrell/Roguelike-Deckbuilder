@@ -3,7 +3,7 @@ using System.Collections;
 
 public abstract class MonsterCard : Card
 {
-    protected Monster.MonsterType monsterToSpawn;
+    public Monster.MonsterType monsterToSpawn { get; protected set; }
     protected override void InitValues()
     {
         base.InitValues();
