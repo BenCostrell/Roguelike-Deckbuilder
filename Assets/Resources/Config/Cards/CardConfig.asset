@@ -32,6 +32,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 892f7c9919eb27d4b9b14f3d99019209, type: 2}
   - {fileID: 11400000, guid: b7cad2d23af6f1b40bb129b527aa7c3b, type: 2}
   - {fileID: 11400000, guid: 0126db0b6e64cff478e2071539c96d6f, type: 2}
+  - {fileID: 11400000, guid: d3f5ef878a0197443887551bf46191e5, type: 2}
   startingDeck:
   - {fileID: 11400000, guid: bd31b52cd16140d4ca5756d38c69abfe, type: 2}
   - {fileID: 11400000, guid: bd31b52cd16140d4ca5756d38c69abfe, type: 2}
@@ -45,10 +46,11 @@ MonoBehaviour:
   - {fileID: 11400000, guid: b7cffbf5124cb0f479a4b2b5ddbf7f72, type: 2}
   handCardSpacing: {x: 100, y: 40, z: 0}
   handCardRotation: 10
+  handCardRotationSpeed: 0.35
   handCardFanFactor: 4
   inPlaySpacing: {x: 70, y: 0, z: 0}
-  onHoverScaleUp: 2
-  onHoverOffset: {x: 0, y: 180, z: 0}
+  onHoverScaleUp: 1.7
+  onHoverOffset: {x: 0, y: 150, z: 0}
   onHoverOffsetDeckViewMode: {x: 0, y: -70, z: 0}
   onHoverOffsetChestMode: {x: 0, y: 120, z: 0}
   cardPlayThresholdYPos: 250
@@ -60,6 +62,8 @@ MonoBehaviour:
   dungeonDrawAnimMidpointOffset: {x: 300, y: -250, z: 0}
   playAnimDur: 0.3
   acquireAnimDur: 0.5
+  reshuffleAnimDur: 0.2
+  reshuffleAnimStagger: 0.1
   discardAnimDur: 0.4
   discardAnimStaggerTime: 0.1
   minSpawnDistFromMonsters: 1

@@ -22,6 +22,10 @@ public class CardConfig : ScriptableObject
     public float HandCardRotation { get { return handCardRotation; } }
 
     [SerializeField]
+    private float handCardRotationSpeed;
+    public float HandCardRotationSpeed { get { return handCardRotationSpeed; } }
+
+    [SerializeField]
     private float handCardFanFactor;
     public float HandCardFanFactor { get { return handCardFanFactor; } }
 
@@ -80,6 +84,14 @@ public class CardConfig : ScriptableObject
     [SerializeField]
     private float acquireAnimDur;
     public float AcquireAnimDur { get { return acquireAnimDur; } }
+
+    [SerializeField]
+    private float reshuffleAnimDur;
+    public float ReshuffleAnimDur { get { return reshuffleAnimDur; } }
+
+    [SerializeField]
+    private float reshuffleAnimStagger;
+    public float ReshuffleAnimStagger { get { return reshuffleAnimStagger; } }
 
     [SerializeField]
     private float discardAnimDur;
@@ -175,6 +187,8 @@ public class CardConfig : ScriptableObject
                 return new Swipe();
             case Card.CardType.Scream:
                 return new Scream();
+            case Card.CardType.Advance:
+                return new Advance();
             default:
                 return null;
         }

@@ -31,6 +31,7 @@ public class Main : Scene<MainTransitionData> {
         levelNum = data.levelNum;
         Services.MapManager.GenerateLevel(levelNum);
         dungeonDeck = new DungeonDeck(data.dungeonDeck);
+        dungeonDeck.Init();
         collection = data.collection;
         Services.SoundManager.SetMusicVolume(0.1f);
         player.Initialize(Services.MapManager.playerSpawnTile, data);
@@ -60,8 +61,8 @@ public class Main : Scene<MainTransitionData> {
         TaskTree endTurnTasks = player.OnTurnEnd();
         endTurnTasks
             .Then(new ScrollMessageBanner(Services.UIManager.dungeonTurnMessage))
-            .Then(Services.MonsterManager.MonstersMove())
-            .Then(Services.MonsterManager.MonstersAttack())
+            //.Then(Services.MonsterManager.MonstersMove())
+            //.Then(Services.MonsterManager.MonstersAttack())
             .Then(dungeonDeck.TakeDungeonTurn())
             .Then(new ScrollMessageBanner(Services.UIManager.playerTurnMessage))
             .Then(player.OnTurnStart())

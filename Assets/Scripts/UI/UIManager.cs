@@ -36,6 +36,8 @@ public class UIManager : MonoBehaviour {
     private Button queueButton;
     private Text queueButtonText;
     [SerializeField]
+    private Button discardQueuedButton;
+    [SerializeField]
     private Color queueColor;
     [SerializeField]
     private Color unqueueColor;
@@ -92,6 +94,7 @@ public class UIManager : MonoBehaviour {
     }
     private List<int> endTurnLockIDs;
     private List<int> playAllLockIDs;
+    private List<int> discardQueuedLockIDs;
     public Vector3 dungeonTimerPos { get { return dungeonTimer.transform.position; } }
     public Vector3 dungeonDeckPos { get { return dungeonDeckZone.transform.position; } }
     public float bannerScrollDuration;
@@ -119,6 +122,7 @@ public class UIManager : MonoBehaviour {
 
         endTurnLockIDs = new List<int>();
         playAllLockIDs = new List<int>();
+        discardQueuedLockIDs = new List<int>();
 
         playerUIKeyIcon.gameObject.SetActive(false);
         levelCompleteUI.gameObject.SetActive(false);
@@ -140,26 +144,30 @@ public class UIManager : MonoBehaviour {
         messageBanner.rectTransform.anchoredPosition = pos;
     }
 
-    public void UpdateDeckCounter(int cardsInDeck)
+    public void UpdateDeckCounter()
     {
+        int cardsInDeck = Services.GameManager.player.deckCount;
         deckCounter.text = cardsInDeck.ToString();
         CreateCardPileUI(cardsInDeck, deckZone.transform);
     }
 
-    public void UpdateDungeonDeckCounter(int cardsInDeck)
+    public void UpdateDungeonDeckCounter()
     {
+        int cardsInDeck = Services.Main.dungeonDeck.deckCount;
         dungeonDeckCounter.text = cardsInDeck.ToString();
         CreateCardPileUI(cardsInDeck, dungeonDeckZone.transform);
     }
 
-    public void UpdateDiscardCounter(int cardsInDiscard)
+    public void UpdateDiscardCounter()
     {
+        int cardsInDiscard = Services.GameManager.player.discardCount;
         discardCounter.text = cardsInDiscard.ToString();
         CreateCardPileUI(cardsInDiscard, discardZone.transform);
     }
 
-    public void UpdateDungeonDiscardCounter(int cardsInDiscard)
+    public void UpdateDungeonDiscardCounter()
     {
+        int cardsInDiscard = Services.Main.dungeonDeck.discardCount;
         dungeonDiscardCounter.text = cardsInDiscard.ToString();
         CreateCardPileUI(cardsInDiscard, dungeonDiscardZone.transform);
     }
@@ -214,8 +222,7 @@ public class UIManager : MonoBehaviour {
                 card.Reposition(GetHandCardPosition(i, cardsInHand.Count), true);
                 card.controller.baseSiblingIndex =
                     card.controller.transform.GetSiblingIndex();
-                card.controller.transform.localRotation =
-                    GetHandCardRotation(i, cardsInHand.Count);
+                card.controller.RotateTo(GetHandCardRotation(i, cardsInHand.Count));
             }
                 
         }
@@ -233,7 +240,7 @@ public class UIManager : MonoBehaviour {
     public Quaternion GetHandCardRotation(int handCountIndex, int handCount)
     {
         return Quaternion.Euler(0, 0,
-                -(handCountIndex - handCount / 2) * Services.CardConfig.HandCardRotation);
+                -(handCountIndex - (handCount-1) / 2f) * Services.CardConfig.HandCardRotation);
     }
 
     public Vector3 GetInPlayCardPosition(int inPlayZoneCountNum)
@@ -289,7 +296,6 @@ public class UIManager : MonoBehaviour {
     {
         endTurnLockIDs.Add(lockID);
         endTurnButton.interactable = false;
-        
     }
 
     public void EnableEndTurn(int lockID)
@@ -304,9 +310,33 @@ public class UIManager : MonoBehaviour {
         }
     }
 
+    public void DisableDiscardQueued(int lockID)
+    {
+        discardQueuedLockIDs.Add(lockID);
+        discardQueuedButton.interactable = false;
+    }
+
+    public void EnableDiscardQueued(int lockID)
+    {
+        if (discardQueuedLockIDs.Contains(lockID))
+        {
+            discardQueuedLockIDs.Remove(lockID);
+            if (discardQueuedLockIDs.Count == 0)
+            {
+                discardQueuedButton.interactable = true;
+            }
+        }
+    }
+
+    public void ForceUnlockDiscardQueued()
+    {
+        discardQueuedButton.interactable = true;
+        discardQueuedLockIDs = new List<int>();
+    }
+
     public void ForceUnlockEndTurn()
     {
-        endTurnButton.interactable = false;
+        endTurnButton.interactable = true;
         endTurnLockIDs = new List<int>();
     }
 

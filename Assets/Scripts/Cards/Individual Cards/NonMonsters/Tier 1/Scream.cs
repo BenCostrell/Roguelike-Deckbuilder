@@ -25,8 +25,7 @@ public class Scream : Card
         for (int i = 0; i < sortedMonsters.Count; i++)
         {
             Monster monster = sortedMonsters[i];
-            if (!monster.IsPlayerInRange())
-                moveTree.AddChild(monster.MoveAwayFromPlayer(monster.movementSpeed));
+            moveTree.AddChild(monster.MoveAwayFromPlayer(monster.movementSpeed));
         }
         moveTree.Then(new ParameterizedActionTask<int>(player.UnlockEverything, lockid));
         Services.Main.taskManager.AddTask(moveTree);

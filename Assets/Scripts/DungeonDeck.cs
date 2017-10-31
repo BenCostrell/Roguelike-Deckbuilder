@@ -6,8 +6,10 @@ public class DungeonDeck
 {
     private readonly List<Card> fullDeck;
     private List<Card> deck;
+    public int deckCount { get { return deck.Count; } }
     public List<Card> playedCards;
-    private List<Card> discardPile;
+    public List<Card> discardPile { get; private set; }
+    public int discardCount { get { return discardPile.Count; } }
     public List<Card> cardsInFlux;
     private const int baseCardsPerRound = 5;
     private int cardsPerRound;
@@ -22,14 +24,18 @@ public class DungeonDeck
         discardPile = new List<Card>();
         cardsInFlux = new List<Card>();
         cardsPerRound = baseCardsPerRound;
-        Services.UIManager.UpdateDungeonDeckCounter(deck.Count);
-        Services.UIManager.UpdateDungeonDiscardCounter(0);
         dungeonTimerCount = 0;
         dungeonTimerThreshold = Services.MonsterConfig.DungeonTimerThreshold;
         UpdateDungeonTimer();
     }
 
-    Card GetRandomCardFromDeck()
+    public void Init()
+    {
+        Services.UIManager.UpdateDungeonDeckCounter();
+        Services.UIManager.UpdateDungeonDiscardCounter();
+    }
+
+    public Card GetRandomCardFromDeck()
     {
         if (deck.Count == 0)
         {
@@ -48,7 +54,7 @@ public class DungeonDeck
         TaskTree cardDrawTasks = new TaskTree(new EmptyTask());
         for (int i = 0; i < numCardsToDraw; i++)
         {
-            cardDrawTasks.Then(DrawCard(GetRandomCardFromDeck()));
+            cardDrawTasks.Then(new DrawCardTask(false));
         }
         cardDrawTasks.Then(new ActionTask(PutCardsInPlayedMode));
         return cardDrawTasks;
@@ -60,11 +66,6 @@ public class DungeonDeck
         {
             playedCards[i].controller.EnterPlayedMode();
         }
-    }
-
-    TaskTree DrawCard(Card card)
-    {
-        return card.OnDraw(deck.Count, discardPile.Count, false);
     }
 
     public TaskTree TakeDungeonTurn()
@@ -85,12 +86,10 @@ public class DungeonDeck
     {
         discardPile.Add(card);
         playedCards.Remove(card);
-        card.OnDiscard();
         TaskTree discardTasks = new TaskTree(new WaitTask(timeOffset));
+        discardTasks.Then(new ActionTask(card.OnDiscard));
         discardTasks.Then(new DiscardCard(card));
-        discardTasks.Then(new ParameterizedActionTask<int>(
-            Services.UIManager.UpdateDungeonDiscardCounter,
-            discardPile.Count));
+        discardTasks.Then(new ActionTask(Services.UIManager.UpdateDungeonDiscardCounter));
         return discardTasks;
     }
 
@@ -133,7 +132,7 @@ public class DungeonDeck
     public void AddCard(Card card)
     {
         discardPile.Add(card);
-        Services.UIManager.UpdateDungeonDiscardCounter(discardPile.Count);
+        Services.UIManager.UpdateDungeonDiscardCounter();
     }
 }
 

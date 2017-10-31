@@ -30,6 +30,8 @@ public class LevelTransition : Scene<MainTransitionData> {
     public MainTransitionData data { get; private set; }
     [SerializeField]
     private int dungeonDeckSize;
+    [SerializeField]
+    private int advanceCount;
 
     internal override void OnEnter(MainTransitionData data_)
     {
@@ -51,7 +53,7 @@ public class LevelTransition : Scene<MainTransitionData> {
 
         if (!data.gameOver)
         {
-            if (data.dungeonDeck.Count == 0) data.dungeonDeck = GenerateMonstersForLevel();
+            if (data.dungeonDeck.Count == 0) data.dungeonDeck = GenerateDungeonDeck();
 
             for (int j = 0; j < data.dungeonDeck.Count; j++)
             {
@@ -105,13 +107,17 @@ public class LevelTransition : Scene<MainTransitionData> {
         SetPlayerUI();
     }
 
-    List<Card> GenerateMonstersForLevel()
+    List<Card> GenerateDungeonDeck()
     {
         List<Card> monsterCards = new List<Card>();
         int numMonsters = Mathf.Min(
             Mathf.FloorToInt((Services.MonsterConfig.MonstersPerLevel * data.levelNum)
             + Services.MonsterConfig.BaseMonstersPerLevel), dungeonDeckSize);
-        int numTicks = Mathf.Max(0, dungeonDeckSize - numMonsters);
+        for (int i = 0; i < advanceCount; i++)
+        {
+            monsterCards.Add(Services.CardConfig.CreateCardOfType(Card.CardType.Advance));
+        }
+        int numTicks = Mathf.Max(0, dungeonDeckSize - numMonsters - advanceCount);
         for (int i = 0; i < numTicks; i++)
         {
             monsterCards.Add(Services.CardConfig.CreateCardOfType(Card.CardType.Tick));

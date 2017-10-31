@@ -19,7 +19,7 @@ public class DiscardCard : Task
     protected override void Init()
     {
         startPos = cardTransform.position;
-        if (card.isDungeon)
+        if (card is DungeonCard)
         {
             targetPos = Services.UIManager.dungeonDiscardZone.transform.position;
         }

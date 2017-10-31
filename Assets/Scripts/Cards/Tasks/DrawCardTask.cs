@@ -13,19 +13,32 @@ public class DrawCardTask : Task
     private Vector3 initialScale;
     private Vector3 zoomScale;
     private Quaternion targetRot;
-    private int deckSizeAtTimeOfDraw;
-    private int discardSizeAtTimeOfDraw;
     private readonly bool playerDeck;
+    private TaskManager subTaskManager;
+    private bool delayStart;
 
-    public DrawCardTask(Card card_, int deckSize, int discardSize, bool playerDeck_)
+    public DrawCardTask(bool playerDeck_)
     {
-        card = card_;
-        deckSizeAtTimeOfDraw = deckSize;
-        discardSizeAtTimeOfDraw = discardSize;
         playerDeck = playerDeck_;
     }
 
     protected override void Init()
+    {
+        subTaskManager = new TaskManager();
+        if (playerDeck && Services.GameManager.player.deckCount == 0)
+        {
+            subTaskManager.AddTask(new ReshuffleDeck(true));
+            delayStart = true;
+        }
+        else if (!playerDeck && Services.Main.dungeonDeck.deckCount == 0)
+        {
+            subTaskManager.AddTask(new ReshuffleDeck(false));
+            delayStart = true;
+        }
+        if (!delayStart) StartDraw();
+   }
+
+    void StartDraw()
     {
         timeElapsed = 0;
         duration = Services.CardConfig.DrawAnimDur;
@@ -33,8 +46,9 @@ public class DrawCardTask : Task
         Vector3 rawDiff;
         if (playerDeck)
         {
-            Services.UIManager.UpdateDeckCounter(deckSizeAtTimeOfDraw);
-            Services.UIManager.UpdateDiscardCounter(discardSizeAtTimeOfDraw);
+            card = Services.GameManager.player.GetRandomCardFromDeck();
+            Services.UIManager.UpdateDeckCounter();
+            Services.UIManager.UpdateDiscardCounter();
             targetPos = Services.UIManager.GetHandCardPosition(
                 Services.GameManager.player.hand.Count,
                 Services.GameManager.player.hand.Count);
@@ -47,8 +61,9 @@ public class DrawCardTask : Task
         }
         else
         {
-            Services.UIManager.UpdateDungeonDeckCounter(deckSizeAtTimeOfDraw);
-            Services.UIManager.UpdateDungeonDiscardCounter(discardSizeAtTimeOfDraw);
+            card = Services.Main.dungeonDeck.GetRandomCardFromDeck();
+            Services.UIManager.UpdateDungeonDeckCounter();
+            Services.UIManager.UpdateDungeonDiscardCounter();
             targetPos = Services.UIManager.GetHandCardPosition(
                 Services.Main.dungeonDeck.playedCards.Count,
                 Services.Main.dungeonDeck.playedCards.Count);
@@ -73,37 +88,52 @@ public class DrawCardTask : Task
         card.Reposition(initialPos, false, true);
         Services.SoundManager.CreateAndPlayAudio(Services.AudioConfig.CardDrawAudio);
         card.controller.EnterDrawingState();
+        subTaskManager.AddTask(card.OnDraw());
     }
 
     internal override void Update()
     {
-        timeElapsed += Time.deltaTime;
-
-        Vector3 pos;
-
-        if (timeElapsed <= timeToMidpoint)
+        subTaskManager.Update();
+        if(subTaskManager.tasksInProcessCount == 0 && delayStart)
         {
-            pos = Vector3.Lerp(initialPos, midpointPos,
-            Easing.QuadEaseOut(timeElapsed / timeToMidpoint));
-            card.controller.transform.localScale = Vector3.Lerp(initialScale, zoomScale,
-                Easing.QuadEaseOut(timeElapsed / timeToMidpoint));
+            StartDraw();
+            delayStart = false;
         }
-        else
-        {
-            pos = Vector3.Lerp(midpointPos, targetPos,
-                Easing.QuadEaseOut((timeElapsed - timeToMidpoint) / 
-                (duration - timeToMidpoint)));
-            card.controller.transform.localScale = Vector3.Lerp(zoomScale, initialScale,
-                Easing.QuadEaseOut((timeElapsed - timeToMidpoint) /
-                (duration - timeToMidpoint)));
-            card.controller.transform.localRotation = Quaternion.Lerp(Quaternion.identity,
-                targetRot, Easing.QuadEaseOut((timeElapsed - timeToMidpoint) /
-                (duration - timeToMidpoint)));
-        }
-       
-        card.Reposition(pos, false, true);
 
-        if (timeElapsed >= duration) SetStatus(TaskStatus.Success);
+        if (!delayStart)
+        {
+            if (timeElapsed < duration)
+            {
+                timeElapsed += Time.deltaTime;
+
+                Vector3 pos;
+
+                if (timeElapsed <= timeToMidpoint)
+                {
+                    pos = Vector3.Lerp(initialPos, midpointPos,
+                        Easing.QuadEaseOut(timeElapsed / timeToMidpoint));
+                    card.controller.transform.localScale = Vector3.Lerp(initialScale, zoomScale,
+                        Easing.QuadEaseOut(timeElapsed / timeToMidpoint));
+                }
+                else
+                {
+                    pos = Vector3.Lerp(midpointPos, targetPos,
+                        Easing.QuadEaseOut((timeElapsed - timeToMidpoint) /
+                        (duration - timeToMidpoint)));
+                    card.controller.transform.localScale = Vector3.Lerp(zoomScale, initialScale,
+                        Easing.QuadEaseOut((timeElapsed - timeToMidpoint) /
+                        (duration - timeToMidpoint)));
+                    card.controller.transform.localRotation = Quaternion.Lerp(Quaternion.identity,
+                        targetRot, Easing.QuadEaseOut((timeElapsed - timeToMidpoint) /
+                        (duration - timeToMidpoint)));
+                }
+
+                card.Reposition(pos, false, true);
+            }
+
+            if (timeElapsed >= duration && subTaskManager.tasksInProcessCount == 0)
+                SetStatus(TaskStatus.Success);
+        }
     }
 
     protected override void OnSuccess()

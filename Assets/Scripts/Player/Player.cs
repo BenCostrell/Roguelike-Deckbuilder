@@ -30,8 +30,10 @@ public class Player {
         }
     }
     private List<Card> remainingDeck;
+    public int deckCount { get { return remainingDeck.Count; } }
     public List<Card> hand;
-    private List<Card> discardPile;
+    public List<Card> discardPile { get; private set; }
+    public int discardCount { get { return discardPile.Count; } }
     public List<Card> cardsInPlay;
     public List<Card> cardsInFlux;
     public bool targeting;
@@ -95,8 +97,8 @@ public class Player {
         controller.UpdateHealthUI();
         shield = 0;
         Services.EventManager.Register<TileSelected>(OnTileSelected);
-        Services.UIManager.UpdateDeckCounter(remainingDeck.Count);
-        Services.UIManager.UpdateDiscardCounter(discardPile.Count);
+        Services.UIManager.UpdateDeckCounter();
+        Services.UIManager.UpdateDiscardCounter();
     }
 
     void InitializeSprite(Tile tile)
@@ -124,13 +126,13 @@ public class Player {
         TaskTree cardDrawTasks = new TaskTree(new EmptyTask());
         for (int i = 0; i < numCardsToDraw; i++)
         {
-            cardDrawTasks.Then(DrawCard(GetRandomCardFromDeck()));
+            cardDrawTasks.Then(new DrawCardTask(true));
         }
         cardDrawTasks.Then(new ParameterizedActionTask<int>(UnlockEverything, lockID));
         return cardDrawTasks;
     }
 
-    Card GetRandomCardFromDeck()
+    public Card GetRandomCardFromDeck()
     {
         if (remainingDeck.Count == 0)
         {
@@ -142,11 +144,6 @@ public class Player {
         remainingDeck.Remove(card);
         cardsInFlux.Add(card);
         return card;
-    }
-
-    TaskTree DrawCard(Card card)
-    {
-        return card.OnDraw(remainingDeck.Count, discardPile.Count, true);
     }
 
     public void DiscardQueuedCards()
@@ -190,12 +187,10 @@ public class Player {
     TaskTree DiscardCard(Card card, float timeOffset)
     {
         discardPile.Add(card);
-        card.OnDiscard();
         TaskTree discardCardTasks = new TaskTree(new WaitTask(timeOffset));
+        discardCardTasks.Then(new ActionTask(card.OnDiscard));
         discardCardTasks.Then(new DiscardCard(card));
-        discardCardTasks.Then(new ParameterizedActionTask<int>(
-            Services.UIManager.UpdateDiscardCounter, 
-            discardPile.Count));
+        discardCardTasks.Then(new ActionTask(Services.UIManager.UpdateDiscardCounter));
         return discardCardTasks;
     }
 
@@ -245,6 +240,7 @@ public class Player {
 
     public void MoveToTile(List<Tile> path)
     {
+        Services.EventManager.Fire(new MovementInitiated());
         movesAvailable -= MovementCost(path);
         HideAvailableMoves();
         Services.Main.taskManager.AddTask(
@@ -470,8 +466,7 @@ public class Player {
     public void AcquireCard(Card card)
     {
         discardPile.Add(card);
-        Services.UIManager.UpdateDiscardCounter(discardPile.Count);
-        //Services.Main.taskManager.AddTask(new AcquireCardTask(card));
+        Services.UIManager.UpdateDiscardCounter();
     }
 
     void PickUpKey(Tile tile)
@@ -520,6 +515,7 @@ public class Player {
         DisableHand(lockID);
         Services.UIManager.DisableEndTurn(lockID);
         Services.UIManager.DisablePlayAll(lockID);
+        Services.UIManager.DisableDiscardQueued(lockID);
     }
 
     public void UnlockEverything(int lockID)
@@ -528,6 +524,7 @@ public class Player {
         ReenableHand(lockID);
         Services.UIManager.EnableEndTurn(lockID);
         Services.UIManager.EnablePlayAll(lockID);
+        Services.UIManager.EnableDiscardQueued(lockID);
     }
 
     void ForceUnlockEverything()

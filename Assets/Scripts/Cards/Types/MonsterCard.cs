@@ -1,18 +1,13 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public abstract class MonsterCard : Card
+public abstract class MonsterCard : DungeonCard
 {
     public Monster.MonsterType monsterToSpawn { get; protected set; }
-    protected override void InitValues()
-    {
-        base.InitValues();
-        isDungeon = true;
-    }
 
-    public override TaskTree OnDraw(int deckSize, int discardSize, bool playerDraw)
+    public override TaskTree OnDraw()
     {
-        TaskTree onDrawTasks = base.OnDraw(deckSize, discardSize, playerDraw);
+        TaskTree onDrawTasks = base.OnDraw();
         onDrawTasks.Then(new SpawnMonster(this));
         return onDrawTasks;
     }
@@ -20,10 +15,5 @@ public abstract class MonsterCard : Card
     public Monster SpawnMonster()
     {
         return Services.MonsterManager.SpawnMonster(monsterToSpawn);
-    }
-
-    public override Color GetCardFrameColor()
-    {
-        return Services.CardConfig.DungeonCardColor;
     }
 }

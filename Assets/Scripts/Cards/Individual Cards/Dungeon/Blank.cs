@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class Blank : Card
+public class Blank : DungeonCard
 {
     public Blank()
     {

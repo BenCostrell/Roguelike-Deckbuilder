@@ -98,39 +98,74 @@ public abstract class Monster {
 
     public virtual TaskTree Move()
     {
-        List<Tile> shortestPathToPlayer = 
-            AStarSearch.ShortestPath(currentTile, player.currentTile);
-        List<Tile> pathToMoveAlong = new List<Tile>();
-        int indexToGoUntil = shortestPathToPlayer[0] == player.currentTile ? 1 : 0;
-        int movesLeft = movementSpeed;
-        for (int i = shortestPathToPlayer.Count - 1; i >= indexToGoUntil; i--)
+        List<Tile> availableTiles =
+            AStarSearch.FindAllAvailableGoals(currentTile, movementSpeed);
+        //Debug.Log(availableTiles.Count + " available tiles to flee to");
+        availableTiles.Add(currentTile);
+        Tile closestTile = currentTile;
+        int closestDistance = 1000000;
+        for (int i = 0; i < availableTiles.Count; i++)
         {
-            if (movesLeft == 0) break;
-            pathToMoveAlong.Add(shortestPathToPlayer[i]);
-            movesLeft -= 1;
+            Tile tile = availableTiles[i];
+            List<Tile> shortestPathFromPlayer = AStarSearch.ShortestPath(
+                Services.GameManager.player.currentTile, tile, true);
+            //Debug.Log("tile at " + tile.coord.x + "," + tile.coord.y + " is " 
+            //    + shortestPathFromPlayer.Count + " distance from player, compared to current farthest tile at "
+            //    + farthestTile.coord.x + "," + farthestTile.coord.y + " at " + 
+            //    farthestDistance + " distance from player");
+            if (shortestPathFromPlayer.Count < closestDistance)
+            {
+                closestTile = tile;
+                closestDistance = shortestPathFromPlayer.Count;
+            }
         }
-        pathToMoveAlong.Reverse();
-        if (pathToMoveAlong.Count > 0)
+        if (closestTile != null && closestDistance != 0 && closestTile != currentTile)
         {
-            targetTile = pathToMoveAlong[0];
+            List<Tile> shortestPathToTarget =
+                AStarSearch.ShortestPath(currentTile, closestTile);
+            targetTile = closestTile;
             return new TaskTree(new MoveObjectAlongPath(controller.gameObject,
-                pathToMoveAlong));
+                shortestPathToTarget));
         }
         else return new TaskTree(new EmptyTask());
+        //List<Tile> shortestPathToPlayer = 
+        //    AStarSearch.ShortestPath(currentTile, player.currentTile);
+        //List<Tile> pathToMoveAlong = new List<Tile>();
+        //int indexToGoUntil = shortestPathToPlayer[0] == player.currentTile ? 1 : 0;
+        //int movesLeft = movementSpeed;
+        //for (int i = shortestPathToPlayer.Count - 1; i >= indexToGoUntil; i--)
+        //{
+        //    if (movesLeft == 0) break;
+        //    pathToMoveAlong.Add(shortestPathToPlayer[i]);
+        //    movesLeft -= 1;
+        //}
+        //pathToMoveAlong.Reverse();
+        //if (pathToMoveAlong.Count > 0)
+        //{
+        //    targetTile = pathToMoveAlong[0];
+        //    return new TaskTree(new MoveObjectAlongPath(controller.gameObject,
+        //        pathToMoveAlong));
+        //}
+        //else return new TaskTree(new EmptyTask());
     }
 
     public TaskTree MoveAwayFromPlayer(int numMovesAllowed)
     {
         List<Tile> availableTiles = 
             AStarSearch.FindAllAvailableGoals(currentTile, numMovesAllowed);
+        //Debug.Log(availableTiles.Count + " available tiles to flee to");
         availableTiles.Add(currentTile);
-        Tile farthestTile = null;
+        Tile farthestTile = currentTile;
         int farthestDistance = 0;
         for (int i = 0; i < availableTiles.Count; i++)
         {
             Tile tile = availableTiles[i];
             List<Tile> shortestPathFromPlayer = AStarSearch.ShortestPath(
-                Services.GameManager.player.currentTile, tile);
+                Services.GameManager.player.currentTile, tile, true);
+            //Debug.Log("tile at " + tile.coord.x + "," + tile.coord.y + " is " 
+            //    + shortestPathFromPlayer.Count + " distance from player, compared to current farthest tile at "
+            //    + farthestTile.coord.x + "," + farthestTile.coord.y + " at " + 
+            //    farthestDistance + " distance from player");
             if(shortestPathFromPlayer.Count > farthestDistance)
             {
                 farthestTile = tile;

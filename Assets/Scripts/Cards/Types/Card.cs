@@ -29,14 +29,14 @@ public abstract class Card {
         Shield,
         Tick,
         Swipe,
-        Scream
+        Scream,
+        Advance
     }
     public int tier { get; protected set; }
     public Sprite sprite { get; protected set; }
     public Tile currentTile { get; private set; }
     public Chest chest;
     protected Player player { get { return Services.GameManager.player; } }
-    public bool isDungeon { get; protected set; }
 
     public void CreatePhysicalCard(Transform tform)
     {
@@ -51,9 +51,8 @@ public abstract class Card {
         controller = null;
     }
 
-    public virtual TaskTree OnDraw(int deckSize, int discardSize, bool playerDraw) {
-        TaskTree onDrawTasks = 
-            new TaskTree(new DrawCardTask(this, deckSize, discardSize, playerDraw));
+    public virtual TaskTree OnDraw() {
+        TaskTree onDrawTasks = new TaskTree(new EmptyTask());
         return onDrawTasks;
     }
 

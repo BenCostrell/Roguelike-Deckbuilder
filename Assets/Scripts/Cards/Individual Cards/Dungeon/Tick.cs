@@ -1,18 +1,17 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class Tick : Card
+public class Tick : DungeonCard
 {
     public Tick()
     {
         cardType = CardType.Tick;
         InitValues();
-        isDungeon = true;
     }
 
-    public override TaskTree OnDraw(int deckSize, int discardSize, bool playerDraw)
+    public override TaskTree OnDraw()
     {
-        TaskTree onDrawTasks = base.OnDraw(deckSize, discardSize, playerDraw);
+        TaskTree onDrawTasks = base.OnDraw();
         onDrawTasks.Then(Services.Main.dungeonDeck.AlterDungeonTimerCount(1));
         return onDrawTasks;
     }

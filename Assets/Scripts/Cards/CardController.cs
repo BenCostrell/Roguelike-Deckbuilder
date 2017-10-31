@@ -38,6 +38,7 @@ public class CardController : MonoBehaviour, IPointerClickHandler, IPointerEnter
     private FSM<CardController> stateMachine;
     private Color baseColor;
     public bool isQueued { get { return stateMachine.CurrentState is MovementCardSelected; } }
+    public Quaternion targetRotation { get; private set; }
 
     // Use this for initialization
     public void Init(Card card_)
@@ -78,6 +79,11 @@ public class CardController : MonoBehaviour, IPointerClickHandler, IPointerEnter
     void Update()
     {
         stateMachine.Update();
+    }
+
+    public void RotateTo(Quaternion targetRot)
+    {
+        targetRotation = targetRot;
     }
 
     public void Reposition(Vector3 pos, bool changeBasePos)
@@ -198,6 +204,11 @@ public class CardController : MonoBehaviour, IPointerClickHandler, IPointerEnter
         stateMachine.TransitionTo<Drawing>();
     }
 
+    public void EnterReshuffleState()
+    {
+        stateMachine.TransitionTo<Reshuffling>();
+    }
+
     public void SelectMovementCard()
     {
         Debug.Assert(card is MovementCard);
@@ -222,6 +233,7 @@ public class CardController : MonoBehaviour, IPointerClickHandler, IPointerEnter
     private abstract class Hoverable : CardState
     {
         protected Quaternion baseRotation;
+        protected bool hovered;
 
         public override void OnEnter()
         {
@@ -234,6 +246,7 @@ public class CardController : MonoBehaviour, IPointerClickHandler, IPointerEnter
             transform.localScale = Services.CardConfig.OnHoverScaleUp * baseScale;
             transform.localRotation = Quaternion.identity;
             AddOffset();
+            hovered = true;
         }
 
         protected virtual void AddOffset()
@@ -248,6 +261,7 @@ public class CardController : MonoBehaviour, IPointerClickHandler, IPointerEnter
             transform.localRotation = baseRotation;
             transform.SetParent(Context.baseParent);
             Context.Reposition(Context.basePos, false);
+            hovered = false;
         }
     }
 
@@ -291,6 +305,17 @@ public class CardController : MonoBehaviour, IPointerClickHandler, IPointerEnter
                 0);
             Context.Reposition(newPos, false, true);
         }
+
+        public override void Update()
+        {
+            if(!hovered && 
+                Quaternion.Angle(transform.localRotation, Context.targetRotation) > 0.1f)
+            {
+                transform.localRotation = 
+                    Quaternion.Lerp(transform.localRotation, Context.targetRotation, 
+                    Services.CardConfig.HandCardRotationSpeed);
+            }
+        }
     }
 
     private class Disabled : CardState
@@ -302,6 +327,16 @@ public class CardController : MonoBehaviour, IPointerClickHandler, IPointerEnter
             transform.SetParent(Context.baseParent);
             Context.SetCardFrameStatus(true);
             Context.Reposition(Context.basePos, false);
+        }
+
+        public override void Update()
+        {
+            if (Quaternion.Angle(transform.localRotation, Context.targetRotation) > 0.1f)
+            {
+                transform.localRotation =
+                    Quaternion.Lerp(transform.localRotation, Context.targetRotation,
+                    Services.CardConfig.HandCardRotationSpeed);
+            }
         }
     }
 
@@ -421,6 +456,7 @@ public class CardController : MonoBehaviour, IPointerClickHandler, IPointerEnter
             player.hand.Remove(card);
             player.cardsInFlux.Add(card);
             Services.UIManager.SortHand(player.hand);
+            Context.RotateTo(Quaternion.identity);
             TransitionTo<Playing>();
         }
 
@@ -458,7 +494,7 @@ public class CardController : MonoBehaviour, IPointerClickHandler, IPointerEnter
     {
         public override void OnEnter()
         {
-            Services.EventManager.Register<TileSelected>(OnTileSelected);
+            Services.EventManager.Register<MovementInitiated>(OnMovementIntiated);
             Context.color = (Color.blue + Color.white) / 2;
             transform.localScale = Context.baseScale * 1.1f;
             transform.localRotation = Quaternion.identity;
@@ -478,7 +514,7 @@ public class CardController : MonoBehaviour, IPointerClickHandler, IPointerEnter
             TransitionTo<Playable>();
         }
 
-        void OnTileSelected(TileSelected e)
+        void OnMovementIntiated(MovementInitiated e)
         {
             MovementCard moveCard = card as MovementCard;
             moveCard.OnMovementAct();
@@ -490,7 +526,7 @@ public class CardController : MonoBehaviour, IPointerClickHandler, IPointerEnter
 
         public override void OnExit()
         {
-            Services.EventManager.Unregister<TileSelected>(OnTileSelected);
+            Services.EventManager.Unregister<MovementInitiated>(OnMovementIntiated);
             player.cardsSelected.Remove(card);
             player.UnselectMovementCard(card as MovementCard);
         }
@@ -556,13 +592,13 @@ public class CardController : MonoBehaviour, IPointerClickHandler, IPointerEnter
             Context.color = Context.baseColor;
             Context.SetCardFrameStatus(true);
             transform.localScale = Context.baseScale;
-            if (!card.isDungeon)
+            if (!(card is DungeonCard))
                 transform.localRotation = Quaternion.identity;
         }
 
         protected override void AddOffset()
         {
-            if (!card.isDungeon)
+            if (!(card is DungeonCard))
             {
                 Context.Reposition(Context.basePos, false, true);
             }
@@ -572,6 +608,17 @@ public class CardController : MonoBehaviour, IPointerClickHandler, IPointerEnter
                     Context.basePos.x,
                     -Services.CardConfig.OnHoverOffset.y + 100, 0);
                 Context.Reposition(newPos, false, true);
+            }
+        }
+
+        public override void Update()
+        {
+            if (!hovered &&
+                Quaternion.Angle(transform.localRotation, Context.targetRotation) > 0.1f)
+            {
+                transform.localRotation =
+                    Quaternion.Lerp(transform.localRotation, Context.targetRotation, 
+                    Services.CardConfig.HandCardRotationSpeed);
             }
         }
     }
@@ -624,6 +671,7 @@ public class CardController : MonoBehaviour, IPointerClickHandler, IPointerEnter
             Context.baseParent = transform.parent;
             player.UnlockEverything(lockID);
             Services.UIManager.SortInPlayZone(player.cardsInPlay);
+            Context.RotateTo(Quaternion.identity);
             TransitionTo<Played>();
         }
     }
@@ -702,10 +750,29 @@ public class CardController : MonoBehaviour, IPointerClickHandler, IPointerEnter
         public override void OnEnter()
         {
             Context.color = Context.baseColor;
+            transform.localRotation = Quaternion.identity;
         }
     }
 
     private class Drawing : CardState
+    {
+        public override void OnEnter()
+        {
+            Context.color = Context.baseColor;
+        }
+
+        public override void Update()
+        {
+            if (Quaternion.Angle(transform.localRotation, Context.targetRotation) > 0.1f)
+            {
+                transform.localRotation =
+                    Quaternion.Lerp(transform.localRotation, Context.targetRotation, 
+                    Services.CardConfig.HandCardRotationSpeed);
+            }
+        }
+    }
+
+    private class Reshuffling : CardState
     {
         public override void OnEnter()
         {

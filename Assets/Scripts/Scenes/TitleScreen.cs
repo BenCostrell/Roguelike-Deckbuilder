@@ -32,7 +32,7 @@ public class TitleScreen : Scene<MainTransitionData> {
             Card card = Services.CardConfig.CreateCardOfType(cardInfo.CardType);
             startingDeck.Add(card);
         }
-        startingCollection.Add(Services.CardConfig.CreateCardOfType(Card.CardType.Scream));
+        //startingCollection.Add(Services.CardConfig.CreateCardOfType(Card.CardType.Scream));
         Services.SceneStackManager.Swap<LevelTransition>(
             new MainTransitionData(startingDeck, new List<Card>(), startingCollection,
             Services.GameManager.playerStartingHealth, 1, false));

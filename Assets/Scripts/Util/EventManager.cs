@@ -7,6 +7,8 @@ public abstract class Event {}
 // EVENTS
 public class AcquisitionComplete : Event { }
 
+public class MovementInitiated : Event { }
+
 public class ButtonPressed : Event {
     public string button;
     public int playerNum;

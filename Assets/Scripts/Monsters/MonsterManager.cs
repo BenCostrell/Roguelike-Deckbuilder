@@ -12,14 +12,6 @@ public class MonsterManager
     {
         Monster monster = CreateMonsterOfType(monsterType);
         Tile playersTargetTile = Services.MapManager.keyTile;
-        //if (!Services.GameManager.player.hasKey)
-        //{
-        //    playersTargetTile = Services.MapManager.keyTile;
-        //}
-        //else
-        //{
-        //    playersTargetTile = Services.MapManager.playerSpawnTile;
-        //}
         List<Tile> playersPathToTarget = AStarSearch.ShortestPath(
             player.currentTile,
             playersTargetTile, true);
@@ -113,7 +105,7 @@ public class MonsterManager
         TaskTree moveTree = new TaskTree(new EmptyTask());
         moveTree.AddChild(new WaitTask(Services.MonsterConfig.MaxMoveAnimDur));
         List<Monster> sortedMonsters = monsters.OrderBy(monster =>
-        AStarSearch.ShortestPath(monster.currentTile, player.currentTile, true).Count).ToList();
+            AStarSearch.ShortestPath(monster.currentTile, player.currentTile, true).Count).ToList();
         for (int i = 0; i < sortedMonsters.Count; i++)
         {
             if (!sortedMonsters[i].IsPlayerInRange())

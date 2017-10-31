@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class TaskManager {
 	private readonly List<Task> tasks = new List<Task>();
+    public int tasksInProcessCount { get { return tasks.Count; } }
 
 	public void AddTask(Task task){
 		Debug.Assert (task != null);
