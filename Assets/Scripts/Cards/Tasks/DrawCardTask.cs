@@ -65,14 +65,14 @@ public class DrawCardTask : Task
             Services.UIManager.UpdateDungeonDeckCounter();
             Services.UIManager.UpdateDungeonDiscardCounter();
             targetPos = Services.UIManager.GetHandCardPosition(
-                Services.Main.dungeonDeck.playedCards.Count,
-                Services.Main.dungeonDeck.playedCards.Count);
+                Services.Main.dungeonDeck.hand.Count,
+                Services.Main.dungeonDeck.hand.Count);
             targetRot = Services.UIManager.GetHandCardRotation(
-                Services.Main.dungeonDeck.playedCards.Count,
-                Services.Main.dungeonDeck.playedCards.Count);
+                Services.Main.dungeonDeck.hand.Count,
+                Services.Main.dungeonDeck.hand.Count);
             rawDiff = Services.UIManager.dungeonDeckZone.transform.position -
                 Services.UIManager.dungeonPlayZone.transform.position;
-            card.CreatePhysicalCard(Services.UIManager.dungeonPlayZone.transform);
+            card.CreatePhysicalCard(Services.UIManager.dungeonHandZone.transform);
         }
         initialScale = card.controller.transform.localScale;
         zoomScale = Services.CardConfig.DrawAnimScale * initialScale;
@@ -147,9 +147,9 @@ public class DrawCardTask : Task
         }
         else
         {
-            Services.Main.dungeonDeck.cardsInFlux.Remove(card);
-            Services.Main.dungeonDeck.playedCards.Add(card);
-            Services.UIManager.SortHand(Services.Main.dungeonDeck.playedCards);
+            Services.Main.dungeonDeck.cardsInFlux.Remove(card as DungeonCard);
+            Services.Main.dungeonDeck.hand.Add(card as DungeonCard);
+            Services.UIManager.SortHand(Services.Main.dungeonDeck.hand);
         }
     }
 

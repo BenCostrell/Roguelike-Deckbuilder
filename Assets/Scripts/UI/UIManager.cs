@@ -26,6 +26,7 @@ public class UIManager : MonoBehaviour {
     public GameObject dungeonDeckZone;
     [SerializeField]
     private Text dungeonDiscardCounter;
+    public GameObject dungeonHandZone;
     public GameObject dungeonDiscardZone;
     public GameObject dungeonPlayZone;
     [SerializeField]
@@ -228,6 +229,16 @@ public class UIManager : MonoBehaviour {
         }
     }
 
+    public void SortHand(List<DungeonCard> cardsInHand)
+    {
+        List<Card> genericCardList = new List<Card>();
+        for (int i = 0; i < cardsInHand.Count; i++)
+        {
+            genericCardList.Add(cardsInHand[i]);
+        }
+        SortHand(genericCardList);
+    }
+
     public Vector3 GetHandCardPosition(int handCountIndex, int handCount)
     {
         return new Vector3(Services.CardConfig.HandCardSpacing.x * handCountIndex,
@@ -257,6 +268,16 @@ public class UIManager : MonoBehaviour {
             cardsInPlay[i].controller.baseSiblingIndex = i;
         }
     }
+
+    //public void SortInPlayZone(List<DungeonCard> cards)
+    //{
+    //    List<Card> cardVersion = new List<Card>();
+    //    for (int i = 0; i < cards.Count; i++)
+    //    {
+    //        cardVersion.Add(cards[i]);
+    //    }
+    //    SortInPlayZone(cardVersion);
+    //}
 
     public void ShowUnitUI(Monster monster)
     {

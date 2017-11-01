@@ -8,6 +8,7 @@ public class DungeonDeck
     private List<Card> deck;
     public int deckCount { get { return deck.Count; } }
     public List<Card> playedCards;
+    public List<DungeonCard> hand { get; private set; }
     public List<Card> discardPile { get; private set; }
     public int discardCount { get { return discardPile.Count; } }
     public List<Card> cardsInFlux;
@@ -23,6 +24,7 @@ public class DungeonDeck
         playedCards = new List<Card>();
         discardPile = new List<Card>();
         cardsInFlux = new List<Card>();
+        hand = new List<DungeonCard>();
         cardsPerRound = baseCardsPerRound;
         dungeonTimerCount = 0;
         dungeonTimerThreshold = Services.MonsterConfig.DungeonTimerThreshold;
@@ -56,15 +58,15 @@ public class DungeonDeck
         {
             cardDrawTasks.Then(new DrawCardTask(false));
         }
-        cardDrawTasks.Then(new ActionTask(PutCardsInPlayedMode));
+        cardDrawTasks.Then(new ActionTask(PutCardsInHandMode));
         return cardDrawTasks;
     }
 
-    void PutCardsInPlayedMode()
+    void PutCardsInHandMode()
     {
         for (int i = 0; i < playedCards.Count; i++)
         {
-            playedCards[i].controller.EnterPlayedMode();
+            playedCards[i].controller.EnterDungonHandMode();
         }
     }
 
@@ -79,6 +81,7 @@ public class DungeonDeck
             staggerTime -= Services.CardConfig.DiscardAnimStaggerTime;
         }
         turnTasks.Then(DrawCards(cardsPerRound));
+        turnTasks.Then(new PerformActions());
         return turnTasks;
     }
 
@@ -129,10 +132,37 @@ public class DungeonDeck
         return newMonsterCard;
     }
 
-    public void AddCard(Card card)
+    public void AddCard(DungeonCard card)
     {
         discardPile.Add(card);
         Services.UIManager.UpdateDungeonDiscardCounter();
+    }
+
+    public TaskTree Act()
+    {
+        if (hand.Count > 0)
+        {
+            DungeonCard nextCardToPlay = NextCardToPlay();
+            hand.Remove(nextCardToPlay);
+            return new TaskTree(new PlayDungeonCard(nextCardToPlay));
+        }
+        else return null;
+    }
+
+    DungeonCard NextCardToPlay()
+    {
+        DungeonCard cardToPlay = null;
+        float priority = Mathf.Infinity;
+        for (int i = 0; i < hand.Count; i++)
+        {
+            DungeonCard card = hand[i];
+            if (card.priority < priority)
+            {
+                cardToPlay = card;
+                priority = card.priority;
+            }
+        }
+        return cardToPlay;
     }
 }
 
@@ -223,6 +253,33 @@ public class AlterDungeonTimerTask : Task
             dungeonDeck.AddCard(newMonsterCard);
             newMonsterCard.DestroyPhysicalCard();
         }
+    }
+}
+
+public class PerformActions : Task
+{
+    private TaskManager subTaskManager;
+
+    protected override void Init()
+    {
+        subTaskManager = new TaskManager();
+        AddNextAction();
+    }
+
+    internal override void Update()
+    {
+        subTaskManager.Update();
+    }
+
+    void AddNextAction()
+    {
+        TaskTree nextAction = Services.Main.dungeonDeck.Act();
+        if (nextAction != null)
+        {
+            nextAction.Then(new ActionTask(AddNextAction));
+            subTaskManager.AddTask(nextAction);
+        }
+        else SetStatus(TaskStatus.Success);
     }
 }
 

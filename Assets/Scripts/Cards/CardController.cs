@@ -10,7 +10,8 @@ public class CardController : MonoBehaviour, IPointerClickHandler, IPointerEnter
     private Vector3 basePos;
     [HideInInspector]
     public Vector3 baseScale;
-    private Transform baseParent;
+    [HideInInspector]
+    public Transform baseParent;
     private RectTransform rect;
     public Image frame { get; private set; }
     public Color color
@@ -187,6 +188,11 @@ public class CardController : MonoBehaviour, IPointerClickHandler, IPointerEnter
     public void EnterPlayedMode()
     {
         stateMachine.TransitionTo<Played>();
+    }
+
+    public void EnterDungonHandMode()
+    {
+        stateMachine.TransitionTo<DungeonHand>();
     }
 
     public void EnterAddToDungeonDeckMode()
@@ -583,6 +589,11 @@ public class CardController : MonoBehaviour, IPointerClickHandler, IPointerEnter
         }
     }
 
+    private class DungeonHand : CardState
+    {
+
+    }
+
 
     private class Played : Hoverable
     {
@@ -592,34 +603,23 @@ public class CardController : MonoBehaviour, IPointerClickHandler, IPointerEnter
             Context.color = Context.baseColor;
             Context.SetCardFrameStatus(true);
             transform.localScale = Context.baseScale;
-            if (!(card is DungeonCard))
-                transform.localRotation = Quaternion.identity;
+            transform.localRotation = Quaternion.identity;
+            baseRotation = Quaternion.identity;
         }
 
         protected override void AddOffset()
         {
-            if (!(card is DungeonCard))
-            {
+            //if (!(card is DungeonCard))
+            //{
                 Context.Reposition(Context.basePos, false, true);
-            }
-            else
-            {
-                Vector3 newPos = new Vector3(
-                    Context.basePos.x,
-                    -Services.CardConfig.OnHoverOffset.y + 100, 0);
-                Context.Reposition(newPos, false, true);
-            }
-        }
-
-        public override void Update()
-        {
-            if (!hovered &&
-                Quaternion.Angle(transform.localRotation, Context.targetRotation) > 0.1f)
-            {
-                transform.localRotation =
-                    Quaternion.Lerp(transform.localRotation, Context.targetRotation, 
-                    Services.CardConfig.HandCardRotationSpeed);
-            }
+            //}
+            //else
+            //{
+            //    Vector3 newPos = new Vector3(
+            //        Context.basePos.x,
+            //        -Services.CardConfig.OnHoverOffset.y + 100, 0);
+            //    Context.Reposition(newPos, false, true);
+            //}
         }
     }
 

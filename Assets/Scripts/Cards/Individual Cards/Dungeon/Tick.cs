@@ -9,11 +9,9 @@ public class Tick : DungeonCard
         InitValues();
     }
 
-    public override TaskTree OnDraw()
+    public override TaskTree DungeonOnPlay()
     {
-        TaskTree onDrawTasks = base.OnDraw();
-        onDrawTasks.Then(Services.Main.dungeonDeck.AlterDungeonTimerCount(1));
-        return onDrawTasks;
+        return Services.Main.dungeonDeck.AlterDungeonTimerCount(1);
     }
 
     public override Color GetCardFrameColor()

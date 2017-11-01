@@ -9,11 +9,15 @@ public class Advance : DungeonCard
         InitValues();
     }
 
-    public override TaskTree OnDraw()
+    public override TaskTree DungeonOnPlay()
     {
-        TaskTree onDrawTasks = base.OnDraw();
-        onDrawTasks.Then(Services.MonsterManager.MonstersMove());
-        onDrawTasks.Then(Services.MonsterManager.MonstersAttack());
-        return onDrawTasks;
+        TaskTree onPlayTasks = Services.MonsterManager.MonstersMove();
+        onPlayTasks.Then(Services.MonsterManager.MonstersAttack());
+        return onPlayTasks;
+    }
+
+    protected override float GetPriority()
+    {
+        return 10f;
     }
 }

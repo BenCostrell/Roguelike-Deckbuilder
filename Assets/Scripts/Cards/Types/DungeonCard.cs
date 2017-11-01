@@ -1,10 +1,24 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class DungeonCard : Card
+public abstract class DungeonCard : Card
 {
+    public float priority { get { return GetPriority(); } }
+
     public override Color GetCardFrameColor()
     {
         return Services.CardConfig.DungeonCardColor;
     }
+
+    protected virtual float GetPriority()
+    {
+        return 0f;
+    }
+
+    public virtual TaskTree DungeonOnPlay()
+    {
+        return new TaskTree(new EmptyTask());
+    }
+
+    public override void OnPlay() { }
 }

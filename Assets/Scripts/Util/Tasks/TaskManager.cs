@@ -37,12 +37,14 @@ public class TaskManager {
 
 			if (task.IsPending) {
 				task.SetStatus (Task.TaskStatus.Working);
+                Debug.Log("starting task " + task.GetType() + " at time " + Time.time);
 			}
 
 			if (task.IsFinished) {
 				HandleCompletion (task, i);
 			} else {
 				task.Update ();
+                //Debug.Log("working on task " + task.GetType() + " at time " + Time.time);
 				if (task.IsFinished) {
 					HandleCompletion (task, i);
 				}
@@ -57,6 +59,7 @@ public class TaskManager {
 
 		tasks.RemoveAt (taskIndex);
 		task.SetStatus (Task.TaskStatus.Detached);
+        Debug.Log("task " + task.GetType() + " completed" + " at time " + Time.time);
 	}
 
 }
