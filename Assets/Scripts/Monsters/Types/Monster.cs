@@ -100,7 +100,8 @@ public abstract class Monster {
     {
         List<Tile> availableTiles =
             AStarSearch.FindAllAvailableGoals(currentTile, movementSpeed);
-        //Debug.Log(availableTiles.Count + " available tiles to flee to");
+        //Debug.Log(availableTiles.Count + " available tiles to move to from " 
+        //    + currentTile.coord.x + ","+ currentTile.coord.y);
         availableTiles.Add(currentTile);
         Tile closestTile = currentTile;
         int closestDistance = 1000000;
@@ -109,10 +110,10 @@ public abstract class Monster {
             Tile tile = availableTiles[i];
             List<Tile> shortestPathFromPlayer = AStarSearch.ShortestPath(
                 Services.GameManager.player.currentTile, tile, true);
-            //Debug.Log("tile at " + tile.coord.x + "," + tile.coord.y + " is " 
-            //    + shortestPathFromPlayer.Count + " distance from player, compared to current farthest tile at "
-            //    + farthestTile.coord.x + "," + farthestTile.coord.y + " at " + 
-            //    farthestDistance + " distance from player");
+            //Debug.Log("tile at " + tile.coord.x + "," + tile.coord.y + " is "
+            //    + shortestPathFromPlayer.Count + " distance from player, compared to current closest tile at "
+            //    + closestTile.coord.x + "," + closestTile.coord.y + " at " +
+            //    closestDistance + " distance from player");
             if (shortestPathFromPlayer.Count < closestDistance)
             {
                 closestTile = tile;

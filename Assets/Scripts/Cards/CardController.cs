@@ -195,6 +195,11 @@ public class CardController : MonoBehaviour, IPointerClickHandler, IPointerEnter
         stateMachine.TransitionTo<DungeonHand>();
     }
 
+    public void EnterDungeonPlayingMode()
+    {
+        stateMachine.TransitionTo<DungeonPlaying>();
+    }
+
     public void EnterAddToDungeonDeckMode()
     {
         stateMachine.TransitionTo<AddingToDungeonDeck>();
@@ -592,6 +597,14 @@ public class CardController : MonoBehaviour, IPointerClickHandler, IPointerEnter
     private class DungeonHand : CardState
     {
 
+    }
+
+    private class DungeonPlaying : CardState
+    {
+        public override void OnEnter()
+        {
+            transform.localRotation = Quaternion.identity;
+        }
     }
 
 

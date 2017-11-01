@@ -17,6 +17,6 @@ public abstract class MonsterCard : DungeonCard
 
     protected override float GetPriority()
     {
-        return 0f;
+        return 5f;
     }
 }

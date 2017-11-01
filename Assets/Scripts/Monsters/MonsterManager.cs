@@ -106,10 +106,15 @@ public class MonsterManager
         moveTree.AddChild(new WaitTask(Services.MonsterConfig.MaxMoveAnimDur));
         List<Monster> sortedMonsters = monsters.OrderBy(monster =>
             AStarSearch.ShortestPath(monster.currentTile, player.currentTile, true).Count).ToList();
+        //Debug.Log("there are " + sortedMonsters.Count + " monsters at time " + Time.time);
         for (int i = 0; i < sortedMonsters.Count; i++)
         {
             if (!sortedMonsters[i].IsPlayerInRange())
+            {
                 moveTree.AddChild(sortedMonsters[i].Move());
+                //Debug.Log("moving " + sortedMonsters[i].GetType() + "at " + sortedMonsters[i].currentTile.coord.x
+                    //+ " " + sortedMonsters[i].currentTile.coord.y);
+            }
         }
         return moveTree;
     }

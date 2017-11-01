@@ -57,7 +57,8 @@ public class Tile
 
     public bool IsImpassable()
     {
-        if (containedMonster != null || monsterMovementTarget) return true;
+        if (containedMonster != null || monsterMovementTarget || this == player.currentTile)
+            return true;
         return false;
     }
 }

@@ -23,12 +23,14 @@ public class PlayDungeonCard : Task
         duration = Services.CardConfig.PlayAnimDur;
         rect = card.controller.GetComponent<RectTransform>();
         card.controller.transform.SetParent(Services.UIManager.dungeonPlayZone.transform);
+        card.controller.EnterDungeonPlayingMode();
         initialPos = rect.anchoredPosition;
         targetPos = Services.UIManager
             .GetInPlayCardPosition(Services.Main.dungeonDeck.playedCards.Count + 1);
         Services.SoundManager.CreateAndPlayAudio(Services.AudioConfig.CardPlayAudio, 0.3f);
         subTaskManager = new TaskManager();
         subTaskManager.AddTask(card.DungeonOnPlay());
+        //Debug.Log("playing card " + card.GetType() + " at time " + Time.time);
     }
 
     internal override void Update()
@@ -40,8 +42,6 @@ public class PlayDungeonCard : Task
             card.Reposition(Vector3.Lerp(initialPos, targetPos,
                 Easing.QuadEaseOut(timeElapsed / duration)), false, true);
         }
-
-        Debug.Log("playing card " + card.GetType() + " at time " + Time.time);
 
         subTaskManager.Update();
 
