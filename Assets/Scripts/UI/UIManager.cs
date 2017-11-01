@@ -162,6 +162,11 @@ public class UIManager : MonoBehaviour {
     public void UpdateDiscardCounter()
     {
         int cardsInDiscard = Services.GameManager.player.discardCount;
+        UpdateDiscardCounter(cardsInDiscard);
+    }
+
+    public void UpdateDiscardCounter(int cardsInDiscard)
+    {
         discardCounter.text = cardsInDiscard.ToString();
         CreateCardPileUI(cardsInDiscard, discardZone.transform);
     }
@@ -169,6 +174,11 @@ public class UIManager : MonoBehaviour {
     public void UpdateDungeonDiscardCounter()
     {
         int cardsInDiscard = Services.Main.dungeonDeck.discardCount;
+        UpdateDungeonDiscardCounter(cardsInDiscard);
+    }
+
+    public void UpdateDungeonDiscardCounter(int cardsInDiscard)
+    {
         dungeonDiscardCounter.text = cardsInDiscard.ToString();
         CreateCardPileUI(cardsInDiscard, dungeonDiscardZone.transform);
     }
@@ -422,5 +432,23 @@ public class UIManager : MonoBehaviour {
             queueButtonText.text = "QUEUE ALL MOVEMENT";
         }
         else queueButtonText.text = "UNQUEUE ALL MOVEMENT";
+    }
+
+    public void SetEndTurnButtonStatus(bool done)
+    {
+        if (done)
+        {
+            ColorBlock buttonColors = endTurnButton.colors;
+            buttonColors.normalColor = Color.green;
+            endTurnButton.colors = buttonColors;
+            endTurnButton.transform.localScale = 1.2f * Vector3.one;
+        }
+        else
+        {
+            ColorBlock buttonColors = endTurnButton.colors;
+            buttonColors.normalColor = Color.yellow;
+            endTurnButton.colors = buttonColors;
+            endTurnButton.transform.localScale = Vector3.one;
+        }
     }
 }

@@ -41,14 +41,6 @@ public class MonsterConfig : ScriptableObject
     public int MinDistFromMonsters { get { return minDistFromMonsters; } }
 
     [SerializeField]
-    private int minDistFromCards;
-    public int MinDistFromCards { get { return minDistFromCards; } }
-
-    [SerializeField]
-    private int minDistFromPlayer;
-    public int MinDistFromPlayer { get { return minDistFromPlayer; } }
-
-    [SerializeField]
     private int spawnRange;
     public int SpawnRange { get { return spawnRange; } }
 

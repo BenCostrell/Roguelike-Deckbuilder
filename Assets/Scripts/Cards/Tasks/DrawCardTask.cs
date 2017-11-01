@@ -25,15 +25,23 @@ public class DrawCardTask : Task
     protected override void Init()
     {
         subTaskManager = new TaskManager();
-        if (playerDeck && Services.GameManager.player.deckCount == 0)
+        if (playerDeck)
         {
-            subTaskManager.AddTask(new ReshuffleDeck(true));
-            delayStart = true;
+            if (Services.GameManager.player.deckCount == 0)
+            {
+                subTaskManager.AddTask(new ReshuffleDeck(true));
+                delayStart = true;
+                Services.UIManager.UpdateDiscardCounter(0);
+            }
         }
-        else if (!playerDeck && Services.Main.dungeonDeck.deckCount == 0)
+        else
         {
-            subTaskManager.AddTask(new ReshuffleDeck(false));
-            delayStart = true;
+            if (Services.Main.dungeonDeck.deckCount == 0)
+            {
+                subTaskManager.AddTask(new ReshuffleDeck(false));
+                delayStart = true;
+                Services.UIManager.UpdateDungeonDiscardCounter(0);
+            }
         }
         if (!delayStart) StartDraw();
    }

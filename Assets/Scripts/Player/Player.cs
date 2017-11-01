@@ -187,6 +187,7 @@ public class Player {
     TaskTree DiscardCard(Card card, float timeOffset)
     {
         discardPile.Add(card);
+        CheckAvailableActions();
         TaskTree discardCardTasks = new TaskTree(new WaitTask(timeOffset));
         discardCardTasks.Then(new ActionTask(card.OnDiscard));
         discardCardTasks.Then(new DiscardCard(card));
@@ -242,6 +243,7 @@ public class Player {
     {
         Services.EventManager.Fire(new MovementInitiated());
         movesAvailable -= MovementCost(path);
+        CheckAvailableActions();
         HideAvailableMoves();
         Services.Main.taskManager.AddTask(
             new MoveObjectAlongPath(controller.gameObject, path));
@@ -307,6 +309,28 @@ public class Player {
     {
         Debug.Assert(hand.Contains(card));
         return new PlayCardTask(card);
+    }
+
+    public void OnCardFinishedPlaying(Card card)
+    {
+        CheckAvailableActions();
+    }
+
+    void CheckAvailableActions()
+    {
+        bool noPlayableCardsInHand = true;
+        for (int i = 0; i < hand.Count; i++)
+        {
+            if (hand[i].CanPlay())
+            {
+                noPlayableCardsInHand = false;
+                break;
+            }
+        }
+        if(noPlayableCardsInHand && movesAvailable == 0)
+        {
+            Services.UIManager.SetEndTurnButtonStatus(true);
+        }
     }
 
     public void SelectMovementCard(MovementCard card)
@@ -390,7 +414,7 @@ public class Player {
     public TaskTree OnTurnStart()
     {
         int cardsToDraw = Mathf.Max(0, 5 - hand.Count);
-
+        Services.UIManager.SetEndTurnButtonStatus(false);
         TaskTree startTurnTaskTree = 
             new TaskTree(new ParameterizedActionTask<int>(SetShield, 0));
         startTurnTaskTree.Then(DrawCards(cardsToDraw));

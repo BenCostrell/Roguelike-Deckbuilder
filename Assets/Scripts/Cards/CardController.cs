@@ -427,6 +427,7 @@ public class CardController : MonoBehaviour, IPointerClickHandler, IPointerEnter
     private class Selected : CardState
     {
         private Vector2 mouseRelativePos;
+        private int lockID;
 
         public override void OnEnter()
         {
@@ -437,6 +438,8 @@ public class CardController : MonoBehaviour, IPointerClickHandler, IPointerEnter
             transform.localScale = Services.CardConfig.OnHoverScaleUp * baseScale;
             card.OnSelect();
             player.cardsSelected.Add(card);
+            lockID = Services.UIManager.nextLockID;
+            player.LockMovement(lockID);
         }
 
         protected void Drag()
@@ -498,6 +501,7 @@ public class CardController : MonoBehaviour, IPointerClickHandler, IPointerEnter
         public override void OnExit()
         {
             player.cardsSelected.Remove(card);
+            player.UnlockMovement(lockID);
         }
     }
 
@@ -569,10 +573,10 @@ public class CardController : MonoBehaviour, IPointerClickHandler, IPointerEnter
             Services.EventManager.Unregister<TileSelected>(OnTileSelected);
         }
 
-        protected override void OnPlayed()
-        {
-            TransitionTo<Playable>();
-        }
+        //protected override void OnPlayed()
+        //{
+        //    TransitionTo<Playable>();
+        //}
 
         void OnTileSelected(TileSelected e)
         {
@@ -582,7 +586,7 @@ public class CardController : MonoBehaviour, IPointerClickHandler, IPointerEnter
             if (targetedCard.IsTargetValid(tileSelected))
             {
                 targetedCard.OnTargetSelected(tileSelected);
-                base.OnPlayed();
+                OnPlayed();
             }
             else TransitionTo<Playable>();
         }
@@ -618,6 +622,7 @@ public class CardController : MonoBehaviour, IPointerClickHandler, IPointerEnter
             transform.localScale = Context.baseScale;
             transform.localRotation = Quaternion.identity;
             baseRotation = Quaternion.identity;
+            if (!(card is DungeonCard)) player.OnCardFinishedPlaying(card);
         }
 
         protected override void AddOffset()
