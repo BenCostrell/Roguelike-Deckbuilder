@@ -80,6 +80,7 @@ public class DungeonDeck
             turnTasks.AddChild(DiscardCard(playedCards[i], staggerTime));
             staggerTime -= Services.CardConfig.DiscardAnimStaggerTime;
         }
+        turnTasks.Then(new ActionTask(Services.MonsterManager.RefreshMonsters));
         turnTasks.Then(DrawCards(cardsPerRound));
         turnTasks.Then(new PerformActions());
         return turnTasks;

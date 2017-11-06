@@ -90,12 +90,22 @@ public class MonsterManager
         return monstersInRange;
     }
 
+    public void RefreshMonsters()
+    {
+        for (int i = 0; i < monsters.Count; i++)
+        {
+            monsters[i].Refresh();
+        }
+    }
+
     public TaskTree MonstersAttack()
     {
         TaskTree attackTree = new TaskTree(new EmptyTask());
         for (int i = 0; i < monsters.Count; i++)
         {
-            if (monsters[i].IsPlayerInRange()) attackTree.Then(monsters[i].AttackPlayer());
+            Monster monster = monsters[i];
+            if (monster.IsPlayerInRange() && !monster.attackedThisTurn)
+                attackTree.Then(monster.AttackPlayer());
         }
         return attackTree;
     }
@@ -109,12 +119,12 @@ public class MonsterManager
         //Debug.Log("there are " + sortedMonsters.Count + " monsters at time " + Time.time);
         for (int i = 0; i < sortedMonsters.Count; i++)
         {
-            if (!sortedMonsters[i].IsPlayerInRange())
-            {
+            //if (!sortedMonsters[i].IsPlayerInRange())
+            //{
                 moveTree.AddChild(sortedMonsters[i].Move());
                 //Debug.Log("moving " + sortedMonsters[i].GetType() + "at " + sortedMonsters[i].currentTile.coord.x
                     //+ " " + sortedMonsters[i].currentTile.coord.y);
-            }
+            //}
         }
         return moveTree;
     }

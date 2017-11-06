@@ -70,6 +70,11 @@ public class FSM<TContext>
         CurrentState.OnInputExit();
     }
 
+    public virtual void OnInputClick()
+    {
+        CurrentState.OnInputClick();
+    }
+
     // Queues transition to a new state
     public void TransitionTo<TState>() where TState : State
     {
@@ -151,6 +156,7 @@ public class FSM<TContext>
         public virtual void OnInputUp() { }
         public virtual void OnInputEnter() { }
         public virtual void OnInputExit() { }
+        public virtual void OnInputClick() { }
     }
 
 }

@@ -21,6 +21,7 @@ public abstract class Monster {
     public int attackRange { get; protected set; }
     public int attackDamage { get; protected set; }
     public bool markedForDeath { get; protected set; }
+    public bool attackedThisTurn { get; private set; }
     public Tile targetTile;
     protected Player player { get { return Services.GameManager.player; } }
 
@@ -83,11 +84,17 @@ public abstract class Monster {
             (targetTile != null && player.currentTile.coord.Distance(targetTile.coord) <= attackRange);
     }
 
+    public void Refresh()
+    {
+        attackedThisTurn = false;
+    }
+
     public virtual TaskTree AttackPlayer()
     {
         TaskTree attackTasks = new TaskTree(new AttackAnimation(controller.gameObject,
             player.controller.gameObject));
         attackTasks.Then(new ResolveHit(this));
+        attackedThisTurn = true;
         return attackTasks;
     }
 
@@ -99,7 +106,7 @@ public abstract class Monster {
     public virtual TaskTree Move()
     {
         List<Tile> availableTiles =
-            AStarSearch.FindAllAvailableGoals(currentTile, movementSpeed);
+            AStarSearch.FindAllAvailableGoals(currentTile, movementSpeed, false, false, true);
         //Debug.Log(availableTiles.Count + " available tiles to move to from " 
         //    + currentTile.coord.x + ","+ currentTile.coord.y);
         availableTiles.Add(currentTile);
@@ -120,15 +127,17 @@ public abstract class Monster {
                 closestDistance = shortestPathFromPlayer.Count;
             }
         }
+        List<Tile> shortestPathToTarget = new List<Tile>();
         if (closestTile != null && closestDistance != 0 && closestTile != currentTile)
         {
-            List<Tile> shortestPathToTarget =
-                AStarSearch.ShortestPath(currentTile, closestTile);
+            shortestPathToTarget = AStarSearch.ShortestPath(currentTile, closestTile, false, false, true);
             targetTile = closestTile;
-            return new TaskTree(new MoveObjectAlongPath(controller.gameObject,
-                shortestPathToTarget));
         }
-        else return new TaskTree(new EmptyTask());
+        else
+        {
+            targetTile = currentTile;
+        }
+        return new TaskTree(new MoveObjectAlongPath(controller.gameObject, shortestPathToTarget));
         //List<Tile> shortestPathToPlayer = 
         //    AStarSearch.ShortestPath(currentTile, player.currentTile);
         //List<Tile> pathToMoveAlong = new List<Tile>();
@@ -153,7 +162,7 @@ public abstract class Monster {
     public TaskTree MoveAwayFromPlayer(int numMovesAllowed)
     {
         List<Tile> availableTiles = 
-            AStarSearch.FindAllAvailableGoals(currentTile, numMovesAllowed);
+            AStarSearch.FindAllAvailableGoals(currentTile, numMovesAllowed, false, false, true);
         //Debug.Log(availableTiles.Count + " available tiles to flee to");
         availableTiles.Add(currentTile);
         Tile farthestTile = currentTile;
@@ -173,15 +182,17 @@ public abstract class Monster {
                 farthestDistance = shortestPathFromPlayer.Count;
             }
         }
+        List<Tile> shortestPathToTarget = new List<Tile>();
         if (farthestTile != null && farthestDistance != 0 && farthestTile != currentTile)
         {
-            List<Tile> shortestPathToTarget =
-                AStarSearch.ShortestPath(currentTile, farthestTile);
+            shortestPathToTarget = AStarSearch.ShortestPath(currentTile, farthestTile, false, false, true);
             targetTile = farthestTile;
-            return new TaskTree(new MoveObjectAlongPath(controller.gameObject,
-                shortestPathToTarget));
         }
-        else return new TaskTree(new EmptyTask());
+        else
+        {
+            targetTile = currentTile;
+        }
+        return new TaskTree(new MoveObjectAlongPath(controller.gameObject, shortestPathToTarget));
     }
 
 }

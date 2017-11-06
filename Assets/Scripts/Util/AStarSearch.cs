@@ -63,6 +63,11 @@ public static class AStarSearch
 
     public static List<Tile> ShortestPath(Tile start, Tile goal, bool raw, bool avoidTraps)
     {
+        return ShortestPath(start, goal, raw, avoidTraps, false);
+    }
+
+    public static List<Tile> ShortestPath(Tile start, Tile goal, bool raw, bool avoidTraps, bool monsterMovement)
+    {
         List<Tile> path = new List<Tile>();
         Dictionary<Tile, Tile> cameFrom = new Dictionary<Tile, Tile>();
         Dictionary<Tile, float> costSoFar = new Dictionary<Tile, float>();
@@ -83,7 +88,7 @@ public static class AStarSearch
             if (current == goal) break;
             foreach (Tile next in current.neighbors)
             {
-                if ((!next.IsImpassable() && !(next.containedMapObject != null && 
+                if ((!next.IsImpassable(monsterMovement) && !(next.containedMapObject != null &&
                     next.containedMapObject is Trap && avoidTraps && next != goal)) || raw)
                 {
                     float newCost;
@@ -108,7 +113,7 @@ public static class AStarSearch
 
         }
         Tile pathNode = estimatedClosestTile;
-        while(pathNode != start)
+        while (pathNode != start)
         {
             path.Add(pathNode);
             pathNode = cameFrom[pathNode];
@@ -127,8 +132,12 @@ public static class AStarSearch
         return FindAllAvailableGoals(start, movesAvailable, raw, false);
     }
 
-    public static List<Tile> FindAllAvailableGoals(Tile start, int movesAvailable, bool raw, 
-        bool avoidTraps)
+    public static List<Tile> FindAllAvailableGoals(Tile start, int movesAvailable, bool raw, bool avoidTraps)
+    {
+        return FindAllAvailableGoals(start, movesAvailable, raw, avoidTraps, false);
+    }
+
+    public static List<Tile> FindAllAvailableGoals(Tile start, int movesAvailable, bool raw, bool avoidTraps, bool monsterMovement)
     {
         List<Tile> availableGoals = new List<Tile>();
         if (movesAvailable == 0) return availableGoals;
@@ -146,12 +155,12 @@ public static class AStarSearch
             if (costSoFar[current] <= movesAvailable)
             {
                 if (current != start) availableGoals.Add(current);
-                if (!(current.containedMapObject != null && current.containedMapObject is Trap 
+                if (!(current.containedMapObject != null && current.containedMapObject is Trap
                     && avoidTraps))
                 {
                     foreach (Tile next in current.neighbors)
                     {
-                        if (!next.IsImpassable() || raw)
+                        if (!next.IsImpassable(monsterMovement) || raw)
                         {
                             int newCost;
                             if (raw)

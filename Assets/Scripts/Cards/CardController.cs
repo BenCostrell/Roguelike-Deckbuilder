@@ -4,7 +4,8 @@ using System.Collections.Generic;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 
-public class CardController : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler, IPointerExitHandler
+public class CardController : MonoBehaviour, IPointerDownHandler, IPointerEnterHandler, IPointerExitHandler, IPointerUpHandler, 
+    IPointerClickHandler
 {
     public Card card { get; private set; }
     private Vector3 basePos;
@@ -112,9 +113,19 @@ public class CardController : MonoBehaviour, IPointerClickHandler, IPointerEnter
         stateMachine.OnInputExit();
     }
 
-    public void OnPointerClick(PointerEventData eventData)
+    public void OnPointerDown(PointerEventData eventData)
     {
         stateMachine.OnInputDown();
+    }
+
+    public void OnPointerClick(PointerEventData eventData)
+    {
+        stateMachine.OnInputClick();
+    }
+
+    public void OnPointerUp(PointerEventData eventData)
+    {
+        stateMachine.OnInputUp();
     }
 
     public void UnselectMovementCard()
@@ -228,8 +239,7 @@ public class CardController : MonoBehaviour, IPointerClickHandler, IPointerEnter
 
     public bool IsInDiscardZone()
     {
-        RectTransform discardRT =
-                    Services.UIManager.discardZone.GetComponent<RectTransform>();
+        RectTransform discardRT = Services.UIManager.discardZone.GetComponent<RectTransform>();
         return discardRT.rect.Contains(discardRT.InverseTransformPoint(transform.position));
     }
 
@@ -278,6 +288,8 @@ public class CardController : MonoBehaviour, IPointerClickHandler, IPointerEnter
 
     private class Playable : Hoverable
     {
+        private int tempLockFramesLeft;
+
         public override void OnEnter()
         {
             Services.UIManager.SortHand(player.hand);
@@ -287,13 +299,17 @@ public class CardController : MonoBehaviour, IPointerClickHandler, IPointerEnter
             transform.SetParent(Context.baseParent);
             Context.SetCardFrameStatus(true);
             Context.Reposition(Context.basePos, false);
+            tempLockFramesLeft = 8;
         }
 
-        public override void OnInputDown()
+        public override void OnInputClick()
         {
-            if (card is MovementCard) TransitionTo<MovementCardSelected>();
-            else if (card is TileTargetedCard) TransitionTo<TargetedCardSelected>();
-            else TransitionTo<Selected>();
+            if (tempLockFramesLeft == 0)
+            {
+                if (card is MovementCard) TransitionTo<MovementCardSelected>();
+                else if (card is TileTargetedCard) TransitionTo<TargetedCardSelected>();
+                else TransitionTo<Selected>();
+            }
         }
 
         public override void OnInputEnter()
@@ -325,6 +341,10 @@ public class CardController : MonoBehaviour, IPointerClickHandler, IPointerEnter
                 transform.localRotation = 
                     Quaternion.Lerp(transform.localRotation, Context.targetRotation, 
                     Services.CardConfig.HandCardRotationSpeed);
+            }
+            if (tempLockFramesLeft > 0)
+            {
+                tempLockFramesLeft -= 1;
             }
         }
     }
@@ -372,7 +392,7 @@ public class CardController : MonoBehaviour, IPointerClickHandler, IPointerEnter
 
     private class Deckbuilding : DeckView
     {
-        public override void OnInputDown()
+        public override void OnInputClick()
         {
             Services.DeckConstruction.OnCardClicked(card);
         }
@@ -385,7 +405,7 @@ public class CardController : MonoBehaviour, IPointerClickHandler, IPointerEnter
             Context.color = Color.magenta;
         }
 
-        public override void OnInputDown()
+        public override void OnInputClick()
         {
             Services.EventManager.Fire(new CardSelected(card));
         }
@@ -408,7 +428,7 @@ public class CardController : MonoBehaviour, IPointerClickHandler, IPointerEnter
             Context.color = Color.red;
         }
 
-        public override void OnInputDown()
+        public override void OnInputClick()
         {
             Services.EventManager.Fire(new CardSelected(card));
         }
@@ -523,7 +543,7 @@ public class CardController : MonoBehaviour, IPointerClickHandler, IPointerEnter
             player.SelectMovementCard(card as MovementCard);
         }
 
-        public override void OnInputDown()
+        public override void OnInputClick()
         {
             card.OnUnselect();
             TransitionTo<Playable>();
@@ -573,10 +593,10 @@ public class CardController : MonoBehaviour, IPointerClickHandler, IPointerEnter
             Services.EventManager.Unregister<TileSelected>(OnTileSelected);
         }
 
-        //protected override void OnPlayed()
-        //{
-        //    TransitionTo<Playable>();
-        //}
+        protected override void OnPlayed()
+        {
+            TransitionTo<Playable>();
+        }
 
         void OnTileSelected(TileSelected e)
         {
@@ -586,7 +606,7 @@ public class CardController : MonoBehaviour, IPointerClickHandler, IPointerEnter
             if (targetedCard.IsTargetValid(tileSelected))
             {
                 targetedCard.OnTargetSelected(tileSelected);
-                OnPlayed();
+                base.OnPlayed();
             }
             else TransitionTo<Playable>();
         }
@@ -703,7 +723,7 @@ public class CardController : MonoBehaviour, IPointerClickHandler, IPointerEnter
             Context.color = Context.baseColor;
         }
 
-        public override void OnInputDown()
+        public override void OnInputClick()
         {
             card.chest.OnCardPicked(card);
             TransitionTo<Acquisition>();
