@@ -35,6 +35,7 @@ public class TitleScreen : Scene<MainTransitionData> {
         //startingCollection.Add(Services.CardConfig.CreateCardOfType(Card.CardType.SpikeTrap));
         Services.SceneStackManager.Swap<LevelTransition>(
             new MainTransitionData(startingDeck, new List<Card>(), startingCollection,
+            Services.GameManager.playerStartingHealth,
             Services.GameManager.playerStartingHealth, 1, false));
     }
 }

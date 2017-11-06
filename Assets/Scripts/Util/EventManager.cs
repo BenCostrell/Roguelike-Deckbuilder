@@ -5,6 +5,16 @@ using UnityEngine;
 public abstract class Event {}
 
 // EVENTS
+public class OptionChosen : Event
+{
+    public int optionChosen;
+
+    public OptionChosen(int optionChosen_)
+    {
+        optionChosen = optionChosen_;
+    }
+}
+
 public class AcquisitionComplete : Event { }
 
 public class MovementInitiated : Event { }

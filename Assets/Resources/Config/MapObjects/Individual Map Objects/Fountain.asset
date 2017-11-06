@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: da8b5526042488c4da3f3b83d1d55d17, type: 3}
+  m_Name: Fountain
+  m_EditorClassIdentifier: 
+  objectType: 1
+  name_: Fountain
+  sprites:
+  - {fileID: 21300000, guid: dbea34209a8cf7941806fbc7eeb5ebfb, type: 3}
+  - {fileID: 21300000, guid: e94979550d2fb7142bfcf74ed6747ff4, type: 3}
+  - {fileID: 21300000, guid: 5fe3547a85c81834da79f4f668407543, type: 3}
+  onStepAudio: {fileID: 0}

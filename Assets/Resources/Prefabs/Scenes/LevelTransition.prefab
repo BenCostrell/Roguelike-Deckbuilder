@@ -1291,13 +1291,13 @@ MonoBehaviour:
   playerUIHPCounter: {fileID: 114227641584554658}
   startButton: {fileID: 114703316896227496}
   finalScore: {fileID: 114458081514363854}
-  levelsPerMonsterTierIncrease: 3
+  levelsPerMonsterTierIncrease: 2
   deckDisplayOffset: {x: 0, y: 0, z: 0}
   deckDisplaySpacing: {x: 70, y: 0, z: -2}
   deckDisplaySpacingPerRow: {x: 0, y: -50, z: -35}
   maxCardsPerRow: 10
   dungeonDeckSize: 20
-  advanceCount: 4
+  advanceCount: 5
 --- !u!114 &114918929741127194
 MonoBehaviour:
   m_ObjectHideFlags: 1

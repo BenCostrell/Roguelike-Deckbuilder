@@ -27,6 +27,8 @@ public class MapObjectConfig : ScriptableObject
         {
             case MapObject.ObjectType.SpikeTrap:
                 return new SpikeTrap();
+            case MapObject.ObjectType.Fountain:
+                return new Fountain();
             default:
                 return null;
         }

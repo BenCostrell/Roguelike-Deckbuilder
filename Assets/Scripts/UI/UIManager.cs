@@ -83,6 +83,12 @@ public class UIManager : MonoBehaviour {
     private Image messageBanner;
     [SerializeField]
     private Text messageBannerText;
+    [SerializeField]
+    private GameObject optionUI;
+    [SerializeField]
+    private Button[] optionButtons;
+    [SerializeField]
+    private Text[] optionTexts;
     private Vector2 playerUIHealthBarBaseSize;
     private int nextLockID_;
     public int nextLockID
@@ -102,6 +108,7 @@ public class UIManager : MonoBehaviour {
     public string startBannerMessage;
     public string playerTurnMessage;
     public string dungeonTurnMessage;
+    private int optionLockID;
 
     // Use this for initialization
     void Awake() {
@@ -116,6 +123,7 @@ public class UIManager : MonoBehaviour {
     {
         unitUI.SetActive(false);
         ToggleChestArea(false);
+        optionUI.SetActive(false);
         unitUIHealthBarBaseSize = unitUIRemainingHealthBody.sizeDelta;
         playerUIHealthBarBaseSize = playerUIRemainingHealthBody.sizeDelta;
         playerUIKeyIcon.color = new Color(1, 1, 1, 0.125f);
@@ -450,5 +458,24 @@ public class UIManager : MonoBehaviour {
             endTurnButton.colors = buttonColors;
             endTurnButton.transform.localScale = Vector3.one;
         }
+    }
+
+    public void OptionChosen(int optionNum)
+    {
+        Services.EventManager.Fire(new OptionChosen(optionNum));
+        optionUI.SetActive(false);
+        Services.GameManager.player.UnlockEverything(optionLockID);
+    }
+
+    public void InitOptions(string[] optionTextContents, Sprite[] optionSprites)
+    {
+        optionUI.SetActive(true);
+        for (int i = 0; i < optionTexts.Length; i++)
+        {
+            optionTexts[i].text = optionTextContents[i];
+            optionButtons[i].GetComponent<Image>().sprite = optionSprites[i];
+        }
+        optionLockID = nextLockID;
+        Services.GameManager.player.LockEverything(optionLockID);
     }
 }

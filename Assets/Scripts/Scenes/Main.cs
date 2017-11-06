@@ -97,7 +97,8 @@ public class Main : Scene<MainTransitionData> {
             player.fullDeck,
             new List<Card>(),
             collection,
-            player.maxHealth + 1,
+            player.currentHealth,
+            player.maxHealth,
             levelNum + 1, false));
     }
 

@@ -9,12 +9,12 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 73947de0df966ea409e713726a341966, type: 3}
-  m_Name: Orc
+  m_Name: Flamekin
   m_EditorClassIdentifier: 
-  cardType: 14
-  name_: Orc
-  cardText: Spawn an Orc.
-  sprite: {fileID: 21300000, guid: c5712e9f56fdbe444ba8a8660ba9f18c, type: 3}
-  tier: 2
+  cardType: 15
+  name_: Flamekin
+  cardText: Spawn a Flamekin.
+  sprite: {fileID: 21300000, guid: aed0b3f7e5d304642b3e2e7b5866c58c, type: 3}
+  tier: 3
   isMonster: 1
   onPlayAudio: {fileID: 0}

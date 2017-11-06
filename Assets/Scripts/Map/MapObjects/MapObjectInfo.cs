@@ -13,8 +13,8 @@ public class MapObjectInfo : ScriptableObject
     public string Name { get { return name_; } }
 
     [SerializeField]
-    private Sprite sprite;
-    public Sprite Sprite { get { return sprite; } }
+    private Sprite[] sprites;
+    public Sprite[] Sprites { get { return sprites; } }
 
     [SerializeField]
     private AudioClip onStepAudio;

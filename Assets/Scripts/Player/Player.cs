@@ -93,7 +93,7 @@ public class Player {
         InitializeDeck(data.deck);
         ForceUnlockEverything();
         maxHealth = data.maxHealth;
-        currentHealth = maxHealth;
+        currentHealth = data.currentHealth;
         controller.UpdateHealthUI();
         shield = 0;
         Services.EventManager.Register<TileSelected>(OnTileSelected);
@@ -482,6 +482,7 @@ public class Player {
             fullDeck,
             new List<Card>(),
             Services.Main.collection,
+            currentHealth,
             maxHealth,
             Services.Main.levelNum,
             true));
@@ -562,6 +563,12 @@ public class Player {
     public void Heal(int amountHealed)
     {
         currentHealth = Mathf.Min(maxHealth, currentHealth + amountHealed);
+    }
+    
+    public void GainMaxHealth(int gainAmount)
+    {
+        maxHealth += gainAmount;
+        Heal(gainAmount);
     }
 
     public void DisableNonMovementCards(int lockID)

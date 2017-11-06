@@ -43,6 +43,8 @@ public class MapManager : MonoBehaviour {
     private int levelsPerCardTierIncrease;
     [SerializeField]
     private float chestsPerRoom;
+    [SerializeField]
+    private float fountainsPerRoom;
     private List<Room> rooms;
     private List<Room> roomsWithoutChests;
     public Tile playerSpawnTile { get; private set; }
@@ -159,6 +161,7 @@ public class MapManager : MonoBehaviour {
         keyTile.SetSprite(exitDoorSprite, Quaternion.identity);
         #endregion
         GenerateChests(levelNum);
+        GenerateFountains();
     }
 
     Tile GetFarthestTileFromHallwayEntrances(Room room)
@@ -694,6 +697,33 @@ public class MapManager : MonoBehaviour {
                 chest.tier = tier;
                 chestTile.containedChest = chest;
                 chestsOnBoard.Add(chest);
+            }
+            else break;
+        }
+    }
+
+    void GenerateFountains()
+    {
+        int numFountains = Mathf.CeilToInt(fountainsPerRoom * rooms.Count);
+        List<Room> roomsWithoutFountains = new List<Room>(rooms);
+        for (int i = 0; i < numFountains; i++)
+        {
+            Room randomRoomWithoutFountain =
+                roomsWithoutFountains[Random.Range(0, roomsWithoutFountains.Count)];
+            roomsWithoutChests.Remove(randomRoomWithoutFountain);
+            Tile fountainTile = randomRoomWithoutFountain.tiles
+                [Random.Range(0, randomRoomWithoutFountain.tiles.Count)];
+            while (fountainTile == keyTile || fountainTile == playerSpawnTile || fountainTile.isExit
+                || fountainTile.containedChest != null)
+            {
+                fountainTile = randomRoomWithoutFountain.tiles
+                [Random.Range(0, randomRoomWithoutFountain.tiles.Count)];
+            }
+            if (fountainTile != null)
+            {
+                MapObject fountain = 
+                    Services.MapObjectConfig.CreateMapObjectOfType(MapObject.ObjectType.Fountain);
+                fountain.PlaceOnTile(fountainTile);
             }
             else break;
         }

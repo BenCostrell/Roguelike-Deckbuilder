@@ -63,7 +63,7 @@ MonoBehaviour:
   playAnimDur: 0.3
   acquireAnimDur: 0.5
   reshuffleAnimDur: 0.2
-  reshuffleAnimStagger: 0.1
+  reshuffleAnimStagger: 0.0625
   discardAnimDur: 0.4
   discardAnimStaggerTime: 0.1
   minSpawnDistFromMonsters: 1

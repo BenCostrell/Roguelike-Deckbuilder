@@ -5,13 +5,15 @@ public abstract class MapObject
 {
     public enum ObjectType
     {
-        SpikeTrap
+        SpikeTrap,
+        Fountain
     }
     protected ObjectType objectType;
     protected MapObjectInfo info;
     protected GameObject physicalObject;
     protected Tile currentTile;
     protected AudioClip onStepAudio;
+    protected Player player { get { return Services.GameManager.player; } }
 
     protected virtual void InitValues()
     {
@@ -23,7 +25,7 @@ public abstract class MapObject
     {
         physicalObject = new GameObject();
         SpriteRenderer sr = physicalObject.AddComponent<SpriteRenderer>();
-        sr.sprite = info.Sprite;
+        sr.sprite = info.Sprites[0];
         physicalObject.transform.position = new Vector3(tile.coord.x, tile.coord.y, 0);
         physicalObject.transform.parent = Services.Main.transform;
         sr.sortingOrder = 1;
@@ -33,13 +35,13 @@ public abstract class MapObject
 
     public virtual bool OnStep(Player player)
     {
-        Services.SoundManager.CreateAndPlayAudio(onStepAudio);
+        if (onStepAudio != null) Services.SoundManager.CreateAndPlayAudio(onStepAudio);
         return false;
     }
 
     public virtual bool OnStep(Monster monster)
     {
-        Services.SoundManager.CreateAndPlayAudio(onStepAudio);
+        if (onStepAudio != null) Services.SoundManager.CreateAndPlayAudio(onStepAudio);
         return false;
     }
 
