@@ -685,6 +685,7 @@ public class CardController : MonoBehaviour, IPointerDownHandler, IPointerEnterH
             targetScale = baseScale;
             lockID = Services.UIManager.nextLockID;
             player.LockEverything(lockID);
+            Context.SetCardFrameStatus(true);
             Services.SoundManager.CreateAndPlayAudio(Services.AudioConfig.CardPlayAudio, 0.3f);
         }
 
