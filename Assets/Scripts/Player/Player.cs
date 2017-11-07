@@ -260,7 +260,8 @@ public class Player {
     {
         List<Tile> availableTiles = 
             AStarSearch.FindAllAvailableGoals(currentTile, movesAvailable, false, true);
-        foreach(Tile tile in Services.MapManager.mapDict.Values)
+        //foreach(Tile tile in Services.MapManager.mapDict.Values)
+        foreach(Tile tile in Services.MapManager.mapGrid)
         {
             if (availableTiles.Contains(tile)) tile.controller.ShowAsAvailable();
             else tile.controller.ShowAsUnavailable();

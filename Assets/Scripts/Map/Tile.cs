@@ -16,11 +16,10 @@ public class Tile
     public MapObject containedMapObject;
     public bool isExit;
     public bool locked;
-    public readonly bool isRoom;
     public bool monsterMovementTarget;
     private Player player { get { return Services.GameManager.player; } }
 
-    public Tile(Coord coord_, bool isExit_, bool isRoom_)
+    public Tile(Coord coord_, bool isExit_)
     {
         coord = coord_;
         GameObject obj = 
@@ -30,7 +29,6 @@ public class Tile
         movementCost = 1;
         isExit = isExit_;
         if (isExit) locked = true;
-        isRoom = isRoom_;
     }
 
     public void SetSprite(Sprite sprite, Quaternion rot)

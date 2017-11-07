@@ -11,7 +11,7 @@ public class MonsterManager
     public Monster SpawnMonster(Monster.MonsterType monsterType)
     {
         Monster monster = CreateMonsterOfType(monsterType);
-        Tile playersTargetTile = Services.MapManager.keyTile;
+        Tile playersTargetTile = Services.MapManager.exitTile;
         List<Tile> playersPathToTarget = AStarSearch.ShortestPath(
             player.currentTile,
             playersTargetTile, true);

@@ -29,7 +29,8 @@ public class Main : Scene<MainTransitionData> {
     {
         data = data_;
         levelNum = data.levelNum;
-        Services.MapManager.GenerateLevel(levelNum);
+        //Services.MapManager.GenerateLevel(levelNum);
+        Services.MapManager.GenerateLevelTest(levelNum);
         dungeonDeck = new DungeonDeck(data.dungeonDeck);
         dungeonDeck.Init();
         collection = data.collection;

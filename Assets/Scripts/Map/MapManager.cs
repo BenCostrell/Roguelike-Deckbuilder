@@ -7,6 +7,24 @@ using System.Linq;
 public class MapManager : MonoBehaviour {
 
     [SerializeField]
+    private int baseLevelDimension;
+    [SerializeField]
+    private float heightToWidthRatio;
+    [SerializeField]
+    private int dimensionIncreasePerLevel;
+    [SerializeField]
+    private float initialWallProb;
+    [SerializeField]
+    private int birthLimit;
+    [SerializeField]
+    private int deathLimit;
+    [SerializeField]
+    private int numSteps;
+    private int width;
+    private int height;
+    public Tile[,] mapGrid { get; private set; }
+
+    [SerializeField]
     private int minRoomDimension;
     [SerializeField]
     private int maxRoomDimension;
@@ -48,7 +66,7 @@ public class MapManager : MonoBehaviour {
     private List<Room> rooms;
     private List<Room> roomsWithoutChests;
     public Tile playerSpawnTile { get; private set; }
-    public Tile keyTile { get; private set; }
+    public Tile exitTile { get; private set; }
 
     public void GenerateLevel(int levelNum)
     {
@@ -129,39 +147,132 @@ public class MapManager : MonoBehaviour {
         }
         #endregion
 
-        #region Assign start and key rooms
-        Room startRoom, keyRoom;
+        #region Assign start and exit rooms
+        Room startRoom, exitRoom;
         if (numRooms >= 2)
         {
             startRoom = GetFarthestRoom(rooms[0], edges, rooms);
             playerSpawnTile = GetFarthestTileFromHallwayEntrances(startRoom);
-            keyRoom = GetFarthestRoom(startRoom, minSpanningTree, rooms);
-            keyTile = GetFarthestTileFromHallwayEntrances(keyRoom);
+            exitRoom = GetFarthestRoom(startRoom, minSpanningTree, rooms);
+            exitTile = GetFarthestTileFromHallwayEntrances(exitRoom);
         }
         else
         {
             startRoom = rooms[0];
-            keyRoom = rooms[0];
+            exitRoom = rooms[0];
             playerSpawnTile = mapDict[new Coord(startRoom.Left, startRoom.Bottom)];
-            keyTile = mapDict[new Coord(startRoom.Right - 1, startRoom.Top - 1)];
+            exitTile = mapDict[new Coord(startRoom.Right - 1, startRoom.Top - 1)];
         }
-        //bool exitCreated = false;
-        //foreach (Tile tile in startRoom.tiles)
-        //{
-        //    if (!exitCreated && tile.coord.Distance(playerSpawnTile.coord) == 1)
-        //    {
-        //        tile.isExit = true;
-        //        tile.SetSprite(exitDoorSprite, Quaternion.identity);
-        //        exitCreated = true;
-        //    }
-        //}
-
-        //PlaceKey(keyTile);
-        keyTile.isExit = true;
-        keyTile.SetSprite(exitDoorSprite, Quaternion.identity);
+        exitTile.isExit = true;
+        exitTile.SetSprite(exitDoorSprite, Quaternion.identity);
         #endregion
         GenerateChests(levelNum);
         GenerateFountains();
+    }
+
+    public void GenerateLevelTest(int levelNum)
+    {
+        width = baseLevelDimension + (levelNum * dimensionIncreasePerLevel);
+        height = Mathf.RoundToInt(width * heightToWidthRatio);
+        mapGrid = new Tile[width, height];
+        bool[,] boolMap = InitializeMap();
+        for (int i = 0; i < numSteps; i++)
+        {
+            boolMap = DoSimulationStep(boolMap);
+        }
+        for (int i = 0; i < width; i++)
+        {
+            for (int j = 0; j < height; j++)
+            {
+                mapGrid[i, j] = new Tile(new Coord(i, j), false);
+                if (boolMap[i, j]) mapGrid[i, j].SetSprite(roomSprite, Quaternion.identity);
+            }
+        }
+        for (int i = 0; i < width; i++)
+        {
+            for (int j = 0; j < height; j++)
+            {
+                FindNeighborsInGrid(mapGrid[i, j]);
+            }
+        }
+
+        playerSpawnTile = mapGrid[0, 0];
+        exitTile = mapGrid[width - 1, height - 1];
+        exitTile.isExit = true;
+        exitTile.SetSprite(exitDoorSprite, Quaternion.identity);
+    }
+
+    bool[,] InitializeMap()
+    {
+        bool[,] map = new bool[width, height];
+        for (int i = 0; i < width; i++)
+        {
+            for (int j = 0; j < height; j++)
+            {
+                map[i, j] = Random.Range(0, 1f) > initialWallProb;
+                Debug.Log(map[i, j]);
+            }
+        }
+        return map;
+    }
+
+    bool[,] DoSimulationStep(bool[,] oldMap)
+    {
+        bool[,] newMap = new bool[width, height];
+        for (int i = 0; i < width; i++)
+        {
+            for (int j = 0; j < height; j++)
+            {
+                int neighborCount = GetLiveNeighborCount(oldMap, i, j);
+                if (oldMap[i, j])
+                {
+                    if(neighborCount < deathLimit)
+                    {
+                        newMap[i, j] = false;
+                    }
+                    else
+                    {
+                        newMap[i, j] = true;
+                    }
+                }
+                else
+                {
+                    if(neighborCount > birthLimit)
+                    {
+                        newMap[i, j] = true;
+                    }
+                    else
+                    {
+                        newMap[i, j] = false;
+                    }
+                }
+            }
+        }
+        return newMap;
+    }
+
+    int GetLiveNeighborCount(bool[,] map, int x, int y)
+    {
+        int count = 0;
+        for (int i = -1; i <= 1; i++)
+        {
+            for (int j = -1; j <= 1; j++)
+            {
+                int neighborX = x + i;
+                int neighborY = y + j;
+                if (i == 0 && j == 0) { }
+                else if (neighborX < 0 || neighborY < 0 
+                    || neighborX >= width || neighborY >= height)
+                {
+                    count += 1;
+                }
+                else if (map[neighborX, neighborY])
+                {
+                    count += 1;
+                }
+            }
+        }
+        return count;
     }
 
     Tile GetFarthestTileFromHallwayEntrances(Room room)
@@ -365,8 +476,7 @@ public class MapManager : MonoBehaviour {
         {
             for (int j = 0; j < room.dimensions.y -1; j++)
             {
-                Tile tile =
-                    new Tile(new Coord(room.origin.x + i, room.origin.y + j), false, true);
+                Tile tile = new Tile(new Coord(room.origin.x + i, room.origin.y + j), false);
                 tile.SetSprite(roomSprite, Quaternion.identity);
                 room.tiles.Add(tile);
                 roomTiles.Add(tile);
@@ -380,7 +490,7 @@ public class MapManager : MonoBehaviour {
         List<Tile> hallwayTiles = new List<Tile>();
         for (int i = 0; i < hallwayCoords.Count; i++)
         {
-            hallwayTiles.Add(new Tile(hallwayCoords[i], false, false));
+            hallwayTiles.Add(new Tile(hallwayCoords[i], false));
         }
         return hallwayTiles;
     }
@@ -558,14 +668,6 @@ public class MapManager : MonoBehaviour {
         return new IntVector2(x, y);
     }
 
-    void PlaceKey(Tile tile)
-    {
-        tile.containedKey = 
-            Instantiate(Services.Prefabs.Key, Services.Main.transform)
-            .GetComponent<DoorKey>();
-        tile.containedKey.transform.position = tile.controller.transform.position;
-    }
-
     void SetSprite(Tile tile)
     {
         Sprite sprite;
@@ -650,6 +752,28 @@ public class MapManager : MonoBehaviour {
         tile.neighbors = neighbors;
     }
 
+    void FindNeighborsInGrid(Tile tile)
+    {
+        Coord[] directions = new Coord[4]
+        {
+            new Coord(0,1),
+            new Coord(0,-1),
+            new Coord(1,0),
+            new Coord(-1,0)
+        };
+        List<Tile> neighbors = new List<Tile>();
+
+        for (int i = 0; i < directions.Length; i++)
+        {
+            Coord neighborCoord = tile.coord.Add(directions[i]);
+            if (neighborCoord.x >= 0 && neighborCoord.x < width &&
+                neighborCoord.y >= 0 && neighborCoord.y < height) {
+                neighbors.Add(mapGrid[neighborCoord.x, neighborCoord.y]);
+            }
+        }
+        tile.neighbors = neighbors;
+    }
+
     void GenerateChests(int levelNum)
     {
         int numChests = Mathf.CeilToInt(rooms.Count * chestsPerRoom);
@@ -683,7 +807,7 @@ public class MapManager : MonoBehaviour {
             roomsWithoutChests.Remove(randomRoomWithoutChest);
             Tile chestTile = randomRoomWithoutChest.tiles
                 [Random.Range(0, randomRoomWithoutChest.tiles.Count)];
-            while(chestTile == keyTile || chestTile == playerSpawnTile || chestTile.isExit)
+            while(chestTile == exitTile || chestTile == playerSpawnTile || chestTile.isExit)
             {
                 chestTile = randomRoomWithoutChest.tiles
                 [Random.Range(0, randomRoomWithoutChest.tiles.Count)];
@@ -713,7 +837,7 @@ public class MapManager : MonoBehaviour {
             roomsWithoutChests.Remove(randomRoomWithoutFountain);
             Tile fountainTile = randomRoomWithoutFountain.tiles
                 [Random.Range(0, randomRoomWithoutFountain.tiles.Count)];
-            while (fountainTile == keyTile || fountainTile == playerSpawnTile || fountainTile.isExit
+            while (fountainTile == exitTile || fountainTile == playerSpawnTile || fountainTile.isExit
                 || fountainTile.containedChest != null)
             {
                 fountainTile = randomRoomWithoutFountain.tiles

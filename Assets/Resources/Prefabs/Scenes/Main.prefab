@@ -3365,6 +3365,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ca0d85cdf5204904cb7404a378c70c85, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  baseLevelDimension: 8
+  heightToWidthRatio: 1.5
+  dimensionIncreasePerLevel: 2
+  initialWallProb: 0.4
+  birthLimit: 5
+  deathLimit: 2
+  numSteps: 5
   minRoomDimension: 5
   maxRoomDimension: 8
   levelOneRoomDimension: 10
