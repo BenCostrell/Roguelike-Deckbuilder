@@ -29,9 +29,7 @@ public abstract class TileTargetedCard : Card
 
     public override void OnSelect()
     {
-        List<Tile> tilesInRange =
-            AStarSearch.FindAllAvailableGoals(Services.GameManager.player.currentTile,
-            range, true);
+        List<Tile> tilesInRange = TilesInRange();
         foreach (Tile tile in tilesInRange)
         {
             tile.controller.ShowAsTargetable(IsTargetValid(tile));
@@ -40,13 +38,17 @@ public abstract class TileTargetedCard : Card
 
     public override void OnUnselect()
     {
-        List<Tile> tilesInRange =
-            AStarSearch.FindAllAvailableGoals(Services.GameManager.player.currentTile,
-            range, true);
+        List<Tile> tilesInRange = TilesInRange();
         foreach (Tile tile in tilesInRange)
         {
             tile.controller.ShowAsUntargetable();
         }
         player.ShowAvailableMoves();
+    }
+
+    protected List<Tile> TilesInRange()
+    {
+        return AStarSearch.FindAllAvailableGoals(Services.GameManager.player.currentTile,
+            range, true);
     }
 }

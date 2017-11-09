@@ -29,6 +29,10 @@ public class MapObjectConfig : ScriptableObject
                 return new SpikeTrap();
             case MapObject.ObjectType.Fountain:
                 return new Fountain();
+            case MapObject.ObjectType.LightBrush:
+                return new LightBrush();
+            case MapObject.ObjectType.HeavyBrush:
+                return new HeavyBrush();
             default:
                 return null;
         }

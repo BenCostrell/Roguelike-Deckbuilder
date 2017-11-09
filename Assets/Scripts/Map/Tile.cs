@@ -60,7 +60,14 @@ public class Tile
 
     public bool IsImpassable(bool monsterMovement)
     {
-        if ((containedMonster != null && !monsterMovement) || monsterMovementTarget || this == player.currentTile)
+        return IsImpassable(monsterMovement, false);
+    }
+
+    public bool IsImpassable(bool monsterMovement, bool ignoreDamageableObjects)
+    {
+        if ((containedMonster != null && !monsterMovement) || monsterMovementTarget ||
+            this == player.currentTile ||
+            (containedMapObject != null && containedMapObject.IsImpassable(ignoreDamageableObjects)))
             return true;
         return false;
     }

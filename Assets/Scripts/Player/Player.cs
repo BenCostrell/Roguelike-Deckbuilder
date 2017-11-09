@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Player {
+public class Player : IDamageable {
 
     public PlayerController controller { get; private set; }
     public Tile currentTile { get; private set; }
@@ -270,7 +270,7 @@ public class Player {
 
     public void HideAvailableMoves()
     {
-        foreach(Tile tile in Services.MapManager.mapDict.Values)
+        foreach(Tile tile in Services.MapManager.mapGrid)
         {
             tile.controller.ShowAsUnavailable();
         }
@@ -456,6 +456,11 @@ public class Player {
                 }
             }
         }
+    }
+
+    public Tile GetCurrentTile()
+    {
+        return currentTile;
     }
 
     public bool TakeDamage(int incomingDamage)

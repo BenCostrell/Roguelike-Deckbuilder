@@ -5,6 +5,7 @@ using UnityEngine.UI;
 
 public class UIManager : MonoBehaviour {
 
+    public GameObject canvas;
     [SerializeField]
     private Sprite cardBackSprite;
     [SerializeField]

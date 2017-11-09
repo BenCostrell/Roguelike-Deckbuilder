@@ -3365,13 +3365,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ca0d85cdf5204904cb7404a378c70c85, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  baseLevelDimension: 8
-  heightToWidthRatio: 1.5
+  baseLevelDimension: 30
+  heightToWidthRatio: 1
   dimensionIncreasePerLevel: 2
-  initialWallProb: 0.4
-  birthLimit: 5
-  deathLimit: 2
-  numSteps: 5
+  initialHeavyProb: 0.35
+  spawnThresh: 2
+  growthThresh: 5
+  matureThresh: 7
+  friendThresh: 2
+  phaseOneStepCount: 10
+  minFillPct: 0
   minRoomDimension: 5
   maxRoomDimension: 8
   levelOneRoomDimension: 10
@@ -3383,7 +3386,8 @@ MonoBehaviour:
   proportionOfEdgesToReAdd: 0.2
   maxTriesProcGen: 200
   chestsOnBoard: []
-  roomSprite: {fileID: 21300000, guid: 55464003870e2984a8ec3c2e0ca07576, type: 3}
+  roomSprite: {fileID: 21300000, guid: e5580b8d5c1eaae4caab4e4661ae9810, type: 3}
+  brushSprite: {fileID: 21300000, guid: bf81b4d129c30264ab9dafe3667d1218, type: 3}
   botLeftCornerSprite: {fileID: 21300248, guid: 3defd70a9f557674ab6dd3a4e7f36461,
     type: 3}
   botRightCornerSprite: {fileID: 21300252, guid: 3defd70a9f557674ab6dd3a4e7f36461,
@@ -3408,6 +3412,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: def66110e8b22a840bea62a6a45392c7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  canvas: {fileID: 1657863233885754}
   cardBackSprite: {fileID: 21300000, guid: 8d2038cf28a1754418b19318813ac25b, type: 3}
   pileCardSpacing: {x: 1, y: 1}
   deckCounter: {fileID: 114152747224111828}

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public abstract class Monster {
+public abstract class Monster : IDamageable {
     public enum MonsterType
     {
         Goblin,
@@ -58,12 +58,22 @@ public abstract class Monster {
         movementSpeed = info.MovementSpeed;
     }
 
-    public void TakeDamage(int damage)
+    public bool TakeDamage(int incomingDamage)
     {
-        currentHealth = Mathf.Max(0, currentHealth - damage);
+        currentHealth = Mathf.Max(0, currentHealth - incomingDamage);
         controller.UpdateHealthUI();
         Services.UIManager.ShowUnitUI(this);
-        if (currentHealth == 0) Die();
+        if (currentHealth == 0)
+        {
+            Die();
+            return true;
+        }
+        return false;
+    }
+
+    public Tile GetCurrentTile()
+    {
+        return currentTile;
     }
 
     void Die()

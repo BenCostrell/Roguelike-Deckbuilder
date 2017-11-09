@@ -9,9 +9,9 @@ public class HitAndRun : AttackCard
         InitValues();
     }
 
-    protected override void OnHit(Monster monster)
+    protected override void OnHit(IDamageable target)
     {
-        base.OnHit(monster);
+        base.OnHit(target);
         player.movesAvailable += 1;
     }
 }

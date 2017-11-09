@@ -13,16 +13,23 @@ public class MapManager : MonoBehaviour {
     [SerializeField]
     private int dimensionIncreasePerLevel;
     [SerializeField]
-    private float initialWallProb;
+    private float initialHeavyProb;
     [SerializeField]
-    private int birthLimit;
+    private int spawnThresh;
     [SerializeField]
-    private int deathLimit;
+    private int growthThresh;
     [SerializeField]
-    private int numSteps;
+    private int matureThresh;
+    [SerializeField]
+    private int friendThresh;
+    [SerializeField]
+    private int phaseOneStepCount;
+    [SerializeField]
+    private float minFillPct;
     private int width;
     private int height;
     public Tile[,] mapGrid { get; private set; }
+    public enum SpaceType { Empty, LightGrowth, HeavyGrowth }
 
     [SerializeField]
     private int minRoomDimension;
@@ -49,6 +56,8 @@ public class MapManager : MonoBehaviour {
     public List<Chest> chestsOnBoard;
     [SerializeField]
     private Sprite roomSprite;
+    [SerializeField]
+    private Sprite brushSprite;
     [SerializeField]
     private Sprite botLeftCornerSprite, botRightCornerSprite;
     [SerializeField]
@@ -172,20 +181,35 @@ public class MapManager : MonoBehaviour {
 
     public void GenerateLevelTest(int levelNum)
     {
-        width = baseLevelDimension + (levelNum * dimensionIncreasePerLevel);
-        height = Mathf.RoundToInt(width * heightToWidthRatio);
-        mapGrid = new Tile[width, height];
-        bool[,] boolMap = InitializeMap();
-        for (int i = 0; i < numSteps; i++)
-        {
-            boolMap = DoSimulationStep(boolMap);
-        }
+        //Services.UIManager.canvas.SetActive(false);
+        SpaceType[,] spaceTypeMap = GenerateSpaceTypeMap(levelNum);
+
+        List<Tile> openTiles = new List<Tile>();
         for (int i = 0; i < width; i++)
         {
             for (int j = 0; j < height; j++)
             {
                 mapGrid[i, j] = new Tile(new Coord(i, j), false);
-                if (boolMap[i, j]) mapGrid[i, j].SetSprite(roomSprite, Quaternion.identity);
+                switch (spaceTypeMap[i,j])
+                {
+                    case SpaceType.Empty:
+                        openTiles.Add(mapGrid[i, j]);
+                        break;
+                    case SpaceType.LightGrowth:
+                        LightBrush lightBrush = Services.MapObjectConfig
+                            .CreateMapObjectOfType(MapObject.ObjectType.LightBrush) 
+                            as LightBrush;
+                        lightBrush.PlaceOnTile(mapGrid[i, j]);
+                        break;
+                    case SpaceType.HeavyGrowth:
+                        HeavyBrush heavyBrush = Services.MapObjectConfig
+                            .CreateMapObjectOfType(MapObject.ObjectType.HeavyBrush)
+                            as HeavyBrush;
+                        heavyBrush.PlaceOnTile(mapGrid[i, j]);
+                        break;
+                    default:
+                        break;
+                }
             }
         }
         for (int i = 0; i < width; i++)
@@ -196,54 +220,87 @@ public class MapManager : MonoBehaviour {
             }
         }
 
-        playerSpawnTile = mapGrid[0, 0];
-        exitTile = mapGrid[width - 1, height - 1];
+        Tile referenceTile = openTiles[0];
+
+        playerSpawnTile = GetFarthestTile(referenceTile, openTiles);
+        openTiles.Remove(playerSpawnTile);
+        exitTile = GetFarthestTile(playerSpawnTile, openTiles);
         exitTile.isExit = true;
         exitTile.SetSprite(exitDoorSprite, Quaternion.identity);
     }
 
-    bool[,] InitializeMap()
+    SpaceType[,] GenerateSpaceTypeMap(int levelNum)
     {
-        bool[,] map = new bool[width, height];
+        width = baseLevelDimension + (levelNum * dimensionIncreasePerLevel);
+        height = Mathf.RoundToInt(width * heightToWidthRatio);
+        mapGrid = new Tile[width, height];
+        SpaceType[,] spaceTypeMap = InitializeMap();
+        for (int i = 0; i < phaseOneStepCount; i++)
+        {
+            spaceTypeMap = DoSimulationStep(spaceTypeMap, spawnThresh, growthThresh,
+                matureThresh, friendThresh);
+        }
+        spaceTypeMap = FloodFillCheck(spaceTypeMap);
+        return spaceTypeMap;
+    }
+
+    SpaceType[,] InitializeMap()
+    {
+        SpaceType[,] map = new SpaceType[width, height];
         for (int i = 0; i < width; i++)
         {
             for (int j = 0; j < height; j++)
             {
-                map[i, j] = Random.Range(0, 1f) > initialWallProb;
-                Debug.Log(map[i, j]);
+                if (Random.Range(0, 1f) < initialHeavyProb)
+                {
+                    map[i, j] = SpaceType.LightGrowth;
+                }
+                else map[i, j] = SpaceType.Empty;
             }
         }
         return map;
     }
 
-    bool[,] DoSimulationStep(bool[,] oldMap)
+    SpaceType[,] DoSimulationStep(SpaceType[,] oldMap, int spawnT, int growthT, 
+        int matureT, int friendT)
     {
-        bool[,] newMap = new bool[width, height];
+        SpaceType[,] newMap = new SpaceType[width, height];
         for (int i = 0; i < width; i++)
         {
             for (int j = 0; j < height; j++)
             {
-                int neighborCount = GetLiveNeighborCount(oldMap, i, j);
-                if (oldMap[i, j])
-                {
-                    if(neighborCount < deathLimit)
-                    {
-                        newMap[i, j] = false;
-                    }
-                    else
-                    {
-                        newMap[i, j] = true;
-                    }
-                }
+                if (i == 0 || j == 0 || i == width - 1 || j == height - 1)
+                    newMap[i, j] = SpaceType.HeavyGrowth;
                 else
                 {
-                    if(neighborCount > birthLimit)
+                    int dist1HeavyCount = 
+                        GetNeighborCount(SpaceType.HeavyGrowth, oldMap, i, j, 1);
+                    int dist1LightCount = 
+                        GetNeighborCount(SpaceType.LightGrowth, oldMap, i, j, 1);
+                    int dist2HeavyCount =
+                        GetNeighborCount(SpaceType.HeavyGrowth, oldMap, i, j, 2);
+                    int dist2LightCount =
+                        GetNeighborCount(SpaceType.LightGrowth, oldMap, i, j, 2);
+                    if(oldMap[i,j] == SpaceType.Empty)
                     {
-                        newMap[i, j] = true;
+                        if (dist1LightCount >= growthT || dist2LightCount <= spawnT)
+                            newMap[i, j] = SpaceType.LightGrowth;
+                        else newMap[i, j] = SpaceType.Empty;
                     }
-                    else
+                    else if (oldMap[i,j] == SpaceType.LightGrowth)
                     {
-                        newMap[i, j] = false;
+                        if (dist1LightCount + dist1HeavyCount < friendT)
+                            newMap[i, j] = SpaceType.Empty;
+                        else if (dist1LightCount + dist1HeavyCount >= matureT)
+                            newMap[i, j] = SpaceType.HeavyGrowth;
+                        else newMap[i, j] = SpaceType.LightGrowth;
+                    }
+                    else if (oldMap[i,j] == SpaceType.HeavyGrowth)
+                    {
+                        if (dist1HeavyCount  + dist1LightCount < friendT)
+                            newMap[i, j] = SpaceType.Empty;
+                        else
+                            newMap[i, j] = SpaceType.HeavyGrowth;
                     }
                 }
             }
@@ -251,22 +308,19 @@ public class MapManager : MonoBehaviour {
         return newMap;
     }
 
-    int GetLiveNeighborCount(bool[,] map, int x, int y)
+    int GetNeighborCount(SpaceType type, SpaceType[,] map, int x, int y, int dist)
     {
         int count = 0;
-        for (int i = -1; i <= 1; i++)
+        for (int i = -dist; i <= dist; i++)
         {
-            for (int j = -1; j <= 1; j++)
+            for (int j = -dist; j <= dist; j++)
             {
                 int neighborX = x + i;
                 int neighborY = y + j;
-                if (i == 0 && j == 0) { }
-                else if (neighborX < 0 || neighborY < 0 
-                    || neighborX >= width || neighborY >= height)
-                {
-                    count += 1;
-                }
-                else if (map[neighborX, neighborY])
+                if ((i == 0 && j == 0)) { }
+                else if (neighborX < 0 || neighborY < 0
+                    || neighborX >= width || neighborY >= height) { }
+                else if (map[neighborX, neighborY] == type)
                 {
                     count += 1;
                 }
@@ -297,6 +351,23 @@ public class MapManager : MonoBehaviour {
             }
         }
         return furthestTileFromEntrances;
+    }
+
+    Tile GetFarthestTile(Tile tile, List<Tile> openTiles)
+    {
+        float longestDistance = 0f;
+        Tile farthestTile = tile;
+        foreach(Tile otherTile in openTiles)
+        {
+            float dist = 
+                AStarSearch.ShortestPath(tile, otherTile, false, false, false, true).Count;
+            if(dist > longestDistance)
+            {
+                farthestTile = otherTile;
+                longestDistance = dist;
+            }
+        }
+        return farthestTile;
     }
 
     Room GetFarthestRoom(Room room, List<Edge> graph, List<Room> otherRooms)
@@ -766,12 +837,71 @@ public class MapManager : MonoBehaviour {
         for (int i = 0; i < directions.Length; i++)
         {
             Coord neighborCoord = tile.coord.Add(directions[i]);
-            if (neighborCoord.x >= 0 && neighborCoord.x < width &&
-                neighborCoord.y >= 0 && neighborCoord.y < height) {
+            if (ContainedInMap(neighborCoord)) {
                 neighbors.Add(mapGrid[neighborCoord.x, neighborCoord.y]);
             }
         }
         tile.neighbors = neighbors;
+    }
+
+    bool ContainedInMap(Coord coord)
+    {
+        return coord.x >= 0 && coord.x < width && coord.y >= 0 && coord.y < height;
+    }
+
+    SpaceType[,] FloodFillCheck(SpaceType[,] oldMap)
+    {
+        SpaceType[,] newMap = new SpaceType[width, height];
+        List<Coord> uncheckedSpaces = new List<Coord>();
+        for (int i = 0; i < width; i++)
+        {
+            for (int j = 0; j < height; j++)
+            {
+                if (oldMap[i, j] != SpaceType.HeavyGrowth)
+                {
+                    uncheckedSpaces.Add(new Coord(i, j));
+                }
+            }
+        }
+        List<Coord> biggestRoom = new List<Coord>();
+        int biggestRoomSize = 0;
+        while (uncheckedSpaces.Count > 0) {
+            Queue<Coord> queue = new Queue<Coord>();
+            queue.Enqueue(uncheckedSpaces[0]);
+            uncheckedSpaces.RemoveAt(0);
+            List<Coord> cavernSpaces = new List<Coord>();
+            while (queue.Count > 0)
+            {
+                Coord space = queue.Dequeue();
+                cavernSpaces.Add(space);
+                Coord[] directions = Coord.Directions();
+                for (int i = 0; i < directions.Length; i++)
+                {
+                    Coord neighbor = space.Add(directions[i]);
+                    if (uncheckedSpaces.Contains(neighbor))
+                    {
+                        queue.Enqueue(neighbor);
+                        uncheckedSpaces.Remove(neighbor);
+                    }
+                }
+            }
+            Debug.Log("finished with cavern sized " + cavernSpaces.Count);
+            if(cavernSpaces.Count > biggestRoomSize)
+            {
+                biggestRoom = cavernSpaces;
+                biggestRoomSize = biggestRoom.Count;
+            }
+        }
+        for (int i = 0; i < width; i++)
+        {
+            for (int j = 0; j < height; j++)
+            {
+                if (!biggestRoom.Contains(new Coord(i, j)))
+                    newMap[i, j] = SpaceType.HeavyGrowth;
+                else newMap[i, j] = oldMap[i, j];
+            }
+        }
+        return newMap;
     }
 
     void GenerateChests(int levelNum)

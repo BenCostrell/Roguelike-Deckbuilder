@@ -66,7 +66,14 @@ public static class AStarSearch
         return ShortestPath(start, goal, raw, avoidTraps, false);
     }
 
-    public static List<Tile> ShortestPath(Tile start, Tile goal, bool raw, bool avoidTraps, bool monsterMovement)
+    public static List<Tile> ShortestPath(Tile start, Tile goal, bool raw, bool avoidTraps, 
+        bool monsterMovement)
+    {
+        return ShortestPath(start, goal, raw, avoidTraps, monsterMovement, false);
+    }
+
+    public static List<Tile> ShortestPath(Tile start, Tile goal, bool raw, bool avoidTraps,
+        bool monsterMovement, bool ignoreDamageableObjects)
     {
         List<Tile> path = new List<Tile>();
         Dictionary<Tile, Tile> cameFrom = new Dictionary<Tile, Tile>();
@@ -88,7 +95,7 @@ public static class AStarSearch
             if (current == goal) break;
             foreach (Tile next in current.neighbors)
             {
-                if ((!next.IsImpassable(monsterMovement) && !(next.containedMapObject != null &&
+                if ((!next.IsImpassable(monsterMovement, ignoreDamageableObjects) && !(next.containedMapObject != null &&
                     next.containedMapObject is Trap && avoidTraps && next != goal)) || raw)
                 {
                     float newCost;
@@ -132,12 +139,21 @@ public static class AStarSearch
         return FindAllAvailableGoals(start, movesAvailable, raw, false);
     }
 
-    public static List<Tile> FindAllAvailableGoals(Tile start, int movesAvailable, bool raw, bool avoidTraps)
+    public static List<Tile> FindAllAvailableGoals(Tile start, int movesAvailable, bool raw, 
+        bool avoidTraps)
     {
         return FindAllAvailableGoals(start, movesAvailable, raw, avoidTraps, false);
     }
 
-    public static List<Tile> FindAllAvailableGoals(Tile start, int movesAvailable, bool raw, bool avoidTraps, bool monsterMovement)
+    public static List<Tile> FindAllAvailableGoals(Tile start, int movesAvailable, bool raw, 
+        bool avoidTraps, bool monsterMovement)
+    {
+        return FindAllAvailableGoals(start, movesAvailable, raw, avoidTraps, 
+            monsterMovement, false);
+    }
+
+    public static List<Tile> FindAllAvailableGoals(Tile start, int movesAvailable, bool raw, 
+        bool avoidTraps, bool monsterMovement, bool ignoreDamageableObjects)
     {
         List<Tile> availableGoals = new List<Tile>();
         if (movesAvailable == 0) return availableGoals;
@@ -160,7 +176,7 @@ public static class AStarSearch
                 {
                     foreach (Tile next in current.neighbors)
                     {
-                        if (!next.IsImpassable(monsterMovement) || raw)
+                        if (!next.IsImpassable(monsterMovement, ignoreDamageableObjects) || raw)
                         {
                             int newCost;
                             if (raw)
@@ -184,6 +200,7 @@ public static class AStarSearch
         }
         return availableGoals;
     }
+
 }
 
 public class PriorityQueue<T>

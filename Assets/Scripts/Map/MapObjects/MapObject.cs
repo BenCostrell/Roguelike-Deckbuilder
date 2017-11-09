@@ -6,7 +6,9 @@ public abstract class MapObject
     public enum ObjectType
     {
         SpikeTrap,
-        Fountain
+        Fountain,
+        LightBrush,
+        HeavyBrush
     }
     protected ObjectType objectType;
     protected MapObjectInfo info;
@@ -50,5 +52,15 @@ public abstract class MapObject
         currentTile.containedMapObject = null;
         currentTile = null;
         GameObject.Destroy(physicalObject);
+    }
+
+    public virtual bool IsImpassable(bool ignoreDamageableObjects)
+    {
+        return false;
+    }
+
+    public virtual int GetEstimatedMovementCost()
+    {
+        return 0;
     }
 }

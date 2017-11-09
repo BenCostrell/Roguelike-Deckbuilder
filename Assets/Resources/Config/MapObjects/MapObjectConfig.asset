@@ -14,3 +14,5 @@ MonoBehaviour:
   mapObjects:
   - {fileID: 11400000, guid: 422e188d703208c4da757890c9b144b6, type: 2}
   - {fileID: 11400000, guid: 96cf646cb49369b479a0ade31bef3808, type: 2}
+  - {fileID: 11400000, guid: 49bb9f37876036c459ee849edb1a7ea5, type: 2}
+  - {fileID: 11400000, guid: 24c4caccbd06d054580f9e2d2e6cd1b8, type: 2}

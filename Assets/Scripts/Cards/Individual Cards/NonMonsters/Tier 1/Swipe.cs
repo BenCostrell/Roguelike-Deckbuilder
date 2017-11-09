@@ -10,25 +10,29 @@ public class Swipe : AttackCard
         InitValues();
     }
 
-    List<Monster> FindAdjacentMonsters(Monster centerMonster)
+    List<IDamageable> FindAdjacentTargets(IDamageable centerTarget)
     {
-        List<Monster> adjMonsters = new List<Monster>();
-        Tile monsterTile = centerMonster.currentTile;
-        for (int i = 0; i < monsterTile.neighbors.Count; i++)
+        List<IDamageable> adjTargets = new List<IDamageable>();
+        Tile targetTile = centerTarget.GetCurrentTile();
+        for (int i = 0; i < targetTile.neighbors.Count; i++)
         {
-            if (monsterTile.neighbors[i].containedMonster != null)
-                adjMonsters.Add(monsterTile.neighbors[i].containedMonster);
+            Tile neighbor = targetTile.neighbors[i];
+            if (neighbor.containedMonster != null)
+                adjTargets.Add(neighbor.containedMonster);
+            else if (neighbor.containedMapObject != null
+                && neighbor.containedMapObject is DamageableObject)
+                adjTargets.Add(neighbor.containedMapObject as DamageableObject);
         }
-        return adjMonsters;
+        return adjTargets;
     }
 
-    protected override void OnHit(Monster monster)
+    protected override void OnHit(IDamageable target)
     {
-        List<Monster> adjMonsters = FindAdjacentMonsters(monster);
-        for (int i = 0; i < adjMonsters.Count; i++)
+        List<IDamageable> adjTargets = FindAdjacentTargets(target);
+        for (int i = 0; i < adjTargets.Count; i++)
         {
-            adjMonsters[i].TakeDamage(damage);
+            adjTargets[i].TakeDamage(damage);
         }
-        base.OnHit(monster);
+        base.OnHit(target);
     }
 }
