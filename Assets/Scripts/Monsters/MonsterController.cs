@@ -33,7 +33,4 @@ public class MonsterController : MonoBehaviour
     {
         healthUI.text = monster.currentHealth + "/" + monster.maxHealth;
     }
-
-
-
 }

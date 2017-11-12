@@ -9,8 +9,7 @@ public class Tile
     public List<Tile> neighbors;
     public int movementCost { get; private set; }
     public bool hovered { get; private set; }
-    public Monster containedMonster;
-    //public Card containedCard;
+    public Monster containedMonster { get; private set; }
     public Chest containedChest;
     public DoorKey containedKey;
     public MapObject containedMapObject;
@@ -70,5 +69,15 @@ public class Tile
             (containedMapObject != null && containedMapObject.IsImpassable(ignoreDamageableObjects)))
             return true;
         return false;
+    }
+
+    public void PlaceMonsterOnTile(Monster monster)
+    {
+        containedMonster = monster;
+    }
+
+    public void RemoveMonsterFromTile()
+    {
+        containedMonster = null;
     }
 }

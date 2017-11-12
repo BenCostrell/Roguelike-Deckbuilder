@@ -17,4 +17,5 @@ MonoBehaviour:
   - {fileID: 21300000, guid: dbea34209a8cf7941806fbc7eeb5ebfb, type: 3}
   - {fileID: 21300000, guid: e94979550d2fb7142bfcf74ed6747ff4, type: 3}
   - {fileID: 21300000, guid: 5fe3547a85c81834da79f4f668407543, type: 3}
+  description: Step here to heal or gain max health.
   onStepAudio: {fileID: 0}

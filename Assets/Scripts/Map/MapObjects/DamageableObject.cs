@@ -3,8 +3,8 @@ using System.Collections;
 
 public class DamageableObject : MapObject, IDamageable
 {
-    protected int currentHealth;
-    protected const int startingHealth = 1;
+    public int currentHealth { get; protected set; }
+    public readonly int startingHealth = 1;
 
     protected override void InitValues()
     {
@@ -16,7 +16,7 @@ public class DamageableObject : MapObject, IDamageable
     {
         currentHealth = Mathf.Max(0, currentHealth - incomingDamage);
         //controller.UpdateHealthUI();
-        //Services.UIManager.ShowUnitUI(this);
+        Services.UIManager.ShowMapObjUI(this);
         if (currentHealth == 0)
         {
             RemoveThis();

@@ -14,5 +14,6 @@ MonoBehaviour:
   objectType: 3
   name_: Heavy Brush
   sprites:
-  - {fileID: 21300000, guid: 70eb008d766759b4c8b07148d5daf1f3, type: 3}
+  - {fileID: 21300000, guid: 6a45dd1866975494fad2c2e7c80ed179, type: 3}
+  description: Impassable terrain.
   onStepAudio: {fileID: 0}

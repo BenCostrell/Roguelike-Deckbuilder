@@ -4,10 +4,12 @@ using System.Collections;
 public class ResolveHit : Task
 {
     private Monster monster;
+    private IDamageable target;
 
-    public ResolveHit(Monster monster_)
+    public ResolveHit(Monster monster_, IDamageable target_)
     {
         monster = monster_;
+        target = target_;
     }
 
     protected override void Init()
@@ -17,7 +19,7 @@ public class ResolveHit : Task
             SetStatus(TaskStatus.Success);
             return;
         }
-        if (monster.OnAttackHit()) SetStatus(TaskStatus.Aborted);
+        if (monster.OnAttackHit(target)) SetStatus(TaskStatus.Aborted);
         else SetStatus(TaskStatus.Success);
     }
 }

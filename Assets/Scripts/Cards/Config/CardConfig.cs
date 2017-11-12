@@ -189,6 +189,8 @@ public class CardConfig : ScriptableObject
                 return new Scream();
             case Card.CardType.Advance:
                 return new Advance();
+            case Card.CardType.GrowTheRanks:
+                return new GrowtheRanks();
             default:
                 return null;
         }

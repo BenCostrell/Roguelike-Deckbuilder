@@ -33,6 +33,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: b7cad2d23af6f1b40bb129b527aa7c3b, type: 2}
   - {fileID: 11400000, guid: 0126db0b6e64cff478e2071539c96d6f, type: 2}
   - {fileID: 11400000, guid: d3f5ef878a0197443887551bf46191e5, type: 2}
+  - {fileID: 11400000, guid: 9154c4c5c1a1dc54cace13d7728cc48b, type: 2}
   startingDeck:
   - {fileID: 11400000, guid: bd31b52cd16140d4ca5756d38c69abfe, type: 2}
   - {fileID: 11400000, guid: bd31b52cd16140d4ca5756d38c69abfe, type: 2}

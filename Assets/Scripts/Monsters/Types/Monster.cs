@@ -42,10 +42,12 @@ public abstract class Monster : IDamageable {
 
     public void PlaceOnTile(Tile tile)
     {
-        if (currentTile != null) currentTile.containedMonster = null;
+        if (currentTile != null) currentTile.RemoveMonsterFromTile();
         currentTile = tile;
-        tile.containedMonster = this;
+        tile.PlaceMonsterOnTile(this);
         controller.PlaceOnTile(tile);
+        Debug.Log("placing monster on tile " + tile.coord.x + ", " + tile.coord.y +
+            " at time " + Time.time);
     }
 
     protected void InitValues()
@@ -79,7 +81,7 @@ public abstract class Monster : IDamageable {
     void Die()
     {
         Services.MonsterManager.KillMonster(this);
-        currentTile.containedMonster = null;
+        currentTile.RemoveMonsterFromTile();
         currentTile = null;
         markedForDeath = true;
         player.ShowAvailableMoves();
@@ -94,6 +96,38 @@ public abstract class Monster : IDamageable {
             (targetTile != null && player.currentTile.coord.Distance(targetTile.coord) <= attackRange);
     }
 
+    public DamageableObject GetDamageableObjectWithinRange()
+    {
+        List<Tile> tilesWithinAttackRange;
+        List<Tile> possiblePathToPlayer;
+        if (targetTile != null)
+        {
+            tilesWithinAttackRange = AStarSearch.FindAllAvailableGoals(targetTile, attackRange, true);
+            possiblePathToPlayer = AStarSearch.ShortestPath(targetTile, player.currentTile, false, false, true, true);
+        }
+        else
+        {
+            tilesWithinAttackRange = AStarSearch.FindAllAvailableGoals(currentTile, attackRange, true);
+            possiblePathToPlayer = AStarSearch.ShortestPath(currentTile, player.currentTile, false, false, true, true);
+
+        }
+        DamageableObject targetObj = null;
+        int closestDistance = 100000;
+        for (int i = 0; i < tilesWithinAttackRange.Count; i++)
+        {
+            Tile tile = tilesWithinAttackRange[i];
+            int dist = tile.coord.Distance(player.currentTile.coord);
+            if (dist < closestDistance && tile.containedMapObject != null 
+                && tile.containedMapObject is DamageableObject && possiblePathToPlayer.Contains(tile))
+            {
+                targetObj = tile.containedMapObject as DamageableObject;
+                closestDistance = dist;
+
+            }
+        }
+        return targetObj;
+    }
+
     public void Refresh()
     {
         attackedThisTurn = false;
@@ -103,14 +137,22 @@ public abstract class Monster : IDamageable {
     {
         TaskTree attackTasks = new TaskTree(new AttackAnimation(controller.gameObject,
             player.controller.gameObject));
-        attackTasks.Then(new ResolveHit(this));
+        attackTasks.Then(new ResolveHit(this, player));
         attackedThisTurn = true;
         return attackTasks;
     }
 
-    public virtual bool OnAttackHit()
+    public virtual TaskTree AttackMapObj(DamageableObject obj)
     {
-        return player.TakeDamage(attackDamage);
+        TaskTree attackTasks = new TaskTree(new AttackAnimation(controller.gameObject,
+            obj.physicalObject));
+        attackTasks.Then(new ResolveHit(this, obj));
+        return attackTasks;
+    }
+
+    public virtual bool OnAttackHit(IDamageable target)
+    {
+        return target.TakeDamage(attackDamage);
     }
 
     public virtual TaskTree Move()
@@ -122,19 +164,28 @@ public abstract class Monster : IDamageable {
         availableTiles.Add(currentTile);
         Tile closestTile = currentTile;
         int closestDistance = 1000000;
-        for (int i = 0; i < availableTiles.Count; i++)
+        if (currentTile.coord.Distance(player.currentTile.coord) > attackRange)
         {
-            Tile tile = availableTiles[i];
-            List<Tile> shortestPathFromPlayer = AStarSearch.ShortestPath(
-                Services.GameManager.player.currentTile, tile, true);
-            //Debug.Log("tile at " + tile.coord.x + "," + tile.coord.y + " is "
-            //    + shortestPathFromPlayer.Count + " distance from player, compared to current closest tile at "
-            //    + closestTile.coord.x + "," + closestTile.coord.y + " at " +
-            //    closestDistance + " distance from player");
-            if (shortestPathFromPlayer.Count < closestDistance)
+            for (int i = 0; i < availableTiles.Count; i++)
             {
-                closestTile = tile;
-                closestDistance = shortestPathFromPlayer.Count;
+                Tile tile = availableTiles[i];
+                if (tile.coord.Distance(player.currentTile.coord) <= attackRange)
+                {
+                    closestTile = tile;
+                    closestDistance = tile.coord.Distance(player.currentTile.coord);
+                    break;
+                }
+                List<Tile> shortestPathFromPlayer = AStarSearch.ShortestPath(
+                    Services.GameManager.player.currentTile, tile, false, false, true, true);
+                //Debug.Log("tile at " + tile.coord.x + "," + tile.coord.y + " is "
+                //    + shortestPathFromPlayer.Count + " distance from player, compared to current closest tile at "
+                //    + closestTile.coord.x + "," + closestTile.coord.y + " at " +
+                //    closestDistance + " distance from player");
+                if (shortestPathFromPlayer.Count < closestDistance)
+                {
+                    closestTile = tile;
+                    closestDistance = shortestPathFromPlayer.Count;
+                }
             }
         }
         List<Tile> shortestPathToTarget = new List<Tile>();

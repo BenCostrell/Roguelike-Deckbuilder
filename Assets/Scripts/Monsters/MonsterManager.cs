@@ -35,16 +35,20 @@ public class MonsterManager
                 potentialSpawnPoints[i].containedMapObject != null)
                 potentialSpawnPoints.Remove(potentialSpawnPoints[i]);
         }
-        Tile spawnPoint = potentialSpawnPoints[Random.Range(0, potentialSpawnPoints.Count)];
-        if (spawnPoint != null)
+        if (potentialSpawnPoints.Count > 0)
         {
-            CreateMonster(monster, spawnPoint);
+            Tile spawnPoint = potentialSpawnPoints[Random.Range(0, potentialSpawnPoints.Count)];
+            if (spawnPoint != null)
+            {
+                CreateMonster(monster, spawnPoint);
+            }
+            else
+            {
+                monster = null;
+            }
+            return monster;
         }
-        else
-        {
-            monster = null;
-        }
-        return monster;
+        return null;
     }
 
     void CreateMonster(Monster monster, Tile tile)
@@ -106,6 +110,14 @@ public class MonsterManager
             Monster monster = monsters[i];
             if (monster.IsPlayerInRange() && !monster.attackedThisTurn)
                 attackTree.Then(monster.AttackPlayer());
+            else
+            {
+                DamageableObject obj = monster.GetDamageableObjectWithinRange();
+                if(obj != null)
+                {
+                    attackTree.Then(monster.AttackMapObj(obj));
+                }
+            }
         }
         return attackTree;
     }
@@ -119,12 +131,12 @@ public class MonsterManager
         //Debug.Log("there are " + sortedMonsters.Count + " monsters at time " + Time.time);
         for (int i = 0; i < sortedMonsters.Count; i++)
         {
-            //if (!sortedMonsters[i].IsPlayerInRange())
-            //{
+            if (!sortedMonsters[i].IsPlayerInRange())
+            {
                 moveTree.AddChild(sortedMonsters[i].Move());
                 //Debug.Log("moving " + sortedMonsters[i].GetType() + "at " + sortedMonsters[i].currentTile.coord.x
-                    //+ " " + sortedMonsters[i].currentTile.coord.y);
-            //}
+                //    + " " + sortedMonsters[i].currentTile.coord.y);
+            }
         }
         return moveTree;
     }

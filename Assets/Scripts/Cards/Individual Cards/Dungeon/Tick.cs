@@ -13,9 +13,4 @@ public class Tick : DungeonCard
     {
         return Services.Main.dungeonDeck.AlterDungeonTimerCount(1);
     }
-
-    public override Color GetCardFrameColor()
-    {
-        return Services.CardConfig.DungeonCardColor;
-    }
 }

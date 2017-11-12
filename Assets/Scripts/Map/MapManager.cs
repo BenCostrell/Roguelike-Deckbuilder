@@ -26,10 +26,24 @@ public class MapManager : MonoBehaviour {
     private int phaseOneStepCount;
     [SerializeField]
     private float minFillPct;
+    [SerializeField]
+    private int maxTriesLevelGen;
+    [SerializeField]
+    private int minMapObjDist;
+    [SerializeField]
+    private float chestsPerLevel;
+    [SerializeField]
+    private float fountainsPerLevel;
     private int width;
     private int height;
     public Tile[,] mapGrid { get; private set; }
     public enum SpaceType { Empty, LightGrowth, HeavyGrowth }
+    private List<Tile> emptyTiles;
+    private List<Tile> tilesWithSpecialStuff;
+    private List<Tile> bufferTiles;
+    [SerializeField]
+    private int bufferLength;
+
 
     [SerializeField]
     private int minRoomDimension;
@@ -56,8 +70,6 @@ public class MapManager : MonoBehaviour {
     public List<Chest> chestsOnBoard;
     [SerializeField]
     private Sprite roomSprite;
-    [SerializeField]
-    private Sprite brushSprite;
     [SerializeField]
     private Sprite botLeftCornerSprite, botRightCornerSprite;
     [SerializeField]
@@ -176,13 +188,26 @@ public class MapManager : MonoBehaviour {
         exitTile.SetSprite(exitDoorSprite, Quaternion.identity);
         #endregion
         GenerateChests(levelNum);
-        GenerateFountains();
+        GenerateFountains(levelNum);
     }
 
     public void GenerateLevelTest(int levelNum)
     {
         //Services.UIManager.canvas.SetActive(false);
-        SpaceType[,] spaceTypeMap = GenerateSpaceTypeMap(levelNum);
+        SpaceType[,] spaceTypeMap = new SpaceType[width, height];
+        for (int i = 0; i < maxTriesLevelGen; i++)
+        {
+            spaceTypeMap = GenerateSpaceTypeMap(levelNum);
+            SpaceType[,] floodFilledMap = FloodFillCheck(spaceTypeMap,
+                i == maxTriesLevelGen - 1);
+            if (floodFilledMap != null)
+            {
+                spaceTypeMap = floodFilledMap;
+                Debug.Log("num map tries: " + (i + 1));
+                break;
+            }
+        }
+
 
         List<Tile> openTiles = new List<Tile>();
         for (int i = 0; i < width; i++)
@@ -227,6 +252,28 @@ public class MapManager : MonoBehaviour {
         exitTile = GetFarthestTile(playerSpawnTile, openTiles);
         exitTile.isExit = true;
         exitTile.SetSprite(exitDoorSprite, Quaternion.identity);
+        openTiles.Remove(exitTile);
+        emptyTiles = openTiles;
+        tilesWithSpecialStuff = new List<Tile>() { playerSpawnTile, exitTile };
+        GenerateChests(levelNum);
+        GenerateFountains(levelNum);
+
+        bufferTiles = new List<Tile>();
+        for (int i = -bufferLength; i < width + bufferLength; i++)
+        {
+            for (int j = -bufferLength; j < height + bufferLength; j++)
+            {
+                if(i < 0 || i >= width || j < 0 || j >= height)
+                {
+                    Tile bufferTile = new Tile(new Coord(i, j), false);
+                    HeavyBrush heavyBrush = Services.MapObjectConfig
+                            .CreateMapObjectOfType(MapObject.ObjectType.HeavyBrush)
+                            as HeavyBrush;
+                    heavyBrush.PlaceOnTile(bufferTile);
+                    bufferTiles.Add(bufferTile);
+                }
+            }
+        }
     }
 
     SpaceType[,] GenerateSpaceTypeMap(int levelNum)
@@ -240,7 +287,6 @@ public class MapManager : MonoBehaviour {
             spaceTypeMap = DoSimulationStep(spaceTypeMap, spawnThresh, growthThresh,
                 matureThresh, friendThresh);
         }
-        spaceTypeMap = FloodFillCheck(spaceTypeMap);
         return spaceTypeMap;
     }
 
@@ -269,10 +315,10 @@ public class MapManager : MonoBehaviour {
         {
             for (int j = 0; j < height; j++)
             {
-                if (i == 0 || j == 0 || i == width - 1 || j == height - 1)
-                    newMap[i, j] = SpaceType.HeavyGrowth;
-                else
-                {
+                //if (i == 0 || j == 0 || i == width - 1 || j == height - 1)
+                //    newMap[i, j] = SpaceType.HeavyGrowth;
+                //else
+                //{
                     int dist1HeavyCount = 
                         GetNeighborCount(SpaceType.HeavyGrowth, oldMap, i, j, 1);
                     int dist1LightCount = 
@@ -302,7 +348,7 @@ public class MapManager : MonoBehaviour {
                         else
                             newMap[i, j] = SpaceType.HeavyGrowth;
                     }
-                }
+                //}
             }
         }
         return newMap;
@@ -849,7 +895,7 @@ public class MapManager : MonoBehaviour {
         return coord.x >= 0 && coord.x < width && coord.y >= 0 && coord.y < height;
     }
 
-    SpaceType[,] FloodFillCheck(SpaceType[,] oldMap)
+    SpaceType[,] FloodFillCheck(SpaceType[,] oldMap, bool force)
     {
         SpaceType[,] newMap = new SpaceType[width, height];
         List<Coord> uncheckedSpaces = new List<Coord>();
@@ -892,6 +938,8 @@ public class MapManager : MonoBehaviour {
                 biggestRoomSize = biggestRoom.Count;
             }
         }
+        if (!force && biggestRoomSize / (width * height * heightToWidthRatio) < minFillPct)
+            return null;
         for (int i = 0; i < width; i++)
         {
             for (int j = 0; j < height; j++)
@@ -906,9 +954,10 @@ public class MapManager : MonoBehaviour {
 
     void GenerateChests(int levelNum)
     {
-        int numChests = Mathf.CeilToInt(rooms.Count * chestsPerRoom);
+        //int numChests = Mathf.CeilToInt(rooms.Count * chestsPerRoom);
+        int numChests = Mathf.CeilToInt(chestsPerLevel * levelNum);
         chestsOnBoard = new List<Chest>();
-        roomsWithoutChests = new List<Room>(rooms);
+        //roomsWithoutChests = new List<Room>(rooms);
         int highestTier = Services.CardConfig.HighestTierOfCardsAvailable(false);
         int potentialHighEnd = 1 + (levelNum / levelsPerCardTierIncrease);
         int highEndTier = Mathf.Min(potentialHighEnd, highestTier);
@@ -932,16 +981,12 @@ public class MapManager : MonoBehaviour {
     {
         for (int i = 0; i < numChests; i++)
         {
-            Room randomRoomWithoutChest = 
-                roomsWithoutChests[Random.Range(0, roomsWithoutChests.Count)];
-            roomsWithoutChests.Remove(randomRoomWithoutChest);
-            Tile chestTile = randomRoomWithoutChest.tiles
-                [Random.Range(0, randomRoomWithoutChest.tiles.Count)];
-            while(chestTile == exitTile || chestTile == playerSpawnTile || chestTile.isExit)
-            {
-                chestTile = randomRoomWithoutChest.tiles
-                [Random.Range(0, randomRoomWithoutChest.tiles.Count)];
-            }
+            //Room randomRoomWithoutChest = 
+            //    roomsWithoutChests[Random.Range(0, roomsWithoutChests.Count)];
+            //roomsWithoutChests.Remove(randomRoomWithoutChest);
+            //Tile chestTile = randomRoomWithoutChest.tiles
+            //    [Random.Range(0, randomRoomWithoutChest.tiles.Count)];
+            Tile chestTile = GetValidObjectTile();
             if (chestTile != null)
             {
                 Chest chest = Instantiate(Services.Prefabs.Chest, Services.Main.transform).
@@ -951,35 +996,63 @@ public class MapManager : MonoBehaviour {
                 chest.tier = tier;
                 chestTile.containedChest = chest;
                 chestsOnBoard.Add(chest);
+                emptyTiles.Remove(chestTile);
+                tilesWithSpecialStuff.Add(chestTile);
             }
             else break;
         }
     }
 
-    void GenerateFountains()
+    void GenerateFountains(int levelNum)
     {
-        int numFountains = Mathf.CeilToInt(fountainsPerRoom * rooms.Count);
-        List<Room> roomsWithoutFountains = new List<Room>(rooms);
+        //int numFountains = Mathf.CeilToInt(fountainsPerRoom * rooms.Count);
+        int numFountains = Mathf.CeilToInt(fountainsPerLevel * levelNum);
+        //List<Room> roomsWithoutFountains = new List<Room>(rooms);
         for (int i = 0; i < numFountains; i++)
         {
-            Room randomRoomWithoutFountain =
-                roomsWithoutFountains[Random.Range(0, roomsWithoutFountains.Count)];
-            roomsWithoutChests.Remove(randomRoomWithoutFountain);
-            Tile fountainTile = randomRoomWithoutFountain.tiles
-                [Random.Range(0, randomRoomWithoutFountain.tiles.Count)];
-            while (fountainTile == exitTile || fountainTile == playerSpawnTile || fountainTile.isExit
-                || fountainTile.containedChest != null)
-            {
-                fountainTile = randomRoomWithoutFountain.tiles
-                [Random.Range(0, randomRoomWithoutFountain.tiles.Count)];
-            }
+            //Room randomRoomWithoutFountain =
+            //    roomsWithoutFountains[Random.Range(0, roomsWithoutFountains.Count)];
+            //roomsWithoutChests.Remove(randomRoomWithoutFountain);
+            //Tile fountainTile = randomRoomWithoutFountain.tiles
+            //    [Random.Range(0, randomRoomWithoutFountain.tiles.Count)];
+            //while (fountainTile == exitTile || fountainTile == playerSpawnTile || fountainTile.isExit
+            //    || fountainTile.containedChest != null)
+            //{
+            //    fountainTile = randomRoomWithoutFountain.tiles
+            //    [Random.Range(0, randomRoomWithoutFountain.tiles.Count)];
+            //}
+            Tile fountainTile = GetValidObjectTile();
             if (fountainTile != null)
             {
                 MapObject fountain = 
                     Services.MapObjectConfig.CreateMapObjectOfType(MapObject.ObjectType.Fountain);
                 fountain.PlaceOnTile(fountainTile);
+                emptyTiles.Remove(fountainTile);
+                tilesWithSpecialStuff.Add(fountainTile);
             }
             else break;
         }
+    }
+
+    Tile GetValidObjectTile()
+    {
+        if (emptyTiles.Count == 0) return null;
+        for (int i = 0; i < maxTriesProcGen; i++)
+        {
+            Tile tile = emptyTiles[Random.Range(0, emptyTiles.Count)];
+            if (IsObjectPlacementValid(tile)) return tile;
+        }
+        return null;
+    }
+
+    bool IsObjectPlacementValid(Tile tile)
+    {
+        for (int i = 0; i < tilesWithSpecialStuff.Count; i++)
+        {
+            if (AStarSearch.ShortestPath(tile, tilesWithSpecialStuff[i],
+                false, false, false, true).Count < minMapObjDist)
+                return false;
+        }
+        return true;
     }
 }

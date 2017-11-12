@@ -13,8 +13,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cardType: 16
   name_: Nothing!
-  cardText: Nothing happens! Phew.
-  sprite: {fileID: 0}
+  cardText: Nothing happens. Phew!
+  sprite: {fileID: 21300000, guid: ac9a5b82d064f2f48ad25bd894f19974, type: 3}
   tier: -1
   isMonster: 0
   onPlayAudio: {fileID: 0}

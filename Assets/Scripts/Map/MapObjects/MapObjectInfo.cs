@@ -16,6 +16,10 @@ public class MapObjectInfo : ScriptableObject
     private Sprite[] sprites;
     public Sprite[] Sprites { get { return sprites; } }
 
+    [SerializeField][TextArea]
+    private string description;
+    public string Description { get { return description; } }
+
     [SerializeField]
     private AudioClip onStepAudio;
     public AudioClip OnStepAudio { get { return onStepAudio; } }

@@ -30,7 +30,8 @@ public abstract class Card {
         Tick,
         Swipe,
         Scream,
-        Advance
+        Advance,
+        GrowTheRanks
     }
     public int tier { get; protected set; }
     public Sprite sprite { get; protected set; }

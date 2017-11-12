@@ -11,8 +11,8 @@ public abstract class MapObject
         HeavyBrush
     }
     protected ObjectType objectType;
-    protected MapObjectInfo info;
-    protected GameObject physicalObject;
+    public MapObjectInfo info { get; protected set; }
+    public GameObject physicalObject { get; protected set; }
     protected Tile currentTile;
     protected AudioClip onStepAudio;
     protected Player player { get { return Services.GameManager.player; } }
@@ -51,6 +51,7 @@ public abstract class MapObject
     {
         currentTile.containedMapObject = null;
         currentTile = null;
+        player.ShowAvailableMoves();
         GameObject.Destroy(physicalObject);
     }
 

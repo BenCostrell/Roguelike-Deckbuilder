@@ -28,7 +28,7 @@ public class DungeonDeck
         cardsPerRound = baseCardsPerRound;
         dungeonTimerCount = 0;
         dungeonTimerThreshold = Services.MonsterConfig.DungeonTimerThreshold;
-        UpdateDungeonTimer();
+        //UpdateDungeonTimer();
     }
 
     public void Init()
@@ -97,14 +97,19 @@ public class DungeonDeck
         return discardTasks;
     }
 
-    void UpdateDungeonTimer()
-    {
-        Services.UIManager.UpdateDungeonTimer((float)dungeonTimerCount / dungeonTimerThreshold);
-    }
+    //void UpdateDungeonTimer()
+    //{
+    //    Services.UIManager.UpdateDungeonTimer((float)dungeonTimerCount / dungeonTimerThreshold);
+    //}
 
     public TaskTree AlterDungeonTimerCount(int amt)
     {
         return new TaskTree(new AlterDungeonTimerTask(this, amt));
+    }
+
+    public TaskTree AddMonster(Card card)
+    {
+        return new TaskTree(new AlterDungeonTimerTask(this, card));
     }
 
     public bool ActuallyAlterDungeonTimerCount(int amt)
@@ -116,7 +121,7 @@ public class DungeonDeck
             dungeonTimerCount -= dungeonTimerThreshold;
             addMonster = true;
         }
-        UpdateDungeonTimer();
+        //UpdateDungeonTimer();
         return addMonster;
     }
 
@@ -181,6 +186,8 @@ public class AlterDungeonTimerTask : Task
     private Vector3 initialScale;
     private Vector3 midpointPos;
     private Vector3 midpointScale;
+    private bool forceSpawn;
+    private Card card;
 
     public AlterDungeonTimerTask(DungeonDeck dungeonDeck_, int amt_)
     {
@@ -188,9 +195,16 @@ public class AlterDungeonTimerTask : Task
         amt = amt_;
     }
 
+    public AlterDungeonTimerTask(DungeonDeck dungeonDeck_, Card card_)
+    {
+        dungeonDeck = dungeonDeck_;
+        forceSpawn = true;
+        card = card_;
+    }
+
     protected override void Init()
     {
-        if (dungeonDeck.ActuallyAlterDungeonTimerCount(amt))
+        if (forceSpawn || dungeonDeck.ActuallyAlterDungeonTimerCount(amt))
         {
             addMonster = true;
             timeElapsed = 0;
@@ -198,7 +212,8 @@ public class AlterDungeonTimerTask : Task
             midpointDuration = duration 
                 * Services.MonsterConfig.AddMonsterCardMidpointTimeProportion;
             newMonsterCard = dungeonDeck.GetNewMonsterCard();
-            initialPos = Services.UIManager.dungeonTimerPos;
+            //initialPos = Services.UIManager.dungeonTimerPos;
+            initialPos = card.controller.transform.position;
             newMonsterCard.CreatePhysicalCard(Services.UIManager.bottomLeft);
             newMonsterCard.Reposition(initialPos, true, true);
             midpointPos = initialPos + Services.MonsterConfig.AddMonsterCardMidpointOffset;

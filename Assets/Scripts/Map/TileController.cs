@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class TileController : MonoBehaviour {
 
@@ -9,7 +10,9 @@ public class TileController : MonoBehaviour {
     [SerializeField]
     private Color onHoverColor;
     private Color defColor;
-	
+    [SerializeField]
+    private float detectionDistance;
+
 	// Update is called once per frame
 	void Update () {
     }
@@ -24,17 +27,28 @@ public class TileController : MonoBehaviour {
 
     private void OnMouseOver()
     {
-        tile.OnHoverEnter();
+        if (Vector2.Distance(transform.position,
+            Services.GameManager.player.controller.transform.position) < detectionDistance)
+        {
+            tile.OnHoverEnter();
+        }
     }
 
     private void OnMouseEnter()
     {
-        sr.color = onHoverColor;
-        if (tile.containedMonster != null)
+        if (Vector2.Distance(transform.position,
+            Services.GameManager.player.controller.transform.position) < detectionDistance)
         {
-            Services.UIManager.ShowUnitUI(tile.containedMonster);
+            sr.color = onHoverColor;
+            if (tile.containedMonster != null)
+            {
+                Services.UIManager.ShowUnitUI(tile.containedMonster);
+            }
+            if (tile.containedMapObject != null)
+            {
+                Services.UIManager.ShowMapObjUI(tile.containedMapObject);
+            }
         }
-        //if (tile.containedCard != null) tile.containedCard.controller.ShowBoardCardOnHover();
     }
 
     private void OnMouseExit()
@@ -42,7 +56,7 @@ public class TileController : MonoBehaviour {
         tile.OnHoverExit();
         sr.color = defColor;
         Services.UIManager.HideUnitUI();
-        //if (tile.containedCard != null) tile.containedCard.controller.DisplayCardOnBoard();
+        Services.UIManager.HideMapObjUI();
     }
 
     private void OnMouseDown()

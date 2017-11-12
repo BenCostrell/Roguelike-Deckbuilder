@@ -31,8 +31,6 @@ public class UIManager : MonoBehaviour {
     public GameObject dungeonDiscardZone;
     public GameObject dungeonPlayZone;
     [SerializeField]
-    private Image dungeonTimer;
-    [SerializeField]
     private Button endTurnButton;
     [SerializeField]
     private Button queueButton;
@@ -43,6 +41,26 @@ public class UIManager : MonoBehaviour {
     private Color queueColor;
     [SerializeField]
     private Color unqueueColor;
+    [SerializeField]
+    private RectTransform mapObjUI;
+    private float mapObjUIBaseHeight;
+    [SerializeField]
+    private GameObject mapObjUIContents;
+    [SerializeField]
+    private GameObject mapObjHealthUIObj;
+    [SerializeField]
+    private GameObject mapObjRemainingHealthObj;
+    [SerializeField]
+    private RectTransform mapObjUIRemainingHealthBody;
+    [SerializeField]
+    private Image mapObjUISprite;
+    [SerializeField]
+    private Text mapObjUIName;
+    [SerializeField]
+    private Text mapObjUIHealthCounter;
+    private Vector2 mapObjUIHealthBarBaseSize;
+    [SerializeField]
+    private Text mapObjUIDesc;
     [SerializeField]
     private GameObject unitUI;
     [SerializeField]
@@ -103,7 +121,6 @@ public class UIManager : MonoBehaviour {
     private List<int> endTurnLockIDs;
     private List<int> playAllLockIDs;
     private List<int> discardQueuedLockIDs;
-    public Vector3 dungeonTimerPos { get { return dungeonTimer.transform.position; } }
     public Vector3 dungeonDeckPos { get { return dungeonDeckZone.transform.position; } }
     public float bannerScrollDuration;
     public string startBannerMessage;
@@ -125,8 +142,11 @@ public class UIManager : MonoBehaviour {
         unitUI.SetActive(false);
         ToggleChestArea(false);
         optionUI.SetActive(false);
+        mapObjUIBaseHeight = mapObjUI.sizeDelta.y;
+        HideMapObjUI();
         unitUIHealthBarBaseSize = unitUIRemainingHealthBody.sizeDelta;
         playerUIHealthBarBaseSize = playerUIRemainingHealthBody.sizeDelta;
+        mapObjUIHealthBarBaseSize = mapObjUIRemainingHealthBody.sizeDelta;
         playerUIKeyIcon.color = new Color(1, 1, 1, 0.125f);
         queueButtonText = queueButton.GetComponentInChildren<Text>();
 
@@ -327,6 +347,43 @@ public class UIManager : MonoBehaviour {
             playerUIKeyIcon.color = Color.white;
     }
 
+    public void ShowMapObjUI(MapObject mapObj)
+    {
+        TurnOnMapObjUI();
+        if (mapObj is DamageableObject)
+        {
+            DamageableObject dmgableMapObj = mapObj as DamageableObject;
+            if (dmgableMapObj.currentHealth == 0) HideMapObjUI();
+            mapObjUIHealthCounter.text = dmgableMapObj.currentHealth + "/" 
+                + dmgableMapObj.startingHealth;
+            mapObjUIRemainingHealthBody.sizeDelta = new Vector2(
+                mapObjUIHealthBarBaseSize.x * (float)dmgableMapObj.currentHealth / dmgableMapObj.startingHealth,
+                mapObjUIHealthBarBaseSize.y);
+            mapObjUIDesc.gameObject.SetActive(false);
+            mapObjHealthUIObj.SetActive(true);
+        }
+        else
+        {
+            mapObjUIDesc.text = mapObj.info.Description;
+            mapObjUIDesc.gameObject.SetActive(true);
+            mapObjHealthUIObj.SetActive(false);
+        }
+        mapObjUIName.text = mapObj.info.Name;
+        mapObjUISprite.sprite = mapObj.info.Sprites[0];
+    }
+
+    void TurnOnMapObjUI()
+    {
+        mapObjUIContents.SetActive(true);
+        mapObjUI.sizeDelta = new Vector2(mapObjUI.sizeDelta.x, mapObjUIBaseHeight);
+    }
+
+    public void HideMapObjUI()
+    {
+        mapObjUIContents.SetActive(false);
+        mapObjUI.sizeDelta = new Vector2(mapObjUI.sizeDelta.x, -10);
+    }
+
     public void HideUnitUI()
     {
         unitUI.SetActive(false);
@@ -414,10 +471,10 @@ public class UIManager : MonoBehaviour {
         }
     }
 
-    public void UpdateDungeonTimer(float fillAmt)
-    {
-        dungeonTimer.fillAmount = fillAmt;
-    }
+    //public void UpdateDungeonTimer(float fillAmt)
+    //{
+    //    dungeonTimer.fillAmount = fillAmt;
+    //}
 
     public void ToggleLevelComplete(bool status)
     {
@@ -450,7 +507,7 @@ public class UIManager : MonoBehaviour {
             ColorBlock buttonColors = endTurnButton.colors;
             buttonColors.normalColor = Color.green;
             endTurnButton.colors = buttonColors;
-            endTurnButton.transform.localScale = 1.2f * Vector3.one;
+            endTurnButton.transform.localScale = 1.1f * Vector3.one;
         }
         else
         {

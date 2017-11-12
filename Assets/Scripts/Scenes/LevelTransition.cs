@@ -117,10 +117,11 @@ public class LevelTransition : Scene<MainTransitionData> {
         {
             monsterCards.Add(Services.CardConfig.CreateCardOfType(Card.CardType.Advance));
         }
-        int numTicks = Mathf.Max(0, dungeonDeckSize - numMonsters - advanceCount);
-        for (int i = 0; i < numTicks; i++)
+        monsterCards.Add(Services.CardConfig.CreateCardOfType(Card.CardType.GrowTheRanks));
+        int numBlanks = Mathf.Max(0, dungeonDeckSize - monsterCards.Count - numMonsters);
+        for (int i = 0; i < numBlanks; i++)
         {
-            monsterCards.Add(Services.CardConfig.CreateCardOfType(Card.CardType.Tick));
+            monsterCards.Add(Services.CardConfig.CreateCardOfType(Card.CardType.Blank));
         }
         int highestTier = Mathf.Min(data.levelNum / levelsPerMonsterTierIncrease, 
             Services.CardConfig.HighestTierOfCardsAvailable(true));

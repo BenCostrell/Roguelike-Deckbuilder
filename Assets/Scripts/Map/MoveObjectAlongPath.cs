@@ -65,6 +65,8 @@ public class MoveObjectAlongPath : Task
             {
                 duration = Services.MonsterConfig.MaxMoveAnimDur / path.Count;
             }
+            Debug.Log("starting movement for monster at tile " + monster.currentTile.coord.x +
+                ", " + monster.currentTile.coord.y + " at time " + Time.time);
         }
         else
         {
@@ -98,6 +100,7 @@ public class MoveObjectAlongPath : Task
                     }
                     if (stopped)
                     {
+                        if (isMonster) finalTile.monsterMovementTarget = false;
                         finalTile = path[pathIndex];
                         SetStatus(TaskStatus.Success);
                     }
@@ -116,7 +119,7 @@ public class MoveObjectAlongPath : Task
         {
             finalTile.monsterMovementTarget = false;
             if (!monster.markedForDeath) monster.PlaceOnTile(finalTile);
-            if(finalTile.containedMapObject != null)
+            if(finalTile.containedMapObject != null && !stopped)
             {
                 finalTile.containedMapObject.OnStep(monster);
             }
