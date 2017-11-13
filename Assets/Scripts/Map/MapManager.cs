@@ -64,7 +64,7 @@ public class MapManager : MonoBehaviour {
     private int numRooms;
     [SerializeField]
     private float proportionOfEdgesToReAdd;
-    public Dictionary<Coord, Tile> mapDict {get; private set;}
+    public Dictionary<Coord, Tile> mapDict { get; private set; }
     [SerializeField]
     private int maxTriesProcGen;
     public List<Chest> chestsOnBoard;
@@ -158,11 +158,11 @@ public class MapManager : MonoBehaviour {
 
         #region Generate map dictionary and assign tile neighbors
         mapDict = new Dictionary<Coord, Tile>();
-        foreach(Tile tile in allTiles)
+        foreach (Tile tile in allTiles)
         {
             mapDict.Add(tile.coord, tile);
         }
-        foreach(Tile tile in allTiles)
+        foreach (Tile tile in allTiles)
         {
             FindNeighbors(tile);
         }
@@ -215,14 +215,14 @@ public class MapManager : MonoBehaviour {
             for (int j = 0; j < height; j++)
             {
                 mapGrid[i, j] = new Tile(new Coord(i, j), false);
-                switch (spaceTypeMap[i,j])
+                switch (spaceTypeMap[i, j])
                 {
                     case SpaceType.Empty:
                         openTiles.Add(mapGrid[i, j]);
                         break;
                     case SpaceType.LightGrowth:
                         LightBrush lightBrush = Services.MapObjectConfig
-                            .CreateMapObjectOfType(MapObject.ObjectType.LightBrush) 
+                            .CreateMapObjectOfType(MapObject.ObjectType.LightBrush)
                             as LightBrush;
                         lightBrush.PlaceOnTile(mapGrid[i, j]);
                         break;
@@ -263,7 +263,7 @@ public class MapManager : MonoBehaviour {
         {
             for (int j = -bufferLength; j < height + bufferLength; j++)
             {
-                if(i < 0 || i >= width || j < 0 || j >= height)
+                if (i < 0 || i >= width || j < 0 || j >= height)
                 {
                     Tile bufferTile = new Tile(new Coord(i, j), false);
                     HeavyBrush heavyBrush = Services.MapObjectConfig
@@ -309,7 +309,7 @@ public class MapManager : MonoBehaviour {
         return map;
     }
 
-    SpaceType[,] DoSimulationStep(SpaceType[,] oldMap, int spawnT, int growthT, 
+    SpaceType[,] DoSimulationStep(SpaceType[,] oldMap, int spawnT, int growthT,
         int matureT, int friendT)
     {
         SpaceType[,] newMap = new SpaceType[width, height];
@@ -321,35 +321,35 @@ public class MapManager : MonoBehaviour {
                 //    newMap[i, j] = SpaceType.HeavyGrowth;
                 //else
                 //{
-                    int dist1HeavyCount = 
-                        GetNeighborCount(SpaceType.HeavyGrowth, oldMap, i, j, 1);
-                    int dist1LightCount = 
-                        GetNeighborCount(SpaceType.LightGrowth, oldMap, i, j, 1);
-                    int dist2HeavyCount =
-                        GetNeighborCount(SpaceType.HeavyGrowth, oldMap, i, j, 2);
-                    int dist2LightCount =
-                        GetNeighborCount(SpaceType.LightGrowth, oldMap, i, j, 2);
-                    if(oldMap[i,j] == SpaceType.Empty)
-                    {
-                        if (dist1LightCount >= growthT || dist2LightCount <= spawnT)
-                            newMap[i, j] = SpaceType.LightGrowth;
-                        else newMap[i, j] = SpaceType.Empty;
-                    }
-                    else if (oldMap[i,j] == SpaceType.LightGrowth)
-                    {
-                        if (dist1LightCount + dist1HeavyCount < friendT)
-                            newMap[i, j] = SpaceType.Empty;
-                        else if (dist1LightCount + dist1HeavyCount >= matureT)
-                            newMap[i, j] = SpaceType.HeavyGrowth;
-                        else newMap[i, j] = SpaceType.LightGrowth;
-                    }
-                    else if (oldMap[i,j] == SpaceType.HeavyGrowth)
-                    {
-                        if (dist1HeavyCount  + dist1LightCount < friendT)
-                            newMap[i, j] = SpaceType.Empty;
-                        else
-                            newMap[i, j] = SpaceType.HeavyGrowth;
-                    }
+                int dist1HeavyCount =
+                    GetNeighborCount(SpaceType.HeavyGrowth, oldMap, i, j, 1);
+                int dist1LightCount =
+                    GetNeighborCount(SpaceType.LightGrowth, oldMap, i, j, 1);
+                int dist2HeavyCount =
+                    GetNeighborCount(SpaceType.HeavyGrowth, oldMap, i, j, 2);
+                int dist2LightCount =
+                    GetNeighborCount(SpaceType.LightGrowth, oldMap, i, j, 2);
+                if (oldMap[i, j] == SpaceType.Empty)
+                {
+                    if (dist1LightCount >= growthT || dist2LightCount <= spawnT)
+                        newMap[i, j] = SpaceType.LightGrowth;
+                    else newMap[i, j] = SpaceType.Empty;
+                }
+                else if (oldMap[i, j] == SpaceType.LightGrowth)
+                {
+                    if (dist1LightCount + dist1HeavyCount < friendT)
+                        newMap[i, j] = SpaceType.Empty;
+                    else if (dist1LightCount + dist1HeavyCount >= matureT)
+                        newMap[i, j] = SpaceType.HeavyGrowth;
+                    else newMap[i, j] = SpaceType.LightGrowth;
+                }
+                else if (oldMap[i, j] == SpaceType.HeavyGrowth)
+                {
+                    if (dist1HeavyCount + dist1LightCount < friendT)
+                        newMap[i, j] = SpaceType.Empty;
+                    else
+                        newMap[i, j] = SpaceType.HeavyGrowth;
+                }
                 //}
             }
         }
@@ -405,11 +405,11 @@ public class MapManager : MonoBehaviour {
     {
         float longestDistance = 0f;
         Tile farthestTile = tile;
-        foreach(Tile otherTile in openTiles)
+        foreach (Tile otherTile in openTiles)
         {
-            float dist = 
+            float dist =
                 AStarSearch.ShortestPath(tile, otherTile, false, false, false, true).Count;
-            if(dist > longestDistance)
+            if (dist > longestDistance)
             {
                 farthestTile = otherTile;
                 longestDistance = dist;
@@ -425,11 +425,11 @@ public class MapManager : MonoBehaviour {
         foreach (Room otherRoom in otherRooms)
         {
             float distance = AStarSearch.ShortestPathDistance(room, otherRoom);
-            if(distance > longestDistance)
+            if (distance > longestDistance)
             {
                 farthestRoom = otherRoom;
                 longestDistance = distance;
-            }  
+            }
         }
         return farthestRoom;
     }
@@ -437,7 +437,7 @@ public class MapManager : MonoBehaviour {
     List<Edge> RemoveEdgeDuplicates(List<Edge> edges)
     {
         List<Edge> filteredList = new List<Edge>();
-        foreach(Edge edge in edges)
+        foreach (Edge edge in edges)
         {
             if (!DoesListContainEquivalentEdge(filteredList, edge))
                 filteredList.Add(edge);
@@ -460,14 +460,14 @@ public class MapManager : MonoBehaviour {
     {
         List<Coord> filteredList = new List<Coord>();
         List<Coord> roomCoords = new List<Coord>();
-        foreach(Room room in rooms)
+        foreach (Room room in rooms)
         {
-            foreach(Tile tile in room.tiles)
+            foreach (Tile tile in room.tiles)
             {
                 roomCoords.Add(tile.coord);
             }
         }
-        foreach(Coord coord in coordList)
+        foreach (Coord coord in coordList)
         {
             if (!filteredList.Contains(coord) && !roomCoords.Contains(coord))
                 filteredList.Add(coord);
@@ -581,7 +581,7 @@ public class MapManager : MonoBehaviour {
     List<Edge> AdjacentEdgesToVertex(Room room, List<Edge> graph)
     {
         List<Edge> adjEdges = new List<Edge>();
-        foreach(Edge edge in graph)
+        foreach (Edge edge in graph)
         {
             if (edge.a == room || edge.b == room) adjEdges.Add(edge);
         }
@@ -593,7 +593,7 @@ public class MapManager : MonoBehaviour {
         List<Tile> roomTiles = new List<Tile>();
         for (int i = 0; i < room.dimensions.x - 1; i++)
         {
-            for (int j = 0; j < room.dimensions.y -1; j++)
+            for (int j = 0; j < room.dimensions.y - 1; j++)
             {
                 Tile tile = new Tile(new Coord(room.origin.x + i, room.origin.y + j), false);
                 tile.SetSprite(roomSprite, Quaternion.identity);
@@ -619,7 +619,7 @@ public class MapManager : MonoBehaviour {
         List<Coord> hallwayCoords = new List<Coord>();
         Vector2 midpointVector2 = (edge.a.Center + edge.b.Center) / 2;
         Coord midpointCoord = new Coord(
-            Mathf.RoundToInt(midpointVector2.x), 
+            Mathf.RoundToInt(midpointVector2.x),
             Mathf.RoundToInt(midpointVector2.y));
         if ((midpointCoord.y >= edge.a.Bottom && midpointCoord.y <= edge.a.Top) &&
             (midpointCoord.y >= edge.b.Bottom && midpointCoord.y <= edge.b.Top))
@@ -659,10 +659,10 @@ public class MapManager : MonoBehaviour {
                 }
             }
             int startY = Mathf.Min(
-                edge.b.Top, 
+                edge.b.Top,
                 edge.a.CenterCoord.y - hallwayWidth / 2);
             int endY = Mathf.Max(
-                edge.b.Bottom, 
+                edge.b.Bottom,
                 edge.a.CenterCoord.y + (hallwayWidth - hallwayWidth / 2));
             for (int i = startY; i < endY; i++)
             {
@@ -676,9 +676,9 @@ public class MapManager : MonoBehaviour {
         Coord closestToRoomB = new Coord(0, 0);
         float shortestDistToRoomA = Mathf.Infinity;
         float shortestDistToRoomB = Mathf.Infinity;
-        foreach(Coord coord in hallwayCoords)
+        foreach (Coord coord in hallwayCoords)
         {
-            if(coord.Distance(edge.a.CenterCoord) < shortestDistToRoomA)
+            if (coord.Distance(edge.a.CenterCoord) < shortestDistToRoomA)
             {
                 closestToRoomA = coord;
                 shortestDistToRoomA = coord.Distance(edge.a.CenterCoord);
@@ -738,13 +738,13 @@ public class MapManager : MonoBehaviour {
             Coord coord = new Coord(0, 0);
             if (otherRooms.Count > 0)
             {
-                Room referenceRoom = 
+                Room referenceRoom =
                     otherRooms[Random.Range(0, otherRooms.Count)];
                 int distance = Random.Range(minRoomDist, maxRoomDist + 1);
                 int distanceX = Random.Range(
                     dimensions.x / 2,
                     distance + dimensions.x / 2);
-                int distanceY = distance - (distanceX - dimensions.x/2) + dimensions.y/2;
+                int distanceY = distance - (distanceX - dimensions.x / 2) + dimensions.y / 2;
                 int offsetX = referenceRoom.dimensions.x / 2;
                 int offsetY = referenceRoom.dimensions.y / 2;
                 if (Random.Range(0, 2) == 0)
@@ -761,7 +761,7 @@ public class MapManager : MonoBehaviour {
                     referenceRoom.CenterCoord.x + offsetX + distanceX,
                     referenceRoom.CenterCoord.y + offsetY + distanceY);
             }
-            
+
             room = new Room(coord, dimensions);
             //Debug.Log("trying room of size " + room.dimensions.x + "," + room.dimensions.y +
             //    " at " + room.origin.x + "," + room.origin.y);
@@ -863,7 +863,7 @@ public class MapManager : MonoBehaviour {
         for (int i = 0; i < directions.Length; i++)
         {
             Tile neighbor;
-            if(mapDict.TryGetValue(tile.coord.Add(directions[i]), out neighbor))
+            if (mapDict.TryGetValue(tile.coord.Add(directions[i]), out neighbor))
             {
                 neighbors.Add(neighbor);
             }
@@ -934,7 +934,7 @@ public class MapManager : MonoBehaviour {
                 }
             }
             Debug.Log("finished with cavern sized " + cavernSpaces.Count);
-            if(cavernSpaces.Count > biggestRoomSize)
+            if (cavernSpaces.Count > biggestRoomSize)
             {
                 biggestRoom = cavernSpaces;
                 biggestRoomSize = biggestRoom.Count;
@@ -1026,7 +1026,7 @@ public class MapManager : MonoBehaviour {
             Tile fountainTile = GetValidObjectTile();
             if (fountainTile != null)
             {
-                MapObject fountain = 
+                MapObject fountain =
                     Services.MapObjectConfig.CreateMapObjectOfType(MapObject.ObjectType.Fountain);
                 fountain.PlaceOnTile(fountainTile);
                 emptyTiles.Remove(fountainTile);
@@ -1056,5 +1056,45 @@ public class MapManager : MonoBehaviour {
                 return false;
         }
         return true;
+    }
+
+    List<Tile> OpenNeighbors(Tile tile)
+    {
+        List<Tile> openNeighbors = new List<Tile>();
+        for (int i = 0; i < tile.neighbors.Count; i++)
+        {
+            Tile neighbor = tile.neighbors[i];
+            if (!neighbor.IsImpassable() && !neighbor.isExit && 
+                neighbor.containedMapObject == null && neighbor.containedChest == null)
+                openNeighbors.Add(neighbor);
+        }
+        return openNeighbors;
+    }
+
+    public TaskTree Growth(int radius, float proportion, float staggerTime)
+    {
+        List<Tile> brushTiles = new List<Tile>();
+        foreach (Tile tile in mapGrid)
+        {
+            if (tile.coord.Distance(Services.GameManager.player.currentTile.coord) <= radius &&
+                tile.containedMapObject != null &&
+                (tile.containedMapObject is LightBrush ||
+                tile.containedMapObject is HeavyBrush) && OpenNeighbors(tile).Count > 0) {
+                brushTiles.Add(tile);
+            }
+        }
+        int numNewGrowth = Mathf.RoundToInt(brushTiles.Count * proportion);
+        Debug.Log(brushTiles.Count + " brush tiles");
+        Debug.Log("growing " + numNewGrowth + " new brushes");
+        TaskTree growthTask = new TaskTree(new EmptyTask());
+        for (int i = 0; i < numNewGrowth; i++)
+        {
+            Tile brushTile = brushTiles[Random.Range(0, brushTiles.Count)];
+            brushTiles.Remove(brushTile);
+            List<Tile> brushNeighbors = OpenNeighbors(brushTile);
+            Tile tileToGrowOn = brushNeighbors[Random.Range(0, brushNeighbors.Count)];
+            growthTask.Then(new GrowBrush(tileToGrowOn, staggerTime));
+        }
+        return growthTask;
     }
 }

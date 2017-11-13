@@ -191,6 +191,8 @@ public class CardConfig : ScriptableObject
                 return new Advance();
             case Card.CardType.GrowTheRanks:
                 return new GrowtheRanks();
+            case Card.CardType.Overgrowth:
+                return new Overgrowth();
             default:
                 return null;
         }

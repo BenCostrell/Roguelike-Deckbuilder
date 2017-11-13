@@ -32,6 +32,8 @@ public class LevelTransition : Scene<MainTransitionData> {
     private int dungeonDeckSize;
     [SerializeField]
     private int advanceCount;
+    [SerializeField]
+    private int growthCount;
 
     internal override void OnEnter(MainTransitionData data_)
     {
@@ -116,6 +118,10 @@ public class LevelTransition : Scene<MainTransitionData> {
         for (int i = 0; i < advanceCount; i++)
         {
             monsterCards.Add(Services.CardConfig.CreateCardOfType(Card.CardType.Advance));
+        }
+        for (int i = 0; i < growthCount; i++)
+        {
+            monsterCards.Add(Services.CardConfig.CreateCardOfType(Card.CardType.Overgrowth));
         }
         monsterCards.Add(Services.CardConfig.CreateCardOfType(Card.CardType.GrowTheRanks));
         int numBlanks = Mathf.Max(0, dungeonDeckSize - monsterCards.Count - numMonsters);

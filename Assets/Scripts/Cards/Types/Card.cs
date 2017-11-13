@@ -31,7 +31,8 @@ public abstract class Card {
         Swipe,
         Scream,
         Advance,
-        GrowTheRanks
+        GrowTheRanks,
+        Overgrowth
     }
     public int tier { get; protected set; }
     public Sprite sprite { get; protected set; }
