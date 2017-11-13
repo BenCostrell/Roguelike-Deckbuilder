@@ -4,9 +4,10 @@ using System.Collections;
 public class DeathAnimation : Task
 {
     private Monster monster;
+    private MapObject mapObj;
     private float timeElapsed;
     private float duration;
-    private SpriteRenderer monsterSr;
+    private SpriteRenderer sr;
     private SpriteRenderer whitemaskSr;
 
     public DeathAnimation(Monster monster_)
@@ -14,19 +15,34 @@ public class DeathAnimation : Task
         monster = monster_;
     }
 
+    public DeathAnimation(MapObject mapObj_)
+    {
+        mapObj = mapObj_;
+    }
+
     protected override void Init()
     {
         timeElapsed = 0;
         duration = Services.MonsterConfig.DeathAnimTime;
-        monsterSr = monster.controller.sr;
-        whitemaskSr = monster.controller.maskSprite;
+        if (monster != null)
+        {
+            sr = monster.controller.sr;
+            whitemaskSr = monster.controller.maskSprite;
+            monster.controller.mask.enabled = true;
+        }
+        else
+        {
+            sr = mapObj.sr;
+            whitemaskSr = mapObj.maskSprite;
+            mapObj.mask.enabled = true;
+        }
     }
 
     internal override void Update()
     {
         timeElapsed += Time.deltaTime;
 
-        monsterSr.color = Color.Lerp(Color.white, new Color(1, 1, 1, 0),
+        sr.color = Color.Lerp(Color.white, new Color(1, 1, 1, 0),
             Easing.QuadEaseOut(timeElapsed / duration));
         if (timeElapsed < (duration / 2))
         {

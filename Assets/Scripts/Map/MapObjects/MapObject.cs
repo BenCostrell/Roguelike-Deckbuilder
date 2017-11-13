@@ -16,6 +16,9 @@ public abstract class MapObject
     protected Tile currentTile;
     protected AudioClip onStepAudio;
     protected Player player { get { return Services.GameManager.player; } }
+    public SpriteMask mask { get; private set; }
+    public SpriteRenderer maskSprite { get; private set; }
+    public SpriteRenderer sr { get; private set; }
 
     protected virtual void InitValues()
     {
@@ -25,12 +28,15 @@ public abstract class MapObject
 
     public void PlaceOnTile(Tile tile)
     {
-        physicalObject = new GameObject();
-        SpriteRenderer sr = physicalObject.AddComponent<SpriteRenderer>();
+        physicalObject = GameObject.Instantiate(Services.Prefabs.MapObject);
+        sr = physicalObject.GetComponent<SpriteRenderer>();
         sr.sprite = info.Sprites[0];
         physicalObject.transform.position = new Vector3(tile.coord.x, tile.coord.y, 0);
         physicalObject.transform.parent = Services.Main.transform;
-        sr.sortingOrder = 1;
+        mask = physicalObject.GetComponentInChildren<SpriteMask>();
+        maskSprite = mask.gameObject.GetComponent<SpriteRenderer>();
+        mask.sprite = info.Sprites[0];
+        mask.enabled = false;
         tile.containedMapObject = this;
         currentTile = tile;
     }
@@ -47,11 +53,22 @@ public abstract class MapObject
         return false;
     }
 
-    protected void RemoveThis()
+    protected void RemoveThis(bool animate)
     {
         currentTile.containedMapObject = null;
         currentTile = null;
         player.ShowAvailableMoves();
+        if(!animate) DestroyThis();
+        else
+        {
+            DeathAnimation deathAnim = new DeathAnimation(this);
+            deathAnim.Then(new ActionTask(DestroyThis));
+            Services.Main.taskManager.AddTask(deathAnim);
+        }
+    }
+
+    protected void DestroyThis()
+    {
         GameObject.Destroy(physicalObject);
     }
 

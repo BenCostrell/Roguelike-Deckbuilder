@@ -297,7 +297,9 @@ public class MapManager : MonoBehaviour {
         {
             for (int j = 0; j < height; j++)
             {
-                if (Random.Range(0, 1f) < initialHeavyProb)
+                if (i == 0 || j == 0 || i == width - 1 || j == height - 1)
+                    map[i, j] = SpaceType.HeavyGrowth;
+                else if (Random.Range(0, 1f) < initialHeavyProb)
                 {
                     map[i, j] = SpaceType.LightGrowth;
                 }

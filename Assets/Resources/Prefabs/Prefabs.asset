@@ -26,3 +26,4 @@ MonoBehaviour:
   chest: {fileID: 1238464452850584, guid: 327cf51bc4981d641b6ec5467f640f42, type: 2}
   cardCounter: {fileID: 1227680033367290, guid: 43e9055fe438bd140b9f056d27ed2b1b,
     type: 2}
+  mapObject: {fileID: 1256261409588616, guid: 787fa0702f02c48459113ab8d6901711, type: 2}

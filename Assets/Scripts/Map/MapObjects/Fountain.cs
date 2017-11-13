@@ -40,6 +40,6 @@ public class Fountain : MapObject
             Services.GameManager.player.GainMaxHealth(1);
         }
         Services.EventManager.Unregister<OptionChosen>(OnOptionChosen);
-        RemoveThis();
+        RemoveThis(false);
     }
 }

@@ -3687,14 +3687,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   baseLevelDimension: 10
   heightToWidthRatio: 1
-  dimensionIncreasePerLevel: 2
-  initialHeavyProb: 0.35
+  dimensionIncreasePerLevel: 3
+  initialHeavyProb: 0.45
   spawnThresh: 2
   growthThresh: 5
   matureThresh: 7
   friendThresh: 2
   phaseOneStepCount: 10
-  minFillPct: 0.6
+  minFillPct: 0.5
   maxTriesLevelGen: 10
   minMapObjDist: 7
   chestsPerLevel: 0.6

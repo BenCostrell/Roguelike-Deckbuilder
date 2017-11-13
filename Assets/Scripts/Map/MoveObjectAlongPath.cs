@@ -65,8 +65,7 @@ public class MoveObjectAlongPath : Task
             {
                 duration = Services.MonsterConfig.MaxMoveAnimDur / path.Count;
             }
-            Debug.Log("starting movement for monster at tile " + monster.currentTile.coord.x +
-                ", " + monster.currentTile.coord.y + " at time " + Time.time);
+
         }
         else
         {

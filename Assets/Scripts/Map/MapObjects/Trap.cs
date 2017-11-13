@@ -17,7 +17,7 @@ public abstract class Trap : MapObject
     {
         base.OnStep(player);
         player.TakeDamage(damage);
-        RemoveThis();
+        RemoveThis(true);
         return true;
     }
 
@@ -25,7 +25,7 @@ public abstract class Trap : MapObject
     {
         base.OnStep(monster);
         monster.TakeDamage(damage);
-        RemoveThis();
+        RemoveThis(true);
         return true;
     }
 

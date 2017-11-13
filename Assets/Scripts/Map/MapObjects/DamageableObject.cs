@@ -19,7 +19,7 @@ public class DamageableObject : MapObject, IDamageable
         Services.UIManager.ShowMapObjUI(this);
         if (currentHealth == 0)
         {
-            RemoveThis();
+            RemoveThis(true);
             return true;
         }
         return false;

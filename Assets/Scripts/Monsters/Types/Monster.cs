@@ -42,12 +42,11 @@ public abstract class Monster : IDamageable {
 
     public void PlaceOnTile(Tile tile)
     {
-        if (currentTile != null) currentTile.RemoveMonsterFromTile();
+        if (currentTile != null && currentTile.containedMonster == this)
+            currentTile.RemoveMonsterFromTile();
         currentTile = tile;
         tile.PlaceMonsterOnTile(this);
         controller.PlaceOnTile(tile);
-        Debug.Log("placing monster on tile " + tile.coord.x + ", " + tile.coord.y +
-            " at time " + Time.time);
     }
 
     protected void InitValues()

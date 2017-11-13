@@ -109,11 +109,14 @@ public class MonsterManager
         {
             Monster monster = monsters[i];
             if (monster.IsPlayerInRange() && !monster.attackedThisTurn)
+            {
                 attackTree.Then(monster.AttackPlayer());
+                //Debug.Log("queuing attack at time " + Time.time);
+            }
             else
             {
                 DamageableObject obj = monster.GetDamageableObjectWithinRange();
-                if(obj != null)
+                if (obj != null)
                 {
                     attackTree.Then(monster.AttackMapObj(obj));
                 }

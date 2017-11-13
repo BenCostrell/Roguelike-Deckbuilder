@@ -8,7 +8,7 @@ public class MonsterController : MonoBehaviour
     private GameObject healthUIobj;
     private TextMesh healthUI;
     public SpriteRenderer sr { get; private set; }
-    private SpriteMask mask;
+    public SpriteMask mask { get; private set; }
     public SpriteRenderer maskSprite { get; private set; }
 
     public void Init(Monster monster_)
@@ -22,6 +22,7 @@ public class MonsterController : MonoBehaviour
         mask = GetComponentInChildren<SpriteMask>();
         maskSprite = mask.gameObject.GetComponent<SpriteRenderer>();
         mask.sprite = monster.info.Sprite;
+        mask.enabled = false;
     }
 
     public void PlaceOnTile(Tile tile)
