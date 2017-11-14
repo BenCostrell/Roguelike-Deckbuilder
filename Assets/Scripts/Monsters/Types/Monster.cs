@@ -255,4 +255,10 @@ public abstract class Monster : IDamageable {
         return new TaskTree(new MoveObjectAlongPath(controller.gameObject, shortestPathToTarget));
     }
 
+
+    public void ResetTargetTile()
+    {
+        targetTile.monsterMovementTarget = false;
+        targetTile = null;
+    }
 }

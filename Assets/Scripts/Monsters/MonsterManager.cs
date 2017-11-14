@@ -134,11 +134,18 @@ public class MonsterManager
         //Debug.Log("there are " + sortedMonsters.Count + " monsters at time " + Time.time);
         for (int i = 0; i < sortedMonsters.Count; i++)
         {
-            if (!sortedMonsters[i].IsPlayerInRange())
+            Monster monster = sortedMonsters[i];
+            if (!monster.IsPlayerInRange())
             {
-                moveTree.AddChild(sortedMonsters[i].Move());
+                moveTree.AddChild(monster.Move());
                 //Debug.Log("moving " + sortedMonsters[i].GetType() + "at " + sortedMonsters[i].currentTile.coord.x
                 //    + " " + sortedMonsters[i].currentTile.coord.y);
+            }
+            else
+            {
+                monster.targetTile = monster.currentTile;
+                monster.targetTile.monsterMovementTarget = true;
+                moveTree.AddChild(new ActionTask(monster.ResetTargetTile));
             }
         }
         return moveTree;

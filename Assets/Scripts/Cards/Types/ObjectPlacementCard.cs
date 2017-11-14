@@ -15,7 +15,6 @@ public class ObjectPlacementCard : TileTargetedCard
     public override bool IsTargetValid(Tile tile)
     {
         return base.IsTargetValid(tile) &&
-            tile.containedChest == null &&
             tile.containedMapObject == null &&
             tile.containedKey == null;
     }

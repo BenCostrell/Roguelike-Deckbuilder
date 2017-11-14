@@ -83,10 +83,9 @@ public class Main : Scene<MainTransitionData> {
     public void CreateBonusChest()
     {
         Services.UIManager.ToggleLevelComplete(false);
-        Chest chest = Instantiate(Services.Prefabs.Chest, Vector3.zero, 
-            Quaternion.identity, transform).GetComponent<Chest>();
+        Chest chest = Services.MapObjectConfig.CreateMapObjectOfType(MapObject.ObjectType.Chest) as Chest;
         chest.tier = 1;
-        chest.OpenChest();
+        chest.OnStep(player);
         Services.EventManager.Register<AcquisitionComplete>(GoToLevelTransitionScene);
     }
 

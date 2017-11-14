@@ -8,7 +8,8 @@ public abstract class MapObject
         SpikeTrap,
         Fountain,
         LightBrush,
-        HeavyBrush
+        HeavyBrush,
+        Chest
     }
     protected ObjectType objectType;
     public MapObjectInfo info { get; protected set; }

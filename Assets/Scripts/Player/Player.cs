@@ -207,10 +207,6 @@ public class Player : IDamageable {
         }
         if (end)
         {
-            if (currentTile.containedChest != null && !currentTile.containedChest.opened)
-            {
-                currentTile.containedChest.OpenChest();
-            }
             if (currentTile.containedKey != null)
             {
                 PickUpKey(currentTile);

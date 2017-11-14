@@ -11,10 +11,6 @@ public class Fountain : MapObject
         InitValues();
     }
 
-    public override bool OnStep(Monster monster) {
-        return false;
-    }
-
     public override bool OnStep(Player player)
     {
         if (!used)
@@ -26,7 +22,7 @@ public class Fountain : MapObject
             Services.EventManager.Register<OptionChosen>(OnOptionChosen);
             used = true;
         }
-        return false;
+        return base.OnStep(player);
     }
 
     void OnOptionChosen(OptionChosen e)

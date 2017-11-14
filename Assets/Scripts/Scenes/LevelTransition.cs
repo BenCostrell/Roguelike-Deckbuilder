@@ -10,9 +10,17 @@ public class LevelTransition : Scene<MainTransitionData> {
     [SerializeField]
     private Transform deckArea;
     [SerializeField]
+    private Text deckCount;
+    [SerializeField]
     private Transform dungeonDeckArea;
     [SerializeField]
+    private Text forestDeckCount;
+    [SerializeField]
     private Text playerUIHPCounter;
+    [SerializeField]
+    private RectTransform playerUIRemainingHealthBody;
+    [SerializeField]
+    private GameObject shieldIcon;
     [SerializeField]
     private Button startButton;
     [SerializeField]
@@ -67,6 +75,8 @@ public class LevelTransition : Scene<MainTransitionData> {
                     true);
                 data.dungeonDeck[j].controller.EnterDeckViewMode();
             }
+            forestDeckCount.text = data.dungeonDeck.Count + "/" + data.dungeonDeck.Count;
+            forestDeckCount.color = Color.green;
         }
         else
         {
@@ -93,11 +103,23 @@ public class LevelTransition : Scene<MainTransitionData> {
         {
             levelTitle.text = "LEVEL " + data.levelNum;
             finalScore.gameObject.SetActive(false);
-            if (data.deck.Count > data.maxDeckSize || data.deck.Count < data.minDeckSize)
+            SetDeckCount();
+            if (data.deck.Count > data.maxDeckSize) {
+                startButton.interactable = false;
+                startButton.GetComponentInChildren<Text>().text = "DECK TOO BIG";
+                startButton.GetComponentInChildren<Text>().fontSize = 40;
+                deckCount.color = Color.red;
+            }
+            else if(data.deck.Count < data.minDeckSize)
             {
                 startButton.interactable = false;
-                startButton.GetComponentInChildren<Text>().text = "INVALID DECK";
+                startButton.GetComponentInChildren<Text>().text = "DECK TOO SMALL";
                 startButton.GetComponentInChildren<Text>().fontSize = 40;
+                deckCount.color = Color.yellow;
+            }
+            else
+            {
+                deckCount.color = Color.green;
             }
         }
         else
@@ -157,9 +179,18 @@ public class LevelTransition : Scene<MainTransitionData> {
         return monsterCards;
     }
 
+    void SetDeckCount()
+    {
+        deckCount.text = data.deck.Count + "/" + data.minDeckSize;
+    }
+
     void SetPlayerUI()
     {
-        playerUIHPCounter.text = data.maxHealth + "/" + data.maxHealth;
+        playerUIHPCounter.text = data.currentHealth + "/" + data.maxHealth;
+        shieldIcon.SetActive(false);
+        playerUIRemainingHealthBody.sizeDelta = new Vector2(
+            playerUIRemainingHealthBody.sizeDelta.x * (float)data.currentHealth / data.maxHealth,
+            playerUIRemainingHealthBody.sizeDelta.y);
     }
 
     public void EditDeck()

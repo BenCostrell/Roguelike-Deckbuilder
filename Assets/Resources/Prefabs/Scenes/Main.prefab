@@ -3685,17 +3685,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ca0d85cdf5204904cb7404a378c70c85, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  baseLevelDimension: 10
+  baseLevelDimension: 8
   heightToWidthRatio: 1
   dimensionIncreasePerLevel: 3
-  initialHeavyProb: 0.45
+  initialHeavyProb: 0.35
   spawnThresh: 2
   growthThresh: 5
   matureThresh: 7
   friendThresh: 2
   phaseOneStepCount: 10
-  minFillPct: 0.5
-  maxTriesLevelGen: 10
+  minFillPct: 0.6
+  maxTriesLevelGen: 20
   minMapObjDist: 7
   chestsPerLevel: 0.6
   fountainsPerLevel: 0.2
@@ -3710,7 +3710,6 @@ MonoBehaviour:
   roomsPerLevel: 1
   proportionOfEdgesToReAdd: 0.2
   maxTriesProcGen: 200
-  chestsOnBoard: []
   roomSprite: {fileID: 21300000, guid: e5580b8d5c1eaae4caab4e4661ae9810, type: 3}
   botLeftCornerSprite: {fileID: 21300248, guid: 3defd70a9f557674ab6dd3a4e7f36461,
     type: 3}

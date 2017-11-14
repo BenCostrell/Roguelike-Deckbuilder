@@ -33,6 +33,8 @@ public class MapObjectConfig : ScriptableObject
                 return new LightBrush();
             case MapObject.ObjectType.HeavyBrush:
                 return new HeavyBrush();
+            case MapObject.ObjectType.Chest:
+                return new Chest();
             default:
                 return null;
         }

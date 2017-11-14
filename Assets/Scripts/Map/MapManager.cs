@@ -43,6 +43,7 @@ public class MapManager : MonoBehaviour {
     private List<Tile> bufferTiles;
     [SerializeField]
     private int bufferLength;
+    private List<Tile> brushTargets;
 
 
     [SerializeField]
@@ -248,6 +249,18 @@ public class MapManager : MonoBehaviour {
         Tile referenceTile = openTiles[0];
 
         playerSpawnTile = GetFarthestTile(referenceTile, openTiles);
+        List<Tile> tilesNearbySpawnPoint = AStarSearch.FindAllAvailableGoals(playerSpawnTile, 4, true);
+        for (int i = 0; i < maxTriesProcGen; i++)
+        {
+            List<Tile> freeMovementSpaces = AStarSearch.FindAllAvailableGoals(playerSpawnTile, 3);
+            if (freeMovementSpaces.Count >= 4) break;
+            else
+            {
+                playerSpawnTile = tilesNearbySpawnPoint[0];
+                tilesNearbySpawnPoint.RemoveAt(0);
+                if (tilesNearbySpawnPoint.Count == 0) break;
+            }
+        }
         openTiles.Remove(playerSpawnTile);
         exitTile = GetFarthestTile(playerSpawnTile, openTiles);
         exitTile.isExit = true;
@@ -991,12 +1004,9 @@ public class MapManager : MonoBehaviour {
             Tile chestTile = GetValidObjectTile();
             if (chestTile != null)
             {
-                Chest chest = Instantiate(Services.Prefabs.Chest, Services.Main.transform).
-                    GetComponent<Chest>();
-                chest.currentTile = chestTile;
-                chest.transform.position = chestTile.controller.transform.position;
+                Chest chest = Services.MapObjectConfig.CreateMapObjectOfType(MapObject.ObjectType.Chest) as Chest;
+                chest.PlaceOnTile(chestTile);
                 chest.tier = tier;
-                chestTile.containedChest = chest;
                 chestsOnBoard.Add(chest);
                 emptyTiles.Remove(chestTile);
                 tilesWithSpecialStuff.Add(chestTile);
@@ -1064,8 +1074,8 @@ public class MapManager : MonoBehaviour {
         for (int i = 0; i < tile.neighbors.Count; i++)
         {
             Tile neighbor = tile.neighbors[i];
-            if (!neighbor.IsImpassable() && !neighbor.isExit && 
-                neighbor.containedMapObject == null && neighbor.containedChest == null)
+            if (!neighbor.IsImpassable() && !neighbor.isExit && !brushTargets.Contains(neighbor)
+                && neighbor.containedMapObject == null)
                 openNeighbors.Add(neighbor);
         }
         return openNeighbors;
@@ -1074,6 +1084,7 @@ public class MapManager : MonoBehaviour {
     public TaskTree Growth(int radius, float proportion, float staggerTime)
     {
         List<Tile> brushTiles = new List<Tile>();
+        brushTargets = new List<Tile>();
         foreach (Tile tile in mapGrid)
         {
             if (tile.coord.Distance(Services.GameManager.player.currentTile.coord) <= radius &&
@@ -1092,8 +1103,12 @@ public class MapManager : MonoBehaviour {
             Tile brushTile = brushTiles[Random.Range(0, brushTiles.Count)];
             brushTiles.Remove(brushTile);
             List<Tile> brushNeighbors = OpenNeighbors(brushTile);
-            Tile tileToGrowOn = brushNeighbors[Random.Range(0, brushNeighbors.Count)];
-            growthTask.Then(new GrowBrush(tileToGrowOn, staggerTime));
+            if (brushNeighbors.Count > 0)
+            {
+                Tile tileToGrowOn = brushNeighbors[Random.Range(0, brushNeighbors.Count)];
+                brushTargets.Add(tileToGrowOn);
+                growthTask.Then(new GrowBrush(tileToGrowOn, staggerTime));
+            }
         }
         return growthTask;
     }

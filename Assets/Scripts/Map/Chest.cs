@@ -2,34 +2,40 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Chest : MonoBehaviour {
+public class Chest : MapObject {
 
-    [HideInInspector]
     public int tier;
-    [SerializeField]
     private int numCards;
-    [SerializeField]
     private Vector3 leftmostCardPosition;
-    [SerializeField]
     private Vector3 cardSpacing;
     public List<Card> cardsInChest;
     public bool opened { get; private set; }
-    public Tile currentTile;
     private int lockID;
-    [SerializeField]
     private float scaleFactor;
 
-	// Use this for initialization
-	void Start () {
-		
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
+    public Chest()
+    {
+        objectType = ObjectType.Chest;
+        InitValues();
+    }
 
-    public void OpenChest()
+    protected override void InitValues()
+    {
+        base.InitValues();
+        ChestInfo chestInfo = info as ChestInfo;
+        scaleFactor = chestInfo.ScaleFactor;
+        cardSpacing = chestInfo.CardSpacing;
+        leftmostCardPosition = chestInfo.LeftmostCardPosition;
+        numCards = chestInfo.NumCards;
+    }
+
+    public override bool OnStep(Player player)
+    {
+        if(!opened) OpenChest();
+        return base.OnStep(player);
+    }
+
+    void OpenChest()
     {
         Services.UIManager.ToggleChestArea(true);
         opened = true;
@@ -68,6 +74,6 @@ public class Chest : MonoBehaviour {
         Services.GameManager.player.AcquireCard(card);
         Services.UIManager.ToggleChestArea(false);
         Services.GameManager.player.UnlockEverything(lockID);
-        Destroy(gameObject);
+        if(currentTile != null) RemoveThis(false);
     }
 }
