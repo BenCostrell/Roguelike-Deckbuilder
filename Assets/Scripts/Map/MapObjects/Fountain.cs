@@ -10,6 +10,17 @@ public class Fountain : MapObject
         objectType = ObjectType.Fountain;
         InitValues();
     }
+    public override void PlaceOnTile(Tile tile)
+    {
+        base.PlaceOnTile(tile);
+        light.gameObject.SetActive(true);
+    }
+
+    public override void RemoveThis(bool animate)
+    {
+        base.RemoveThis(animate);
+        Services.MapManager.RemoveLitMapObject(this);
+    }
 
     public override bool OnStep(Player player)
     {

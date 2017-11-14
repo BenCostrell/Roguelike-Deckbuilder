@@ -17,6 +17,7 @@ MonoBehaviour:
   - {fileID: 21300000, guid: 88a2a91dcfbed764c889161617dd0027, type: 3}
   description: Step here to open chest and get a new card.
   onStepAudio: {fileID: 0}
+  lightColor: {r: 1, g: 0.8672414, b: 0.125, a: 1}
   numCards: 3
   leftmostCardPosition: {x: -200, y: 0, z: 0}
   cardSpacing: {x: 200, y: 0, z: 0}

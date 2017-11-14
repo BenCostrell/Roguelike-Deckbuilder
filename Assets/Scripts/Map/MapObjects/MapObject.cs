@@ -20,6 +20,8 @@ public abstract class MapObject
     public SpriteMask mask { get; private set; }
     public SpriteRenderer maskSprite { get; private set; }
     public SpriteRenderer sr { get; private set; }
+    protected Light light;
+    private float baseIntensity;
 
     protected virtual void InitValues()
     {
@@ -27,7 +29,7 @@ public abstract class MapObject
         onStepAudio = info.OnStepAudio;
     }
 
-    public void PlaceOnTile(Tile tile)
+    public virtual void PlaceOnTile(Tile tile)
     {
         physicalObject = GameObject.Instantiate(Services.Prefabs.MapObject);
         sr = physicalObject.GetComponent<SpriteRenderer>();
@@ -40,6 +42,11 @@ public abstract class MapObject
         mask.enabled = false;
         tile.containedMapObject = this;
         currentTile = tile;
+        light = physicalObject.GetComponentInChildren<Light>();
+        light.gameObject.SetActive(false);
+        physicalObject.name = GetType().ToString();
+        baseIntensity = light.intensity;
+        light.color = info.LightColor;
     }
 
     public virtual bool OnStep(Player player)
@@ -54,7 +61,7 @@ public abstract class MapObject
         return false;
     }
 
-    protected void RemoveThis(bool animate)
+    public virtual void RemoveThis(bool animate)
     {
         currentTile.containedMapObject = null;
         currentTile = null;
@@ -81,5 +88,12 @@ public abstract class MapObject
     public virtual int GetEstimatedMovementCost()
     {
         return 0;
+    }
+
+    public void AdjustLighting()
+    {
+        light.intensity = baseIntensity * 1 / Mathf.Max(1, Mathf.Pow(
+            Vector2.Distance(currentTile.controller.transform.position,
+            player.controller.transform.position), 0.5f));
     }
 }

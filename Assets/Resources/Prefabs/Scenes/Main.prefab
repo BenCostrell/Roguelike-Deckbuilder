@@ -882,7 +882,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!1 &1581411057091358
 GameObject:
   m_ObjectHideFlags: 1
@@ -1594,7 +1594,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!1 &1994785762181506
 GameObject:
   m_ObjectHideFlags: 1
@@ -3685,7 +3685,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ca0d85cdf5204904cb7404a378c70c85, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  baseLevelDimension: 8
+  baseLevelDimension: 9
   heightToWidthRatio: 1
   dimensionIncreasePerLevel: 3
   initialHeavyProb: 0.35
@@ -3699,7 +3699,7 @@ MonoBehaviour:
   minMapObjDist: 7
   chestsPerLevel: 0.6
   fountainsPerLevel: 0.2
-  bufferLength: 8
+  bufferLength: 20
   minRoomDimension: 5
   maxRoomDimension: 8
   levelOneRoomDimension: 10

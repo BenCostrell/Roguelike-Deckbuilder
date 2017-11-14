@@ -89,6 +89,15 @@ public class MapManager : MonoBehaviour {
     private List<Room> roomsWithoutChests;
     public Tile playerSpawnTile { get; private set; }
     public Tile exitTile { get; private set; }
+    private List<MapObject> litObjects;
+
+    private void Update()
+    {
+        for (int i = 0; i < litObjects.Count; i++)
+        {
+            litObjects[i].AdjustLighting();
+        }
+    }
 
     public void GenerateLevel(int levelNum)
     {
@@ -261,13 +270,16 @@ public class MapManager : MonoBehaviour {
                 if (tilesNearbySpawnPoint.Count == 0) break;
             }
         }
-        openTiles.Remove(playerSpawnTile);
+        if (playerSpawnTile.containedMapObject != null)
+            playerSpawnTile.containedMapObject.RemoveThis(false);
+        else openTiles.Remove(playerSpawnTile);
         exitTile = GetFarthestTile(playerSpawnTile, openTiles);
         exitTile.isExit = true;
         exitTile.SetSprite(exitDoorSprite, Quaternion.identity);
         openTiles.Remove(exitTile);
         emptyTiles = openTiles;
         tilesWithSpecialStuff = new List<Tile>() { playerSpawnTile, exitTile };
+        litObjects = new List<MapObject>();
         GenerateChests(levelNum);
         GenerateFountains(levelNum);
 
@@ -1006,6 +1018,7 @@ public class MapManager : MonoBehaviour {
             {
                 Chest chest = Services.MapObjectConfig.CreateMapObjectOfType(MapObject.ObjectType.Chest) as Chest;
                 chest.PlaceOnTile(chestTile);
+                litObjects.Add(chest);
                 chest.tier = tier;
                 chestsOnBoard.Add(chest);
                 emptyTiles.Remove(chestTile);
@@ -1039,6 +1052,7 @@ public class MapManager : MonoBehaviour {
                 MapObject fountain =
                     Services.MapObjectConfig.CreateMapObjectOfType(MapObject.ObjectType.Fountain);
                 fountain.PlaceOnTile(fountainTile);
+                litObjects.Add(fountain);
                 emptyTiles.Remove(fountainTile);
                 tilesWithSpecialStuff.Add(fountainTile);
             }
@@ -1111,5 +1125,10 @@ public class MapManager : MonoBehaviour {
             }
         }
         return growthTask;
+    }
+
+    public void RemoveLitMapObject(MapObject obj)
+    {
+        litObjects.Remove(obj);
     }
 }

@@ -23,4 +23,8 @@ public class MapObjectInfo : ScriptableObject
     [SerializeField]
     private AudioClip onStepAudio;
     public AudioClip OnStepAudio { get { return onStepAudio; } }
+
+    [SerializeField]
+    private Color lightColor;
+    public Color LightColor { get { return lightColor; } }
 }
