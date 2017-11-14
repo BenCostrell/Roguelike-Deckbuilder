@@ -3696,7 +3696,7 @@ MonoBehaviour:
   phaseOneStepCount: 10
   minFillPct: 0.6
   maxTriesLevelGen: 20
-  minMapObjDist: 7
+  minMapObjDist: 6
   chestsPerLevel: 0.6
   fountainsPerLevel: 0.2
   bufferLength: 20

@@ -21,12 +21,24 @@ public abstract class MapObject
     public SpriteRenderer maskSprite { get; private set; }
     public SpriteRenderer sr { get; private set; }
     protected Light light;
+    protected ParticleSystem ps;
     private float baseIntensity;
+    private static int nextID_;
+    private static int nextID
+    {
+        get
+        {
+            nextID_ += 1;
+            return nextID_;
+        }
+    }
+    private int id;
 
     protected virtual void InitValues()
     {
         info = Services.MapObjectConfig.GetMapObjectOfType(objectType);
         onStepAudio = info.OnStepAudio;
+        id = nextID;
     }
 
     public virtual void PlaceOnTile(Tile tile)
@@ -47,6 +59,9 @@ public abstract class MapObject
         physicalObject.name = GetType().ToString();
         baseIntensity = light.intensity;
         light.color = info.LightColor;
+        //ps = physicalObject.GetComponentInChildren<ParticleSystem>();
+        //ParticleSystem.MainModule main = ps.main;
+        //main.startColor = info.LightColor;
     }
 
     public virtual bool OnStep(Player player)
@@ -94,6 +109,6 @@ public abstract class MapObject
     {
         light.intensity = baseIntensity * 1 / Mathf.Max(1, Mathf.Pow(
             Vector2.Distance(currentTile.controller.transform.position,
-            player.controller.transform.position), 0.5f));
+            player.controller.transform.position), 1f)) * (1 + Mathf.Sin(Time.time)/2);
     }
 }

@@ -33,6 +33,7 @@ public class Chest : MapObject {
     {
         base.PlaceOnTile(tile);
         light.gameObject.SetActive(true);
+        //ps.Play();
     }
 
     public override void RemoveThis(bool animate)
