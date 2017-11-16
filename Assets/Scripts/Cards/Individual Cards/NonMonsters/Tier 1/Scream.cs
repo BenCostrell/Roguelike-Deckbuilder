@@ -28,6 +28,7 @@ public class Scream : Card
             moveTree.AddChild(monster.MoveAwayFromPlayer(monster.movementSpeed));
         }
         moveTree.Then(new ParameterizedActionTask<int>(player.UnlockEverything, lockid));
+        moveTree.Then(new ActionTask(player.ShowAvailableMoves));
         Services.Main.taskManager.AddTask(moveTree);
     }
 }

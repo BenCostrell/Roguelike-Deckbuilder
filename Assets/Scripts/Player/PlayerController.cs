@@ -7,6 +7,7 @@ public class PlayerController : MonoBehaviour {
     public Player player { get; private set; }
     private LineRenderer lr;
     private GameObject arrowhead;
+    private SpriteRenderer arrowSr;
     [SerializeField]
     private GameObject healthUIobj;
     private TextMesh healthUI;
@@ -29,6 +30,7 @@ public class PlayerController : MonoBehaviour {
         sr = GetComponent<SpriteRenderer>();
         arrowhead = lr.gameObject;
         arrowhead.SetActive(false);
+        arrowSr = arrowhead.GetComponent<SpriteRenderer>();
         healthUI = healthUIobj.GetComponent<TextMesh>();
         MeshRenderer mr = healthUIobj.GetComponent<MeshRenderer>();
         mr.sortingLayerID = sr.sortingLayerID;
@@ -46,12 +48,42 @@ public class PlayerController : MonoBehaviour {
         transform.position = new Vector3(tile.coord.x, tile.coord.y, 0);
     }
 
-    public void ShowPathArrow(List<Tile> path)
+    public void ShowPathArrow(List<Tile> path, bool potential)
     {
         if (path.Count > 0)
         {
             path.Add(player.currentTile);
             arrowhead.SetActive(true);
+            if (potential)
+            {
+                arrowSr.color =
+                    new Color(arrowSr.color.r, arrowSr.color.g, arrowSr.color.b, 0.2f);
+                Gradient curGrad = lr.colorGradient;
+                Gradient grad = new Gradient();
+                GradientAlphaKey[] alphaKeys = new GradientAlphaKey[curGrad.alphaKeys.Length];
+                    for (int i = 0; i < curGrad.alphaKeys.Length; i++)
+                {
+                    GradientAlphaKey alphaKey = curGrad.alphaKeys[i];
+                    alphaKeys[i] = new GradientAlphaKey(0.2f, alphaKey.time);
+                }
+                grad.SetKeys(curGrad.colorKeys, alphaKeys);
+                lr.colorGradient = grad;
+            }
+            else
+            {
+                arrowSr.color =
+                    new Color(arrowSr.color.r, arrowSr.color.g, arrowSr.color.b, 1f);
+                Gradient curGrad = lr.colorGradient;
+                Gradient grad = new Gradient();
+                GradientAlphaKey[] alphaKeys = new GradientAlphaKey[curGrad.alphaKeys.Length];
+                for (int i = 0; i < curGrad.alphaKeys.Length; i++)
+                {
+                    GradientAlphaKey alphaKey = curGrad.alphaKeys[i];
+                    alphaKeys[i] = new GradientAlphaKey(1f, alphaKey.time);
+                }
+                grad.SetKeys(curGrad.colorKeys, alphaKeys);
+                lr.colorGradient = grad;
+            }
             Vector3[] positions = new Vector3[path.Count];
             for (int i = 0; i < path.Count; i++)
             {

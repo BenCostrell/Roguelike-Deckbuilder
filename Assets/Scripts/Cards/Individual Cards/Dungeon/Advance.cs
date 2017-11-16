@@ -11,9 +11,10 @@ public class Advance : DungeonCard
 
     public override TaskTree DungeonOnPlay()
     {
-        TaskTree onPlayTasks = Services.MonsterManager.MonstersMove();
-        onPlayTasks.Then(Services.MonsterManager.MonstersAttack());
-        return onPlayTasks;
+        //TaskTree onPlayTasks = Services.MonsterManager.MonstersMove();
+        //onPlayTasks.Then(Services.MonsterManager.MonstersAttack());
+        //return onPlayTasks;
+        return Services.MonsterManager.MonstersAdvance();
     }
 
     protected override float GetPriority()

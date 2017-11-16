@@ -102,6 +102,19 @@ public class MonsterManager
         }
     }
 
+    public TaskTree MonstersAdvance()
+    {
+        TaskTree advanceTree = new TaskTree(new EmptyTask());
+        List<Monster> sortedMonsters = monsters.OrderBy(monster =>
+            AStarSearch.ShortestPath(monster.currentTile, 
+            player.currentTile, true).Count).ToList();
+        for (int i = 0; i < sortedMonsters.Count; i++)
+        {
+            advanceTree.Then(new AdvanceMonster(sortedMonsters[i]));
+        }
+        return advanceTree;
+    }
+
     public TaskTree MonstersAttack()
     {
         TaskTree attackTree = new TaskTree(new EmptyTask());

@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
 
 public class Player : IDamageable {
 
@@ -89,8 +90,8 @@ public class Player : IDamageable {
 
     public void Initialize(Tile tile, MainTransitionData data)
     {
-        InitializeSprite(tile);
         InitializeDeck(data.deck);
+        InitializeSprite(tile);
         ForceUnlockEverything();
         maxHealth = data.maxHealth;
         currentHealth = data.currentHealth;
@@ -129,6 +130,7 @@ public class Player : IDamageable {
             cardDrawTasks.Then(new DrawCardTask(true));
         }
         cardDrawTasks.Then(new ParameterizedActionTask<int>(UnlockEverything, lockID));
+        cardDrawTasks.Then(new ActionTask(ShowAvailableMoves));
         return cardDrawTasks;
     }
 
@@ -192,6 +194,7 @@ public class Player : IDamageable {
         discardCardTasks.Then(new ActionTask(card.OnDiscard));
         discardCardTasks.Then(new DiscardCard(card));
         discardCardTasks.Then(new ActionTask(Services.UIManager.UpdateDiscardCounter));
+        discardCardTasks.Then(new ActionTask(ShowAvailableMoves));
         return discardCardTasks;
     }
 
@@ -220,19 +223,84 @@ public class Player : IDamageable {
         if (!e.tile.IsImpassable() && !movementLocked)
         {
             List<Tile> shortestPath = GetShortestPath(e.tile);
-            if (CanMoveAlongPath(shortestPath)) MoveToTile(shortestPath);
+            if (CanMoveAlongPath(shortestPath, false))
+                MoveToTile(shortestPath);
+            else if (CanMoveAlongPath(shortestPath, true))
+                QueueAppropriateMovementCards(shortestPath);
         }
     }
 
-    public bool CanMoveAlongPath(List<Tile> path)
+    void QueueAppropriateMovementCards(List<Tile> desiredPath)
     {
-        return ((path.Count <= movesAvailable && path.Count > 0 && !movementLocked));
+        int movesRequired = desiredPath.Count - movesAvailable;
+        List<MovementCard> availableCards = new List<MovementCard>();
+        for (int i = 0; i < hand.Count; i++)
+        {
+            if (hand[i] is MovementCard)
+            {
+                MovementCard card = hand[i] as MovementCard;
+                if (!movementCardsSelected.Contains(card)) availableCards.Add(card);
+            }
+        }
+        List<MovementCard> cardsToQueue = FindClosestSubset(availableCards, movesRequired);
+        for (int i = cardsToQueue.Count -1; i >= 0; i--)
+        {
+            cardsToQueue[i].controller.SelectMovementCard();
+        }
     }
 
-    public bool CanMoveToTile(Tile tile)
+    List<MovementCard> FindClosestSubset(List<MovementCard> cards, int targetValue)
     {
-        List<Tile> shortestPath = GetShortestPath(tile);
-        return CanMoveAlongPath(shortestPath);
+        List<List<MovementCard>>[] subsets = new List<List<MovementCard>>[cards.Count + 1];
+        List<MovementCard> bestSubset = new List<MovementCard>();
+        int bestSubsetValue = 10000;
+        for (int i = 0; i < subsets.Length; i++)
+        {
+            if(i == 0)
+            {
+                subsets[0] = new List<List<MovementCard>>() { new List<MovementCard>() };
+            }
+            else
+            {
+                subsets[i] = new List<List<MovementCard>>();
+                for (int j = 0; j < subsets[i - 1].Count; j++)
+                {
+                    List<MovementCard> baseSubset = subsets[i - 1][j];
+                    for (int k = 0; k < cards.Count; k++)
+                    {
+                        MovementCard card = cards[k];
+                        if (!baseSubset.Contains(card))
+                        {
+                            List<MovementCard> newSubset = new List<MovementCard>(baseSubset);
+                            newSubset.Add(card);
+                            subsets[i].Add(newSubset);
+                            int value = 0;
+                            for (int l = 0; l < newSubset.Count; l++)
+                            {
+                                value += newSubset[l].range;
+                            }
+                            if (value >= targetValue && targetValue - value < bestSubsetValue)
+                            {
+                                if (bestSubsetValue != targetValue || newSubset.Count < bestSubset.Count)
+                                {
+                                    bestSubset = newSubset;
+                                    bestSubsetValue = value;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            
+        }
+        return bestSubset;
+    }
+
+    public bool CanMoveAlongPath(List<Tile> path, bool potential)
+    {
+        return (((path.Count <= movesAvailable || 
+            (potential && path.Count <= PotentialMoveRange()))
+            && path.Count > 0 && !movementLocked));
     }
 
     public void MoveToTile(List<Tile> path)
@@ -256,12 +324,19 @@ public class Player : IDamageable {
     {
         List<Tile> availableTiles = 
             AStarSearch.FindAllAvailableGoals(currentTile, movesAvailable, false, true);
+        List<Tile> potentialAvailableTiles =
+            AStarSearch.FindAllAvailableGoals(currentTile, PotentialMoveRange(), false, true);
         //foreach(Tile tile in Services.MapManager.mapDict.Values)
-        foreach(Tile tile in Services.MapManager.mapGrid)
+        foreach (Tile tile in Services.MapManager.mapGrid)
         {
-            if (availableTiles.Contains(tile)) tile.controller.ShowAsAvailable();
-            else tile.controller.ShowAsUnavailable();
+            if (availableTiles.Contains(tile))
+                tile.controller.ShowAsAvailable();
+            else if(potentialAvailableTiles.Contains(tile))
+                tile.controller.ShowAsPotentiallyAvailable();
+            else
+                tile.controller.ShowAsUnavailable();
         }
+
     }
 
     public void HideAvailableMoves()
@@ -287,9 +362,13 @@ public class Player : IDamageable {
         if ((!targeting || movementCardsSelected.Count > 0) && !moving && !hoveredTile.IsImpassable())
         {
             List<Tile> pathToTile = GetShortestPath(hoveredTile);
-            if (CanMoveAlongPath(pathToTile))
+            if (CanMoveAlongPath(pathToTile, false))
             {
-                controller.ShowPathArrow(pathToTile);
+                controller.ShowPathArrow(pathToTile, false);
+            }
+            else if (CanMoveAlongPath(pathToTile, true))
+            {
+                controller.ShowPathArrow(pathToTile, true);
             }
             else HideArrow();
         }
@@ -340,6 +419,7 @@ public class Player : IDamageable {
     {
         movementCardsSelected.Remove(card);
         Services.UIManager.SetQueueButtonStatus(CheckQueueButtonStatus());
+        ShowAvailableMoves();
     }
 
     bool CheckQueueButtonStatus()
@@ -405,6 +485,7 @@ public class Player : IDamageable {
         UnqueueAll();
         Services.UIManager.SetQueueButtonStatus(true);
         movesAvailable = 0;
+        HideAvailableMoves();
         return turnEndTasks;
     }
 
@@ -622,5 +703,25 @@ public class Player : IDamageable {
         {
             hand[i].controller.Enable();
         }
+    }
+
+    public int PotentialMoveRange()
+    {
+        int range = movesAvailable;
+        if (hand != null)
+        {
+            for (int i = 0; i < hand.Count; i++)
+            {
+                if (hand[i] is MovementCard)
+                {
+                    MovementCard movementCard = hand[i] as MovementCard;
+                    if (!movementCardsSelected.Contains(movementCard))
+                    {
+                        range += movementCard.range;
+                    }
+                }
+            }
+        }
+        return range;
     }
 }

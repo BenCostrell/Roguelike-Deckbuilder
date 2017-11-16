@@ -109,6 +109,7 @@ public abstract class MapObject
     {
         light.intensity = baseIntensity * 1 / Mathf.Max(1, Mathf.Pow(
             Vector2.Distance(currentTile.controller.transform.position,
-            player.controller.transform.position), 1f)) * (1 + Mathf.Sin(Time.time)/2);
+            player.controller.transform.position), 1f)) 
+            * (0.5f + (1 + Mathf.Sin(Time.time * 2)) / 4);
     }
 }

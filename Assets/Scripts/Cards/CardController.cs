@@ -488,6 +488,7 @@ public class CardController : MonoBehaviour, IPointerDownHandler, IPointerEnterH
         protected virtual void OnPlayed()
         {
             player.hand.Remove(card);
+            player.ShowAvailableMoves();
             player.cardsInFlux.Add(card);
             Services.UIManager.SortHand(player.hand);
             Context.RotateTo(Quaternion.identity);
@@ -538,9 +539,9 @@ public class CardController : MonoBehaviour, IPointerDownHandler, IPointerEnterH
                 Services.CardConfig.OnHoverOffset.y,
                 0);
             Context.Reposition(newPos, false, true);
-            card.OnSelect();
             player.cardsSelected.Add(card);
             player.SelectMovementCard(card as MovementCard);
+            card.OnSelect();
         }
 
         public override void OnInputClick()

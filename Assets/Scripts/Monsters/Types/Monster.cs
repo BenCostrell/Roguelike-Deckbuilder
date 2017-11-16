@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public abstract class Monster : IDamageable {
+public abstract class Monster : IDamageable
+{
     public enum MonsterType
     {
         Goblin,
@@ -116,7 +117,7 @@ public abstract class Monster : IDamageable {
         {
             Tile tile = tilesWithinAttackRange[i];
             int dist = tile.coord.Distance(player.currentTile.coord);
-            if (dist < closestDistance && tile.containedMapObject != null 
+            if (dist < closestDistance && tile.containedMapObject != null
                 && tile.containedMapObject is DamageableObject && possiblePathToPlayer.Contains(tile))
             {
                 targetObj = tile.containedMapObject as DamageableObject;
@@ -221,7 +222,7 @@ public abstract class Monster : IDamageable {
 
     public TaskTree MoveAwayFromPlayer(int numMovesAllowed)
     {
-        List<Tile> availableTiles = 
+        List<Tile> availableTiles =
             AStarSearch.FindAllAvailableGoals(currentTile, numMovesAllowed, false, false, true);
         //Debug.Log(availableTiles.Count + " available tiles to flee to");
         availableTiles.Add(currentTile);
@@ -236,7 +237,7 @@ public abstract class Monster : IDamageable {
             //    + shortestPathFromPlayer.Count + " distance from player, compared to current farthest tile at "
             //    + farthestTile.coord.x + "," + farthestTile.coord.y + " at " + 
             //    farthestDistance + " distance from player");
-            if(shortestPathFromPlayer.Count > farthestDistance)
+            if (shortestPathFromPlayer.Count > farthestDistance)
             {
                 farthestTile = tile;
                 farthestDistance = shortestPathFromPlayer.Count;
@@ -260,5 +261,56 @@ public abstract class Monster : IDamageable {
     {
         targetTile.monsterMovementTarget = false;
         targetTile = null;
+    }
+
+    public List<Tile> GetApproachPath()
+    {
+        List<Tile> approachPath = new List<Tile>();
+        List<Tile> availableTiles =
+            AStarSearch.FindAllAvailableGoals(currentTile, movementSpeed);
+        availableTiles.Add(currentTile);
+        List<Tile> tilesWithinRangeOfPlayer = new List<Tile>();
+        Tile closestTile = availableTiles[0];
+        int closestTileDistance = 1000000;
+
+        for (int i = 0; i < availableTiles.Count; i++)
+        {
+            Tile tile = availableTiles[i];
+            if (tile.coord.Distance(player.currentTile.coord) <= attackRange)
+            {
+                tilesWithinRangeOfPlayer.Add(tile);
+            }
+            else if (tilesWithinRangeOfPlayer.Count == 0)
+            {
+                List<Tile> pathToPlayerFromTile = AStarSearch.ShortestPath(tile,
+                    player.currentTile, false, false, false, true);
+                if (pathToPlayerFromTile.Count < closestTileDistance)
+                {
+                    closestTile = tile;
+                    closestTileDistance = pathToPlayerFromTile.Count;
+                }
+            }
+        }
+
+        if (tilesWithinRangeOfPlayer.Count > 0)
+        {
+            Tile farthestAttackVantage = tilesWithinRangeOfPlayer[0];
+            int farthestVantageDistance = 0;
+            for (int i = 0; i < tilesWithinRangeOfPlayer.Count; i++)
+            {
+                Tile tile = tilesWithinRangeOfPlayer[i];
+                List<Tile> pathToPlayer = AStarSearch.ShortestPath(player.currentTile, tile);
+                if (pathToPlayer.Count > farthestVantageDistance)
+                {
+                    farthestAttackVantage = tile;
+                    farthestVantageDistance = pathToPlayer.Count;
+                }
+            }
+            return AStarSearch.ShortestPath(currentTile, farthestAttackVantage, false, false, true);
+        }
+        else
+        {
+            return AStarSearch.ShortestPath(currentTile, closestTile, false, false, true);
+        }
     }
 }
