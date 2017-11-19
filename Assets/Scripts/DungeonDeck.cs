@@ -221,6 +221,9 @@ public class AlterDungeonTimerTask : Task
             initialScale = newMonsterCard.controller.transform.localScale;
             midpointScale = initialScale * Services.MonsterConfig.AddMonsterCardScaleUpFactor;
             newMonsterCard.controller.EnterAddToDungeonDeckMode();
+            Debug.Log("inital pos " + initialPos);
+            Debug.Log("midpoint pos " + midpointPos);
+            Debug.Log("target pos " + targetPos);
         }
         else
         {

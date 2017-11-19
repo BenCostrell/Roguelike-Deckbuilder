@@ -1495,7 +1495,7 @@ MonoBehaviour:
   deckDisplaySpacingPerRow: {x: 0, y: -50, z: -35}
   maxCardsPerRow: 10
   dungeonDeckSize: 20
-  advanceCount: 5
+  advanceCount: 4
   growthCount: 2
 --- !u!114 &114918929741127194
 MonoBehaviour:
