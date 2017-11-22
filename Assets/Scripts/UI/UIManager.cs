@@ -507,14 +507,12 @@ public class UIManager : MonoBehaviour {
             ColorBlock buttonColors = endTurnButton.colors;
             buttonColors.normalColor = Color.green;
             endTurnButton.colors = buttonColors;
-            endTurnButton.transform.localScale = 1.1f * Vector3.one;
         }
         else
         {
             ColorBlock buttonColors = endTurnButton.colors;
             buttonColors.normalColor = Color.yellow;
             endTurnButton.colors = buttonColors;
-            endTurnButton.transform.localScale = Vector3.one;
         }
     }
 

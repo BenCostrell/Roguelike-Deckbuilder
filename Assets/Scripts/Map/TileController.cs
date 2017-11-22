@@ -12,9 +12,13 @@ public class TileController : MonoBehaviour {
     private Color defColor;
     [SerializeField]
     private float detectionDistance;
+    [SerializeField]
+    private int selectionLockOutPeriod;
+    private int selectionLockoutFramesLeft;
 
 	// Update is called once per frame
 	void Update () {
+        if (selectionLockoutFramesLeft > 0) selectionLockoutFramesLeft -= 1;
     }
 
     public void Init(Tile tile_)
@@ -32,6 +36,7 @@ public class TileController : MonoBehaviour {
         {
             tile.OnHoverEnter();
         }
+        Services.EventManager.Fire(new TileHovered(tile));
     }
 
     private void OnMouseEnter()
@@ -62,6 +67,16 @@ public class TileController : MonoBehaviour {
     private void OnMouseDown()
     {
         tile.OnSelect();
+        selectionLockoutFramesLeft = selectionLockOutPeriod;
+    }
+
+    private void OnMouseUp()
+    {
+        if (selectionLockoutFramesLeft == 0)
+        {
+            tile.OnSelect();
+            selectionLockoutFramesLeft = selectionLockOutPeriod;
+        }
     }
 
     public void ShowAsAvailable()

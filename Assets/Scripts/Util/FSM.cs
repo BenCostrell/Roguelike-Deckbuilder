@@ -75,6 +75,16 @@ public class FSM<TContext>
         CurrentState.OnInputClick();
     }
 
+    public virtual void OnBeginDrag()
+    {
+        CurrentState.OnBeginDrag();
+    }
+
+    public virtual void OnEndDrag()
+    {
+        CurrentState.OnEndDrag();
+    }
+
     // Queues transition to a new state
     public void TransitionTo<TState>() where TState : State
     {
@@ -157,6 +167,8 @@ public class FSM<TContext>
         public virtual void OnInputEnter() { }
         public virtual void OnInputExit() { }
         public virtual void OnInputClick() { }
+        public virtual void OnBeginDrag() { }
+        public virtual void OnEndDrag() { }
     }
 
 }

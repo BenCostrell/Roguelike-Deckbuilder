@@ -40,6 +40,15 @@ public class TileSelected : Event
     }
 }
 
+public class TileHovered : Event {
+    public Tile tile;
+    public TileHovered(Tile tile_)
+    {
+        tile = tile_;
+    }
+}
+
+
 public class CardSelected : Event
 {
     public Card card;

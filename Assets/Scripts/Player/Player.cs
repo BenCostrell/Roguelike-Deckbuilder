@@ -307,10 +307,11 @@ public class Player : IDamageable {
     {
         Services.EventManager.Fire(new MovementInitiated());
         movesAvailable -= MovementCost(path);
-        CheckAvailableActions();
         HideAvailableMoves();
-        Services.Main.taskManager.AddTask(
-            new MoveObjectAlongPath(controller.gameObject, path));
+        TaskQueue moveTasks = new TaskQueue(new List<Task>(){
+            new MoveObjectAlongPath(controller.gameObject, path),
+            new ActionTask(CheckAvailableActions) });
+        Services.Main.taskManager.AddTask(moveTasks);
     }
 
     List<Tile> GetShortestPath(Tile tile)
@@ -403,7 +404,7 @@ public class Player : IDamageable {
                 break;
             }
         }
-        if(noPlayableCardsInHand && movesAvailable == 0)
+        if(noPlayableCardsInHand && movesAvailable == 0 && !moving)
         {
             Services.UIManager.SetEndTurnButtonStatus(true);
         }

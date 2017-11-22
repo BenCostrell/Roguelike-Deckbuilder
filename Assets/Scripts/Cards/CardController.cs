@@ -4,8 +4,8 @@ using System.Collections.Generic;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 
-public class CardController : MonoBehaviour, IPointerDownHandler, IPointerEnterHandler, IPointerExitHandler, IPointerUpHandler, 
-    IPointerClickHandler
+public class CardController : MonoBehaviour, IPointerDownHandler, IPointerEnterHandler, 
+    IPointerExitHandler, IPointerUpHandler, IPointerClickHandler, IBeginDragHandler, IEndDragHandler, IDragHandler
 {
     public Card card { get; private set; }
     private Vector3 basePos;
@@ -41,6 +41,8 @@ public class CardController : MonoBehaviour, IPointerDownHandler, IPointerEnterH
     private Color baseColor;
     public bool isQueued { get { return stateMachine.CurrentState is MovementCardSelected; } }
     public Quaternion targetRotation { get; private set; }
+    [SerializeField]
+    private float discardDetectionRadius;
 
     // Use this for initialization
     public void Init(Card card_)
@@ -126,6 +128,20 @@ public class CardController : MonoBehaviour, IPointerDownHandler, IPointerEnterH
     public void OnPointerUp(PointerEventData eventData)
     {
         stateMachine.OnInputUp();
+    }
+
+    public void OnBeginDrag(PointerEventData eventData)
+    {
+        stateMachine.OnBeginDrag();
+    }
+
+    public void OnEndDrag(PointerEventData eventData)
+    {
+        stateMachine.OnEndDrag();
+    }
+
+    public void OnDrag(PointerEventData eventData)
+    {
     }
 
     public void UnselectMovementCard()
@@ -240,7 +256,18 @@ public class CardController : MonoBehaviour, IPointerDownHandler, IPointerEnterH
     public bool IsInDiscardZone()
     {
         RectTransform discardRT = Services.UIManager.discardZone.GetComponent<RectTransform>();
-        return discardRT.rect.Contains(discardRT.InverseTransformPoint(transform.position));
+        List<Vector3> directions = new List<Vector3>()
+        {
+            Vector3.up, Vector3.down, Vector3.left, Vector3.right
+        };
+        for (int i = 0; i < directions.Count; i++)
+        {
+            Vector3 point = transform.position + (discardDetectionRadius * directions[i]);
+            if (discardRT.rect.Contains(discardRT.InverseTransformPoint(point))){ 
+                return true;
+            }
+        }
+        return false;
     }
 
     private abstract class CardState : FSM<CardController>.State
@@ -299,10 +326,20 @@ public class CardController : MonoBehaviour, IPointerDownHandler, IPointerEnterH
             transform.SetParent(Context.baseParent);
             Context.SetCardFrameStatus(true);
             Context.Reposition(Context.basePos, false);
-            tempLockFramesLeft = 8;
+            tempLockFramesLeft = 7;
         }
 
         public override void OnInputClick()
+        {
+            Select();
+        }
+
+        public override void OnBeginDrag()
+        {
+            Select();
+        }
+
+        void Select()
         {
             if (tempLockFramesLeft == 0)
             {
@@ -448,6 +485,8 @@ public class CardController : MonoBehaviour, IPointerDownHandler, IPointerEnterH
     {
         private Vector2 mouseRelativePos;
         private int lockID;
+        private bool dragEnded;
+        private Tile tileHovered;
 
         public override void OnEnter()
         {
@@ -495,9 +534,15 @@ public class CardController : MonoBehaviour, IPointerDownHandler, IPointerEnterH
             TransitionTo<Playing>();
         }
 
+        public override void OnEndDrag()
+        {
+            dragEnded = true;
+        }
+
         public override void Update()
         {
-            bool buttonDown = Input.GetMouseButtonDown(0);
+            bool buttonDown = Input.GetMouseButtonDown(0) || dragEnded;
+            if (dragEnded) dragEnded = false;
             Drag();
             if (buttonDown) card.OnUnselect();
             if (Context.IsInDiscardZone())
@@ -570,12 +615,20 @@ public class CardController : MonoBehaviour, IPointerDownHandler, IPointerEnterH
 
     private class TargetedCardSelected : Selected
     {
+        private Tile tileHovered;
+
+        public override void Update()
+        {
+            base.Update();
+            tileHovered = null;
+        }
+
         protected override void OnDiscardableEffect()
         {
             base.OnDiscardableEffect();
             transform.localScale = baseScale * Services.CardConfig.OnHoverScaleUp;
             Context.SetCardFrameStatus(true);
-            Services.EventManager.Unregister<TileSelected>(OnTileSelected);
+            Services.EventManager.Unregister<TileHovered>(OnTileHovered);
         }
 
         protected override void OnPlayableEffect()
@@ -583,7 +636,7 @@ public class CardController : MonoBehaviour, IPointerDownHandler, IPointerEnterH
             base.OnPlayableEffect();
             transform.localScale = Context.baseScale;
             Context.SetCardFrameStatus(false);
-            Services.EventManager.Register<TileSelected>(OnTileSelected);
+            Services.EventManager.Register<TileHovered>(OnTileHovered);
         }
 
         protected override void OnUnplayableEffect()
@@ -591,17 +644,22 @@ public class CardController : MonoBehaviour, IPointerDownHandler, IPointerEnterH
             base.OnUnplayableEffect();
             transform.localScale = baseScale * Services.CardConfig.OnHoverScaleUp;
             Context.SetCardFrameStatus(true);
-            Services.EventManager.Unregister<TileSelected>(OnTileSelected);
+            Services.EventManager.Unregister<TileHovered>(OnTileHovered);
+        }
+
+        void OnTileHovered(TileHovered e)
+        {
+            tileHovered = e.tile;
         }
 
         protected override void OnPlayed()
         {
-            TransitionTo<Playable>();
+            if (tileHovered == null) TransitionTo<Playable>();
+            else OnTileSelected(tileHovered);
         }
 
-        void OnTileSelected(TileSelected e)
+        void OnTileSelected(Tile tileSelected)
         {
-            Tile tileSelected = e.tile;
             TileTargetedCard targetedCard = card as TileTargetedCard;
             card.OnUnselect();
             if (targetedCard.IsTargetValid(tileSelected))
@@ -615,7 +673,8 @@ public class CardController : MonoBehaviour, IPointerDownHandler, IPointerEnterH
         public override void OnExit()
         {
             base.OnExit();
-            Services.EventManager.Unregister<TileSelected>(OnTileSelected);
+            Services.EventManager.Unregister<TileHovered>(OnTileHovered);
+            Debug.Log("unregistering at time " + Time.time);
         }
     }
 
