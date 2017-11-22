@@ -298,7 +298,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   baseScale: {x: 0, y: 0, z: 0}
+  baseParent: {fileID: 0}
   selected: 0
+  baseSiblingIndex: 0
+  discardDetectionRadius: 2
 --- !u!212 &212515422846648890
 SpriteRenderer:
   m_ObjectHideFlags: 1
