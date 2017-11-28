@@ -72,6 +72,10 @@ public class MonsterConfig : ScriptableObject
     private float spawnAnimTime;
     public float SpawnAnimTime { get { return spawnAnimTime; } }
 
+    [SerializeField]
+    private int maxSpawnRadius;
+    public int MaxSpawnRadius { get { return maxSpawnRadius; } }
+
     public MonsterInfo GetMonsterOfType(Monster.MonsterType monsterType)
     {
         foreach (MonsterInfo monsterInfo in monsters)

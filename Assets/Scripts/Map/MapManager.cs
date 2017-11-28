@@ -34,6 +34,10 @@ public class MapManager : MonoBehaviour {
     private float chestsPerLevel;
     [SerializeField]
     private float fountainsPerLevel;
+    [SerializeField]
+    private float initSaplingProportionNearPlayer;
+    [SerializeField]
+    private int initSaplingRadius;
     private int width;
     private int height;
     public Tile[,] mapGrid { get; private set; }
@@ -43,7 +47,8 @@ public class MapManager : MonoBehaviour {
     private List<Tile> bufferTiles;
     [SerializeField]
     private int bufferLength;
-    private List<Tile> brushTargets;
+    private List<Tile> targetTiles;
+    private List<Sprout> currentLiveSprouts;
 
 
     [SerializeField]
@@ -255,6 +260,7 @@ public class MapManager : MonoBehaviour {
             }
         }
 
+
         Tile referenceTile = openTiles[0];
 
         playerSpawnTile = GetFarthestTile(referenceTile, openTiles);
@@ -273,6 +279,7 @@ public class MapManager : MonoBehaviour {
         if (playerSpawnTile.containedMapObject != null)
             playerSpawnTile.containedMapObject.RemoveThis(false);
         else openTiles.Remove(playerSpawnTile);
+
         exitTile = GetFarthestTile(playerSpawnTile, openTiles);
         exitTile.isExit = true;
         exitTile.SetSprite(exitDoorSprite, Quaternion.identity);
@@ -282,6 +289,10 @@ public class MapManager : MonoBehaviour {
         litObjects = new List<MapObject>();
         GenerateChests(levelNum);
         GenerateFountains(levelNum);
+
+        currentLiveSprouts = new List<Sprout>();
+        SproutSaplings(playerSpawnTile, initSaplingProportionNearPlayer,
+            initSaplingRadius, false, 0);
 
         bufferTiles = new List<Tile>();
         for (int i = -bufferLength; i < width + bufferLength; i++)
@@ -379,6 +390,78 @@ public class MapManager : MonoBehaviour {
             }
         }
         return newMap;
+    }
+
+    List<Tile> GetSproutCandidateTiles(Tile centerTile, int radius)
+    {
+        List<Tile> candidateTiles = new List<Tile>();
+        targetTiles = new List<Tile>();
+
+        foreach (Tile tile in mapGrid)
+        {
+            if (tile.coord.Distance(centerTile.coord) <= radius &&
+                tile.containedMapObject != null &&
+                (tile.containedMapObject is LightBrush ||
+                tile.containedMapObject is HeavyBrush) && OpenNeighbors(tile).Count > 0)
+            {
+                candidateTiles.Add(tile);
+            }
+        }
+        return candidateTiles;
+    }
+
+    public TaskTree SproutSaplings(Tile centerTile, float proportion, int radius, bool animate, float staggerTime)
+    {
+        List<Tile> candidateTiles = GetSproutCandidateTiles(centerTile, radius);
+
+        int numNewSprouts = Mathf.RoundToInt(candidateTiles.Count * proportion);
+        return SproutSaplings(numNewSprouts, candidateTiles, animate, staggerTime);
+        
+    }
+
+    public TaskTree SproutSaplings(Tile centerTile, int numSeeds, int radius, bool animate, 
+        float staggerTime)
+    {
+        List<Tile> candidateTiles = GetSproutCandidateTiles(centerTile, radius);
+        return SproutSaplings(numSeeds, candidateTiles, animate, staggerTime);
+    }
+
+    public TaskTree SproutSaplings(int numSprouts, List<Tile> candidateTiles, 
+        bool animate, float staggerTime)
+    {
+        TaskTree sproutTasks = new TaskTree(new EmptyTask());
+        for (int i = 0; i < numSprouts; i++)
+        {
+            Tile sproutTile = candidateTiles[Random.Range(0, candidateTiles.Count)];
+            candidateTiles.Remove(sproutTile);
+            List<Tile> sproutNeighbors = OpenNeighbors(sproutTile);
+            if (sproutNeighbors.Count > 0)
+            {
+                Tile tileToGrowOn = sproutNeighbors[Random.Range(0, sproutNeighbors.Count)];
+                targetTiles.Add(tileToGrowOn);
+                Sprout sprout = Services.MapObjectConfig
+                        .CreateMapObjectOfType(MapObject.ObjectType.Sprout) as Sprout;
+                if (animate)
+                {
+                    sproutTasks.Then(new GrowObject(tileToGrowOn, staggerTime, sprout, true));
+                }
+                else
+                {
+                    sprout.PlaceOnTile(tileToGrowOn);
+                }
+            }
+        }
+        return sproutTasks;
+    }
+
+    public void OnSproutBirth(Sprout sprout)
+    {
+        currentLiveSprouts.Add(sprout);
+    }
+
+    public void OnSproutDeath(Sprout sprout)
+    {
+        currentLiveSprouts.Remove(sprout);
     }
 
     int GetNeighborCount(SpaceType type, SpaceType[,] map, int x, int y, int dist)
@@ -1088,43 +1171,86 @@ public class MapManager : MonoBehaviour {
         for (int i = 0; i < tile.neighbors.Count; i++)
         {
             Tile neighbor = tile.neighbors[i];
-            if (!neighbor.IsImpassable() && !neighbor.isExit && !brushTargets.Contains(neighbor)
-                && neighbor.containedMapObject == null)
+            if (!neighbor.IsImpassable() && !neighbor.isExit && !targetTiles.Contains(neighbor)
+                && neighbor.containedMapObject == null && 
+                neighbor != Services.GameManager.player.currentTile)
                 openNeighbors.Add(neighbor);
         }
         return openNeighbors;
     }
 
-    public TaskTree Growth(int radius, float proportion, float staggerTime)
+    //public TaskTree Growth(int radius, float proportion, float staggerTime)
+    //{
+    //    List<Tile> brushTiles = new List<Tile>();
+    //    targetTiles = new List<Tile>();
+    //    foreach (Tile tile in mapGrid)
+    //    {
+    //        if (tile.coord.Distance(Services.GameManager.player.currentTile.coord) <= radius &&
+    //            tile.containedMapObject != null &&
+    //            (tile.containedMapObject is LightBrush ||
+    //            tile.containedMapObject is HeavyBrush) && OpenNeighbors(tile).Count > 0) {
+    //            brushTiles.Add(tile);
+    //        }
+    //    }
+    //    int numNewGrowth = Mathf.RoundToInt(brushTiles.Count * proportion);
+    //    Debug.Log(brushTiles.Count + " brush tiles");
+    //    Debug.Log("growing " + numNewGrowth + " new brushes");
+    //    TaskTree growthTask = new TaskTree(new EmptyTask());
+    //    for (int i = 0; i < numNewGrowth; i++)
+    //    {
+    //        Tile brushTile = brushTiles[Random.Range(0, brushTiles.Count)];
+    //        brushTiles.Remove(brushTile);
+    //        List<Tile> brushNeighbors = OpenNeighbors(brushTile);
+    //        if (brushNeighbors.Count > 0)
+    //        {
+    //            Tile tileToGrowOn = brushNeighbors[Random.Range(0, brushNeighbors.Count)];
+    //            targetTiles.Add(tileToGrowOn);
+    //            growthTask.Then(new GrowObject(tileToGrowOn, staggerTime, MapObject.ObjectType.LightBrush));
+    //        }
+    //    }
+    //    return growthTask;
+    //}
+
+    public TaskTree Overgrowth(int radius, int numNewBrushes, float staggerTime)
     {
-        List<Tile> brushTiles = new List<Tile>();
-        brushTargets = new List<Tile>();
-        foreach (Tile tile in mapGrid)
+        TaskTree growthTasks = new TaskTree(new EmptyTask());
+        for (int i = 0; i < numNewBrushes; i++)
         {
-            if (tile.coord.Distance(Services.GameManager.player.currentTile.coord) <= radius &&
-                tile.containedMapObject != null &&
-                (tile.containedMapObject is LightBrush ||
-                tile.containedMapObject is HeavyBrush) && OpenNeighbors(tile).Count > 0) {
-                brushTiles.Add(tile);
-            }
-        }
-        int numNewGrowth = Mathf.RoundToInt(brushTiles.Count * proportion);
-        Debug.Log(brushTiles.Count + " brush tiles");
-        Debug.Log("growing " + numNewGrowth + " new brushes");
-        TaskTree growthTask = new TaskTree(new EmptyTask());
-        for (int i = 0; i < numNewGrowth; i++)
-        {
-            Tile brushTile = brushTiles[Random.Range(0, brushTiles.Count)];
-            brushTiles.Remove(brushTile);
-            List<Tile> brushNeighbors = OpenNeighbors(brushTile);
-            if (brushNeighbors.Count > 0)
+            Sprout sprout = GetLiveSprout(radius);
+            if (sprout != null)
             {
-                Tile tileToGrowOn = brushNeighbors[Random.Range(0, brushNeighbors.Count)];
-                brushTargets.Add(tileToGrowOn);
-                growthTask.Then(new GrowBrush(tileToGrowOn, staggerTime));
+                currentLiveSprouts.Remove(sprout);
+                TaskTree growthSubtask = new TaskTree(new EmptyTask());
+                growthSubtask.AddChild(new FadeOutSprout(sprout));
+                growthSubtask.AddChild(new GrowObject(sprout.GetCurrentTile(), staggerTime,
+                    Services.MapObjectConfig.CreateMapObjectOfType(
+                        MapObject.ObjectType.LightBrush)));
+                growthTasks.Then(growthSubtask);
+            }
+            else break;
+        }
+        return growthTasks;
+    }
+
+    public Sprout GetLiveSprout(int radius)
+    {
+        List<Sprout> sproutsInRange = new List<Sprout>();
+        for (int i = 0; i < currentLiveSprouts.Count; i++)
+        {
+            Sprout sprout = currentLiveSprouts[i];
+            Tile sproutTile = sprout.GetCurrentTile();
+            if (sproutTile.coord
+                .Distance(Services.GameManager.player.currentTile.coord) <= radius &&
+                sproutTile != Services.GameManager.player.currentTile && 
+                sproutTile.containedMonster == null)
+            {
+                sproutsInRange.Add(sprout);
             }
         }
-        return growthTask;
+        if (sproutsInRange.Count > 0)
+            return sproutsInRange[Random.Range(0, sproutsInRange.Count)];
+        else
+            return null;
     }
 
     public void RemoveLitMapObject(MapObject obj)

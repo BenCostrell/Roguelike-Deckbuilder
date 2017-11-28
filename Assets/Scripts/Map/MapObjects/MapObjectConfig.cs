@@ -8,6 +8,10 @@ public class MapObjectConfig : ScriptableObject
     private MapObjectInfo[] mapObjects;
     public MapObjectInfo[] MapObjects { get { return mapObjects; } }
 
+    [SerializeField]
+    private float plantGrowthTime;
+    public float PlantGrowthTime { get { return plantGrowthTime; } }
+
     public MapObjectInfo GetMapObjectOfType(MapObject.ObjectType objectType)
     {
         foreach (MapObjectInfo info in mapObjects)
@@ -35,6 +39,8 @@ public class MapObjectConfig : ScriptableObject
                 return new HeavyBrush();
             case MapObject.ObjectType.Chest:
                 return new Chest();
+            case MapObject.ObjectType.Sprout:
+                return new Sprout();
             default:
                 return null;
         }

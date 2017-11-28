@@ -33,3 +33,4 @@ MonoBehaviour:
   attackAnimDist: 0.3
   deathAnimTime: 0.25
   spawnAnimTime: 0.3
+  maxSpawnRadius: 8

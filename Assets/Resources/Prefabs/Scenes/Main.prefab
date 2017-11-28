@@ -3699,6 +3699,8 @@ MonoBehaviour:
   minMapObjDist: 6
   chestsPerLevel: 0.6
   fountainsPerLevel: 0.2
+  initSaplingProportionNearPlayer: 0.6
+  initSaplingRadius: 10
   bufferLength: 20
   minRoomDimension: 5
   maxRoomDimension: 8

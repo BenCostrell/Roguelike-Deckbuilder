@@ -32,7 +32,8 @@ public abstract class Card {
         Scream,
         Advance,
         GrowTheRanks,
-        Overgrowth
+        Overgrowth,
+        SpreadSeeds
     }
     public int tier { get; protected set; }
     public Sprite sprite { get; protected set; }

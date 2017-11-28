@@ -674,7 +674,7 @@ public class CardController : MonoBehaviour, IPointerDownHandler, IPointerEnterH
         {
             base.OnExit();
             Services.EventManager.Unregister<TileHovered>(OnTileHovered);
-            Debug.Log("unregistering at time " + Time.time);
+            //Debug.Log("unregistering at time " + Time.time);
         }
     }
 

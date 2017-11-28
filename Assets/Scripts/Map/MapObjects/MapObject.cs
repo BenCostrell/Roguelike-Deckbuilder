@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public abstract class MapObject 
+public abstract class MapObject : IPlaceable
 {
     public enum ObjectType
     {
@@ -9,7 +9,8 @@ public abstract class MapObject
         Fountain,
         LightBrush,
         HeavyBrush,
-        Chest
+        Chest,
+        Sprout
     }
     protected ObjectType objectType;
     public MapObjectInfo info { get; protected set; }
@@ -64,6 +65,16 @@ public abstract class MapObject
         //main.startColor = info.LightColor;
     }
 
+    public GameObject GetPhysicalObject()
+    {
+        return physicalObject;
+    }
+
+    public SpriteRenderer GetSpriteRenderer()
+    {
+        return sr;
+    }
+
     public virtual bool OnStep(Player player)
     {
         if (onStepAudio != null) Services.SoundManager.CreateAndPlayAudio(onStepAudio);
@@ -78,7 +89,7 @@ public abstract class MapObject
 
     public virtual void RemoveThis(bool animate)
     {
-        currentTile.containedMapObject = null;
+        if(currentTile.containedMapObject == this) currentTile.containedMapObject = null;
         currentTile = null;
         player.ShowAvailableMoves();
         if(!animate) DestroyThis();

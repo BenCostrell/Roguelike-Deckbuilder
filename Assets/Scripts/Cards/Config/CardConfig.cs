@@ -193,6 +193,8 @@ public class CardConfig : ScriptableObject
                 return new GrowtheRanks();
             case Card.CardType.Overgrowth:
                 return new Overgrowth();
+            case Card.CardType.SpreadSeeds:
+                return new SpreadSeeds();
             default:
                 return null;
         }

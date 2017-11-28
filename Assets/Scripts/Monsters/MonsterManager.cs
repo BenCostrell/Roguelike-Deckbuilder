@@ -8,47 +8,49 @@ public class MonsterManager
     public List<Monster> monsters = new List<Monster>();
     private Player player { get { return Services.GameManager.player; } }
 
-    public Monster SpawnMonster(Monster.MonsterType monsterType)
+    public Monster SpawnMonster(Monster.MonsterType monsterType, Tile tile)
     {
         Monster monster = CreateMonsterOfType(monsterType);
-        Tile playersTargetTile = Services.MapManager.exitTile;
-        List<Tile> playersPathToTarget = AStarSearch.ShortestPath(
-            player.currentTile,
-            playersTargetTile, true);
-        playersPathToTarget.Reverse();
-        Tile spawnCenterPoint;
-        if(playersPathToTarget.Count < Services.MonsterConfig.MinDistFromMonsters)
-        {
-            spawnCenterPoint = playersPathToTarget[playersPathToTarget.Count - 1];
-        }
-        else
-        {
-            spawnCenterPoint = 
-                playersPathToTarget[Services.MonsterConfig.MinDistFromMonsters - 1];
-        }
-        List<Tile> potentialSpawnPoints = AStarSearch.FindAllAvailableGoals(spawnCenterPoint,
-            Services.MonsterConfig.SpawnRange, true);
-        for (int i = potentialSpawnPoints.Count - 1; i >= 0; i--)
-        {
-            if (potentialSpawnPoints[i].containedMonster != null ||
-                player.currentTile == potentialSpawnPoints[i] ||
-                potentialSpawnPoints[i].containedMapObject != null)
-                potentialSpawnPoints.Remove(potentialSpawnPoints[i]);
-        }
-        if (potentialSpawnPoints.Count > 0)
-        {
-            Tile spawnPoint = potentialSpawnPoints[Random.Range(0, potentialSpawnPoints.Count)];
-            if (spawnPoint != null)
-            {
-                CreateMonster(monster, spawnPoint);
-            }
-            else
-            {
-                monster = null;
-            }
-            return monster;
-        }
-        return null;
+        CreateMonster(monster, tile);
+        return monster;
+        //Tile playersTargetTile = Services.MapManager.exitTile;
+        //List<Tile> playersPathToTarget = AStarSearch.ShortestPath(
+        //    player.currentTile,
+        //    playersTargetTile, true);
+        //playersPathToTarget.Reverse();
+        //Tile spawnCenterPoint;
+        //if(playersPathToTarget.Count < Services.MonsterConfig.MinDistFromMonsters)
+        //{
+        //    spawnCenterPoint = playersPathToTarget[playersPathToTarget.Count - 1];
+        //}
+        //else
+        //{
+        //    spawnCenterPoint = 
+        //        playersPathToTarget[Services.MonsterConfig.MinDistFromMonsters - 1];
+        //}
+        //List<Tile> potentialSpawnPoints = AStarSearch.FindAllAvailableGoals(spawnCenterPoint,
+        //    Services.MonsterConfig.SpawnRange, true);
+        //for (int i = potentialSpawnPoints.Count - 1; i >= 0; i--)
+        //{
+        //    if (potentialSpawnPoints[i].containedMonster != null ||
+        //        player.currentTile == potentialSpawnPoints[i] ||
+        //        potentialSpawnPoints[i].containedMapObject != null)
+        //        potentialSpawnPoints.Remove(potentialSpawnPoints[i]);
+        //}
+        //if (potentialSpawnPoints.Count > 0)
+        //{
+        //    Tile spawnPoint = potentialSpawnPoints[Random.Range(0, potentialSpawnPoints.Count)];
+        //    if (spawnPoint != null)
+        //    {
+        //        CreateMonster(monster, spawnPoint);
+        //    }
+        //    else
+        //    {
+        //        monster = null;
+        //    }
+        //    return monster;
+        //}
+        //return null;
     }
 
     void CreateMonster(Monster monster, Tile tile)

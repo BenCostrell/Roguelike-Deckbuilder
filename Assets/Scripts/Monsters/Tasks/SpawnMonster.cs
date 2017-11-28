@@ -19,7 +19,7 @@ public class SpawnMonster : Task
     protected override void Init()
     {
         initialPos = monsterCard.controller.transform.position + Vector3.back * zOffset;
-        monster = monsterCard.SpawnMonster();
+        //monster = monsterCard.SpawnMonster();
         if(monster == null)
         {
             SetStatus(TaskStatus.Success);

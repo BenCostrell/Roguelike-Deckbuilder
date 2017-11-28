@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public abstract class Monster : IDamageable
+public abstract class Monster : IDamageable, IPlaceable
 {
     public enum MonsterType
     {
@@ -48,6 +48,16 @@ public abstract class Monster : IDamageable
         currentTile = tile;
         tile.PlaceMonsterOnTile(this);
         controller.PlaceOnTile(tile);
+    }
+
+    public GameObject GetPhysicalObject()
+    {
+        return controller.gameObject;
+    }
+
+    public SpriteRenderer GetSpriteRenderer()
+    {
+        return controller.sr;
     }
 
     protected void InitValues()
@@ -117,8 +127,10 @@ public abstract class Monster : IDamageable
         {
             Tile tile = tilesWithinAttackRange[i];
             int dist = tile.coord.Distance(player.currentTile.coord);
-            if (dist < closestDistance && tile.containedMapObject != null
-                && tile.containedMapObject is DamageableObject && possiblePathToPlayer.Contains(tile))
+            if (dist < closestDistance && tile.containedMapObject != null && 
+                tile.containedMapObject is DamageableObject && 
+                tile.IsImpassable() &&
+                possiblePathToPlayer.Contains(tile))
             {
                 targetObj = tile.containedMapObject as DamageableObject;
                 closestDistance = dist;
