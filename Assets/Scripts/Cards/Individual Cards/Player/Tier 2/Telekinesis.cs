@@ -12,9 +12,9 @@ public class Telekinesis : TileTargetedCard
         targets = new List<Tile>();
     }
 
-    public override void BeginTargeting()
+    public override void ClearTargets()
     {
-        base.BeginTargeting();
+        base.ClearTargets();
         numRequiredTargets = 2;
     }
 

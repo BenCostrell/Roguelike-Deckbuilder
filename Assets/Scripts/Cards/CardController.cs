@@ -621,7 +621,7 @@ public class CardController : MonoBehaviour, IPointerDownHandler, IPointerEnterH
         {
             base.OnEnter();
             TileTargetedCard targetedCard = card as TileTargetedCard;
-            targetedCard.BeginTargeting();
+            targetedCard.ClearTargets();
         }
 
         public override void Update()

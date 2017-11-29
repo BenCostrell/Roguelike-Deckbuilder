@@ -8,7 +8,7 @@ public abstract class TileTargetedCard : Card
     protected List<Tile> targets;
     protected int numRequiredTargets;
 
-    public virtual void BeginTargeting()
+    public virtual void ClearTargets()
     {
         targets = new List<Tile>();
         numRequiredTargets = 1;
@@ -69,6 +69,7 @@ public abstract class TileTargetedCard : Card
             tile.controller.ShowAsUntargetable();
         }
         player.ShowAvailableMoves();
+        ClearTargets();
     }
 
     protected List<Tile> TilesInRange()

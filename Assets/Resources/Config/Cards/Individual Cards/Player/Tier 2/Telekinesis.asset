@@ -16,7 +16,7 @@ MonoBehaviour:
   cardText: Teleport a Monster within 4 range to an open space up to 2 spaces away
     from it.
   sprite: {fileID: 21300000, guid: 92d9efc512724ee469b8b06d5610bb9c, type: 3}
-  tier: 0
+  tier: 1
   isMonster: 0
   onPlayAudio: {fileID: 0}
   range: 4
