@@ -12,7 +12,7 @@ public class DungeonDeck
     public List<Card> discardPile { get; private set; }
     public int discardCount { get { return discardPile.Count; } }
     public List<Card> cardsInFlux;
-    private const int baseCardsPerRound = 5;
+    private const int baseCardsPerRound = 4;
     private int cardsPerRound;
     private int dungeonTimerCount;
     private int dungeonTimerThreshold;

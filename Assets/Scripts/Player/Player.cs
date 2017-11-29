@@ -107,7 +107,7 @@ public class Player : IDamageable {
         GameObject obj = GameObject.Instantiate(Services.Prefabs.Player, Services.Main.transform);
         controller = obj.GetComponent<PlayerController>();
         controller.Init(this);
-        PlaceOnTile(tile, false);
+        PlaceOnTile(tile);
         movesAvailable = 0;
     }
 
@@ -198,7 +198,7 @@ public class Player : IDamageable {
         return discardCardTasks;
     }
 
-    public bool PlaceOnTile(Tile tile, bool end)
+    public bool PlaceOnTile(Tile tile)
     {
         bool stopped = false;
         controller.PlaceOnTile(tile);
@@ -207,13 +207,6 @@ public class Player : IDamageable {
         if (tile.containedMapObject != null)
         {
             stopped = tile.containedMapObject.OnStep(this);
-        }
-        if (end)
-        {
-            if (currentTile.containedKey != null)
-            {
-                PickUpKey(currentTile);
-            }
         }
         return stopped;
     }
@@ -303,15 +296,20 @@ public class Player : IDamageable {
             && path.Count > 0 && !movementLocked));
     }
 
-    public void MoveToTile(List<Tile> path)
+    public void MoveToTile(List<Tile> path, bool freeMove)
     {
         Services.EventManager.Fire(new MovementInitiated());
-        movesAvailable -= MovementCost(path);
+        if(!freeMove) movesAvailable -= MovementCost(path);
         HideAvailableMoves();
         TaskQueue moveTasks = new TaskQueue(new List<Task>(){
             new MoveObjectAlongPath(controller.gameObject, path),
             new ActionTask(CheckAvailableActions) });
         Services.Main.taskManager.AddTask(moveTasks);
+    }
+
+    public void MoveToTile(List<Tile> path)
+    {
+        MoveToTile(path, false);
     }
 
     List<Tile> GetShortestPath(Tile tile)

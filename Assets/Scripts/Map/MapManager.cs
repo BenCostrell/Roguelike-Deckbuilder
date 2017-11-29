@@ -1000,7 +1000,7 @@ public class MapManager : MonoBehaviour {
         tile.neighbors = neighbors;
     }
 
-    bool ContainedInMap(Coord coord)
+    public bool ContainedInMap(Coord coord)
     {
         return coord.x >= 0 && coord.x < width && coord.y >= 0 && coord.y < height;
     }

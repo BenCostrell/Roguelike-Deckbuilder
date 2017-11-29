@@ -33,7 +33,10 @@ public abstract class Card {
         Advance,
         GrowTheRanks,
         Overgrowth,
-        SpreadSeeds
+        SpreadSeeds,
+        Leapfrog,
+        Lignify,
+        Telekinesis
     }
     public int tier { get; protected set; }
     public Sprite sprite { get; protected set; }

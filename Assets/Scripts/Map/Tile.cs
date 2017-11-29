@@ -79,4 +79,13 @@ public class Tile
     {
         containedMonster = null;
     }
+
+    public Tile GetTileBehind(Tile originTile)
+    {
+        Coord direction = coord.Subtract(originTile.coord);
+        Coord tileBehindCoord = coord.Add(direction);
+        if (!Services.MapManager.ContainedInMap(tileBehindCoord)) return null;
+        Tile tileBehind = Services.MapManager.mapGrid[tileBehindCoord.x, tileBehindCoord.y];
+        return tileBehind;
+    }
 }

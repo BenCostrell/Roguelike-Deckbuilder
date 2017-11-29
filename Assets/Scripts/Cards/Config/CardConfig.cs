@@ -195,6 +195,12 @@ public class CardConfig : ScriptableObject
                 return new Overgrowth();
             case Card.CardType.SpreadSeeds:
                 return new SpreadSeeds();
+            case Card.CardType.Leapfrog:
+                return new Leapfrog();
+            case Card.CardType.Lignify:
+                return new Lignify();
+            case Card.CardType.Telekinesis:
+                return new Telekinesis();
             default:
                 return null;
         }

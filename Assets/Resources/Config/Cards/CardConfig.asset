@@ -36,6 +36,9 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 9154c4c5c1a1dc54cace13d7728cc48b, type: 2}
   - {fileID: 11400000, guid: cb6827183c4aaff409a6bee0d1b5c000, type: 2}
   - {fileID: 11400000, guid: 879ba90c0f0277947b8c1714a880bc32, type: 2}
+  - {fileID: 11400000, guid: 68c4ccacc69983441a6da696c40e87ac, type: 2}
+  - {fileID: 11400000, guid: 3bac88185bf98694688b2be913c25037, type: 2}
+  - {fileID: 11400000, guid: 880d9efd296f10d468c565cd9a01ab1f, type: 2}
   startingDeck:
   - {fileID: 11400000, guid: bd31b52cd16140d4ca5756d38c69abfe, type: 2}
   - {fileID: 11400000, guid: bd31b52cd16140d4ca5756d38c69abfe, type: 2}

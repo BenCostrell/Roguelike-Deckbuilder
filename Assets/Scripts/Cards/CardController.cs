@@ -617,6 +617,13 @@ public class CardController : MonoBehaviour, IPointerDownHandler, IPointerEnterH
     {
         private Tile tileHovered;
 
+        public override void OnEnter()
+        {
+            base.OnEnter();
+            TileTargetedCard targetedCard = card as TileTargetedCard;
+            targetedCard.BeginTargeting();
+        }
+
         public override void Update()
         {
             base.Update();
@@ -665,7 +672,10 @@ public class CardController : MonoBehaviour, IPointerDownHandler, IPointerEnterH
             if (targetedCard.IsTargetValid(tileSelected))
             {
                 targetedCard.OnTargetSelected(tileSelected);
-                base.OnPlayed();
+                if (targetedCard.SelectionComplete())
+                {
+                    base.OnPlayed();
+                }
             }
             else TransitionTo<Playable>();
         }

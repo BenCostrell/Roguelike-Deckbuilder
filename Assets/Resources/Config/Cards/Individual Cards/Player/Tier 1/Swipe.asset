@@ -13,8 +13,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cardType: 20
   name_: Swipe
-  cardText: Deal 1 damage to a Monster within 1 range and 1 damage to each Monster
-    adjacent to it.
+  cardText: Deal 1 damage to a target within 1 range and 1 damage to each Monster
+    or object adjacent to it.
   sprite: {fileID: 21300000, guid: 1a48990c889778343a47afd6e1edb7f1, type: 3}
   tier: 1
   isMonster: 0

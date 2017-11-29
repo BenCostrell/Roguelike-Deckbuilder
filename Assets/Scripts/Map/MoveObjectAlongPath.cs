@@ -126,7 +126,7 @@ public class MoveObjectAlongPath : Task
         }
         else
         {
-            player.PlaceOnTile(finalTile, true);
+            player.PlaceOnTile(finalTile);
             player.moving = false;
             if (finalTile.containedMapObject != null)
             {

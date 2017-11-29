@@ -13,7 +13,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cardType: 9
   name_: Slash
-  cardText: Deal 2 damage to a Monster within 1 range.
+  cardText: Deal 2 damage to a target within 1 range.
   sprite: {fileID: 21300000, guid: 3404612c750922b4fb807203c3d8b0b7, type: 3}
   tier: 1
   isMonster: 0

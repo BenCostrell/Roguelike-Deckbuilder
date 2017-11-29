@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Name: SpreadSeeds
   m_EditorClassIdentifier: 
   cardType: 25
-  name_: Spread Seeds
+  name_: Serotiny
   cardText: Grow sprouts nearby.
   sprite: {fileID: 21300024, guid: 7cb559824574c384dac0b01530a0943f, type: 3}
   tier: 0

@@ -3,7 +3,7 @@ using System.Collections;
 
 public class SpreadSeeds : DungeonCard
 {
-    private const int numSeeds = 4;
+    private const int numSeeds = 2;
     private const int spreadRadius = 6;
 
     public SpreadSeeds()

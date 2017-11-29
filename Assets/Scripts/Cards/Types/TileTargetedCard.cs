@@ -5,6 +5,30 @@ using System.Collections.Generic;
 public abstract class TileTargetedCard : Card
 {
     public int range { get; protected set; }
+    protected List<Tile> targets;
+    protected int numRequiredTargets;
+
+    public virtual void BeginTargeting()
+    {
+        targets = new List<Tile>();
+        numRequiredTargets = 1;
+    }
+
+    public override bool CanPlay()
+    {
+        List<Tile> tilesWithinRange = TilesInRange();
+        for (int i = 0; i < tilesWithinRange.Count; i++)
+        {
+            Tile tile = tilesWithinRange[i];
+            if (IsTargetValid(tile)) return true;
+        }
+        return false;
+    }
+
+    public bool SelectionComplete()
+    {
+        return targets.Count == numRequiredTargets;
+    }
 
     public override void OnPlay()
     {
@@ -18,6 +42,7 @@ public abstract class TileTargetedCard : Card
 
     public virtual void OnTargetSelected(Tile tile)
     {
+        targets.Add(tile);
     }
 
     protected override void InitValues()

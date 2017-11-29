@@ -88,7 +88,7 @@ public abstract class Monster : IDamageable, IPlaceable
         return currentTile;
     }
 
-    void Die()
+    public void Die()
     {
         Services.MonsterManager.KillMonster(this);
         currentTile.RemoveMonsterFromTile();
@@ -210,7 +210,7 @@ public abstract class Monster : IDamageable, IPlaceable
         {
             targetTile = currentTile;
         }
-        return new TaskTree(new MoveObjectAlongPath(controller.gameObject, shortestPathToTarget));
+        return MoveAlongPath(shortestPathToTarget);
         //List<Tile> shortestPathToPlayer = 
         //    AStarSearch.ShortestPath(currentTile, player.currentTile);
         //List<Tile> pathToMoveAlong = new List<Tile>();
@@ -265,9 +265,14 @@ public abstract class Monster : IDamageable, IPlaceable
         {
             targetTile = currentTile;
         }
-        return new TaskTree(new MoveObjectAlongPath(controller.gameObject, shortestPathToTarget));
+        return MoveAlongPath(shortestPathToTarget);
     }
 
+
+    public TaskTree MoveAlongPath(List<Tile> path)
+    {
+        return new TaskTree(new MoveObjectAlongPath(controller.gameObject, path));
+    }
 
     public void ResetTargetTile()
     {
