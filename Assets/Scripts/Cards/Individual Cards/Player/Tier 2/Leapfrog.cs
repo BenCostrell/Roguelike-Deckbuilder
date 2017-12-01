@@ -20,6 +20,7 @@ public class Leapfrog : TileTargetedCard
 
     public override void OnTargetSelected(Tile tile)
     {
+        base.OnTargetSelected(tile);
         player.MoveToTile(
             new List<Tile>() { tile.GetTileBehind(player.currentTile), tile },
             true);
