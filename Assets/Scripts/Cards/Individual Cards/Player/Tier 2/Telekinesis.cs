@@ -22,20 +22,32 @@ public class Telekinesis : TileTargetedCard
     {
         if (targets.Count == 0)
         {
-            return base.IsTargetValid(tile) && tile.containedMonster != null;
+            return base.IsTargetValid(tile) &&
+                (tile.containedMonster != null || 
+                (tile.containedMapObject != null && !(tile.containedMapObject is HeavyBrush)));
         }
         else
         {
-            return !tile.IsImpassable() && (tile.coord.Distance(targets[0].coord) <= teleportDist);
+            return tile.containedMonster == null && tile.containedMapObject == null 
+                && tile != player.currentTile
+                && tile.coord.Distance(targets[0].coord) <= teleportDist;
         }
     }
 
     public override void OnTargetSelected(Tile tile)
     {
         base.OnTargetSelected(tile);
-        if (SelectionComplete()) { 
-            Services.Main.taskManager.AddTask(
-                targets[0].containedMonster.MoveAlongPath(new List<Tile>() { targets[1] }));
+        if (SelectionComplete()) {
+            if (targets[0].containedMonster != null)
+            {
+                Services.Main.taskManager.AddTask(
+                    targets[0].containedMonster.MoveAlongPath(new List<Tile>() { targets[1] }));
+            }
+            else
+            {
+                Services.Main.taskManager
+                    .AddTask(new MoveMapObject(targets[0].containedMapObject, targets[1]));
+            }
         }
         else
         {
@@ -45,9 +57,9 @@ public class Telekinesis : TileTargetedCard
 
     void ShowSecondPhaseTargets()
     {
-        OnUnselect();
-        List<Tile> tilesInRange = TilesInRangeOfSecondPhase();
-        foreach (Tile tile in tilesInRange)
+        UnhighlightTilesInRange();
+        currentTileRange = TilesInRangeOfSecondPhase();
+        foreach (Tile tile in currentTileRange)
         {
             tile.controller.ShowAsTargetable(IsTargetValid(tile));
         }

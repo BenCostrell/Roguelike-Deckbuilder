@@ -668,16 +668,20 @@ public class CardController : MonoBehaviour, IPointerDownHandler, IPointerEnterH
         void OnTileSelected(Tile tileSelected)
         {
             TileTargetedCard targetedCard = card as TileTargetedCard;
-            card.OnUnselect();
             if (targetedCard.IsTargetValid(tileSelected))
             {
                 targetedCard.OnTargetSelected(tileSelected);
                 if (targetedCard.SelectionComplete())
                 {
+                    card.OnUnselect();
                     base.OnPlayed();
                 }
             }
-            else TransitionTo<Playable>();
+            else
+            {
+                card.OnUnselect();
+                TransitionTo<Playable>();
+            }
         }
 
         public override void OnExit()

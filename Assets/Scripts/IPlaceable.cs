@@ -8,4 +8,6 @@ public interface IPlaceable
     GameObject GetPhysicalObject();
 
     SpriteRenderer GetSpriteRenderer();
+
+    Tile GetCurrentTile();
 }

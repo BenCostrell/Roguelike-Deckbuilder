@@ -7,6 +7,7 @@ public abstract class TileTargetedCard : Card
     public int range { get; protected set; }
     protected List<Tile> targets;
     protected int numRequiredTargets;
+    protected List<Tile> currentTileRange;
 
     public virtual void ClearTargets()
     {
@@ -54,8 +55,9 @@ public abstract class TileTargetedCard : Card
 
     public override void OnSelect()
     {
-        List<Tile> tilesInRange = TilesInRange();
-        foreach (Tile tile in tilesInRange)
+        ClearTargets();
+        currentTileRange = TilesInRange();
+        foreach (Tile tile in currentTileRange)
         {
             tile.controller.ShowAsTargetable(IsTargetValid(tile));
         }
@@ -63,13 +65,17 @@ public abstract class TileTargetedCard : Card
 
     public override void OnUnselect()
     {
-        List<Tile> tilesInRange = TilesInRange();
-        foreach (Tile tile in tilesInRange)
+        UnhighlightTilesInRange();
+        player.ShowAvailableMoves();
+        //ClearTargets();
+    }
+
+    protected void UnhighlightTilesInRange()
+    {
+        foreach (Tile tile in currentTileRange)
         {
             tile.controller.ShowAsUntargetable();
         }
-        player.ShowAvailableMoves();
-        ClearTargets();
     }
 
     protected List<Tile> TilesInRange()

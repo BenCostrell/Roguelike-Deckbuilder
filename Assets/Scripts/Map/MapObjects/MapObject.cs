@@ -65,6 +65,11 @@ public abstract class MapObject : IPlaceable
         //main.startColor = info.LightColor;
     }
 
+    public Tile GetCurrentTile()
+    {
+        return currentTile;
+    }
+
     public GameObject GetPhysicalObject()
     {
         return physicalObject;
