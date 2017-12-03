@@ -25,6 +25,11 @@ public class DamageableObject : MapObject, IDamageable
         return false;
     }
 
+    public void Die()
+    {
+        RemoveThis(true);
+    }
+
     public override bool IsImpassable(bool ignoreDamageableObjects)
     {
         return !ignoreDamageableObjects;
@@ -33,10 +38,5 @@ public class DamageableObject : MapObject, IDamageable
     public override int GetEstimatedMovementCost()
     {
         return 2;
-    }
-
-    public Tile GetCurrentTile()
-    {
-        return currentTile;
     }
 }

@@ -42,27 +42,35 @@ public abstract class MapObject : IPlaceable
         id = nextID;
     }
 
-    public virtual void PlaceOnTile(Tile tile)
+    public virtual void CreatePhysicalObject(Tile tile)
     {
         physicalObject = GameObject.Instantiate(Services.Prefabs.MapObject);
         sr = physicalObject.GetComponent<SpriteRenderer>();
         sr.sprite = info.Sprites[0];
-        physicalObject.transform.position = new Vector3(tile.coord.x, tile.coord.y, 0);
         physicalObject.transform.parent = Services.Main.transform;
         mask = physicalObject.GetComponentInChildren<SpriteMask>();
         maskSprite = mask.gameObject.GetComponent<SpriteRenderer>();
         mask.sprite = info.Sprites[0];
         mask.enabled = false;
-        tile.containedMapObject = this;
-        currentTile = tile;
         light = physicalObject.GetComponentInChildren<Light>();
         light.gameObject.SetActive(false);
         physicalObject.name = GetType().ToString();
         baseIntensity = light.intensity;
         light.color = info.LightColor;
+
         //ps = physicalObject.GetComponentInChildren<ParticleSystem>();
         //ParticleSystem.MainModule main = ps.main;
         //main.startColor = info.LightColor;
+        PlaceOnTile(tile);
+    }
+
+    public virtual void PlaceOnTile(Tile tile)
+    {
+        if (currentTile != null && currentTile.containedMapObject == this)
+            currentTile.containedMapObject = null;
+        tile.containedMapObject = this;
+        currentTile = tile;
+        physicalObject.transform.position = new Vector3(tile.coord.x, tile.coord.y, 0);
     }
 
     public Tile GetCurrentTile()

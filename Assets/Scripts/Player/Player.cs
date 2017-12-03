@@ -558,7 +558,7 @@ public class Player : IDamageable {
         return false;
     }
 
-    void Die()
+    public void Die()
     {
         Services.SceneStackManager.Swap<LevelTransition>(new MainTransitionData(
             fullDeck,

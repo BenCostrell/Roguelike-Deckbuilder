@@ -5,5 +5,7 @@ public interface IDamageable
 {
     bool TakeDamage(int incomingDamage);
 
+    void Die();
+
     Tile GetCurrentTile();
 }

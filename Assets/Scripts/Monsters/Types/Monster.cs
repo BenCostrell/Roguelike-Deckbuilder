@@ -25,8 +25,9 @@ public abstract class Monster : IDamageable, IPlaceable
     public bool attackedThisTurn { get; private set; }
     public Tile targetTile;
     protected Player player { get { return Services.GameManager.player; } }
+    public bool summoningSick { get; private set; }
 
-    public void CreatePhysicalMonster(Tile tile)
+    public void CreatePhysicalObject(Tile tile)
     {
         GameObject obj = GameObject.Instantiate(Services.Prefabs.Monster, Services.Main.transform);
         controller = obj.GetComponent<MonsterController>();
@@ -34,6 +35,7 @@ public abstract class Monster : IDamageable, IPlaceable
         controller.GetComponent<SpriteRenderer>().sprite = info.Sprite;
         PlaceOnTile(tile);
         controller.UpdateHealthUI();
+        summoningSick = true;
     }
 
     void DestroyPhysicalMonster()
@@ -143,6 +145,7 @@ public abstract class Monster : IDamageable, IPlaceable
     public void Refresh()
     {
         attackedThisTurn = false;
+        summoningSick = false;
     }
 
     public virtual TaskTree AttackPlayer()

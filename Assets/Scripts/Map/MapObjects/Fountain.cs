@@ -10,9 +10,9 @@ public class Fountain : MapObject
         objectType = ObjectType.Fountain;
         InitValues();
     }
-    public override void PlaceOnTile(Tile tile)
+    public override void CreatePhysicalObject(Tile tile)
     {
-        base.PlaceOnTile(tile);
+        base.CreatePhysicalObject(tile);
         light.gameObject.SetActive(true);
         //ps.Play();
     }

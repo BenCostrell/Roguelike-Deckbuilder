@@ -39,4 +39,8 @@ public class PrefabDB : ScriptableObject {
     [SerializeField]
     private GameObject mapObject;
     public GameObject MapObject { get { return mapObject; } }
+
+    [SerializeField]
+    private GameObject leafBurst;
+    public GameObject LeafBurst { get { return leafBurst; } }
 }

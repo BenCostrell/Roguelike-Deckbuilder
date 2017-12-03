@@ -13,7 +13,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cardType: 27
   name_: Lignify
-  cardText: Turn a monster within 2 range into Light Brush.
+  cardText: Turn a Monster or an Object with HP within 2 range into Light Brush.
   sprite: {fileID: 21300000, guid: 0aa5395b9dcf1dd41a05846a6a8d6eac, type: 3}
   tier: 1
   isMonster: 0

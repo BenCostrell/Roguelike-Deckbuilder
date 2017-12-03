@@ -19,9 +19,9 @@ public class Sprout : DamageableObject
         return 1;
     }
 
-    public override void PlaceOnTile(Tile tile)
+    public override void CreatePhysicalObject(Tile tile)
     {
-        base.PlaceOnTile(tile);
+        base.CreatePhysicalObject(tile);
         Services.MapManager.OnSproutBirth(this);
     }
 

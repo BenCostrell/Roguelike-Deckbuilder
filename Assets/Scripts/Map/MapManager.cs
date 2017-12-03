@@ -35,7 +35,7 @@ public class MapManager : MonoBehaviour {
     [SerializeField]
     private float fountainsPerLevel;
     [SerializeField]
-    private float initSaplingProportionNearPlayer;
+    private float initSaplingProportion;
     [SerializeField]
     private int initSaplingRadius;
     private int width;
@@ -239,13 +239,13 @@ public class MapManager : MonoBehaviour {
                         LightBrush lightBrush = Services.MapObjectConfig
                             .CreateMapObjectOfType(MapObject.ObjectType.LightBrush)
                             as LightBrush;
-                        lightBrush.PlaceOnTile(mapGrid[i, j]);
+                        lightBrush.CreatePhysicalObject(mapGrid[i, j]);
                         break;
                     case SpaceType.HeavyGrowth:
                         HeavyBrush heavyBrush = Services.MapObjectConfig
                             .CreateMapObjectOfType(MapObject.ObjectType.HeavyBrush)
                             as HeavyBrush;
-                        heavyBrush.PlaceOnTile(mapGrid[i, j]);
+                        heavyBrush.CreatePhysicalObject(mapGrid[i, j]);
                         break;
                     default:
                         break;
@@ -291,8 +291,8 @@ public class MapManager : MonoBehaviour {
         GenerateFountains(levelNum);
 
         currentLiveSprouts = new List<Sprout>();
-        SproutSaplings(playerSpawnTile, initSaplingProportionNearPlayer,
-            initSaplingRadius, false, 0);
+        SproutSaplings(mapGrid[width/2, height/2], initSaplingProportion,
+            99999, false, 0);
 
         bufferTiles = new List<Tile>();
         for (int i = -bufferLength; i < width + bufferLength; i++)
@@ -305,7 +305,7 @@ public class MapManager : MonoBehaviour {
                     HeavyBrush heavyBrush = Services.MapObjectConfig
                             .CreateMapObjectOfType(MapObject.ObjectType.HeavyBrush)
                             as HeavyBrush;
-                    heavyBrush.PlaceOnTile(bufferTile);
+                    heavyBrush.CreatePhysicalObject(bufferTile);
                     bufferTiles.Add(bufferTile);
                 }
             }
@@ -410,7 +410,8 @@ public class MapManager : MonoBehaviour {
         return candidateTiles;
     }
 
-    public TaskTree SproutSaplings(Tile centerTile, float proportion, int radius, bool animate, float staggerTime)
+    public TaskTree SproutSaplings(Tile centerTile, float proportion, int radius, bool animate,
+        float staggerTime)
     {
         List<Tile> candidateTiles = GetSproutCandidateTiles(centerTile, radius);
 
@@ -447,7 +448,7 @@ public class MapManager : MonoBehaviour {
                 }
                 else
                 {
-                    sprout.PlaceOnTile(tileToGrowOn);
+                    sprout.CreatePhysicalObject(tileToGrowOn);
                 }
             }
         }
@@ -1100,7 +1101,7 @@ public class MapManager : MonoBehaviour {
             if (chestTile != null)
             {
                 Chest chest = Services.MapObjectConfig.CreateMapObjectOfType(MapObject.ObjectType.Chest) as Chest;
-                chest.PlaceOnTile(chestTile);
+                chest.CreatePhysicalObject(chestTile);
                 litObjects.Add(chest);
                 chest.tier = tier;
                 chestsOnBoard.Add(chest);
@@ -1134,7 +1135,7 @@ public class MapManager : MonoBehaviour {
             {
                 MapObject fountain =
                     Services.MapObjectConfig.CreateMapObjectOfType(MapObject.ObjectType.Fountain);
-                fountain.PlaceOnTile(fountainTile);
+                fountain.CreatePhysicalObject(fountainTile);
                 litObjects.Add(fountain);
                 emptyTiles.Remove(fountainTile);
                 tilesWithSpecialStuff.Add(fountainTile);

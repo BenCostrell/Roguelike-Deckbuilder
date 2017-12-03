@@ -23,7 +23,7 @@ MonoBehaviour:
   targetReticle: {fileID: 1539334066238208, guid: 2a04fc6cb115eaa439097209409d57bd,
     type: 2}
   key: {fileID: 1135521771267632, guid: 00c5870ee1cf26a40b04b8c4ecd6a305, type: 2}
-  chest: {fileID: 1238464452850584, guid: 327cf51bc4981d641b6ec5467f640f42, type: 2}
   cardCounter: {fileID: 1227680033367290, guid: 43e9055fe438bd140b9f056d27ed2b1b,
     type: 2}
   mapObject: {fileID: 1256261409588616, guid: 787fa0702f02c48459113ab8d6901711, type: 2}
+  leafBurst: {fileID: 1117018082177400, guid: 87cc31643940a3d40a8bd095ee254382, type: 2}

@@ -23,6 +23,6 @@ public class ObjectPlacementCard : TileTargetedCard
     {
         base.OnTargetSelected(tile);
         MapObject mapObject = Services.MapObjectConfig.CreateMapObjectOfType(objectTypeToPlace);
-        mapObject.PlaceOnTile(tile);
+        mapObject.CreatePhysicalObject(tile);
     }
 }

@@ -440,6 +440,9 @@ public class CardController : MonoBehaviour, IPointerDownHandler, IPointerEnterH
         public override void OnEnter()
         {
             Context.color = Color.magenta;
+            transform.SetParent(Context.baseParent);
+            transform.localScale = baseScale;
+            Services.UIManager.SortHand(player.hand);
         }
 
         public override void OnInputClick()

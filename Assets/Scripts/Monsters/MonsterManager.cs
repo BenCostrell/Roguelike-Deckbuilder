@@ -11,7 +11,7 @@ public class MonsterManager
     public Monster SpawnMonster(Monster.MonsterType monsterType, Tile tile)
     {
         Monster monster = CreateMonsterOfType(monsterType);
-        CreateMonster(monster, tile);
+        monsters.Add(monster);
         return monster;
         //Tile playersTargetTile = Services.MapManager.exitTile;
         //List<Tile> playersPathToTarget = AStarSearch.ShortestPath(
@@ -51,12 +51,6 @@ public class MonsterManager
         //    return monster;
         //}
         //return null;
-    }
-
-    void CreateMonster(Monster monster, Tile tile)
-    {
-        monsters.Add(monster);
-        monster.CreatePhysicalMonster(tile);
     }
 
     public void KillMonster(Monster monster)
@@ -112,7 +106,8 @@ public class MonsterManager
             player.currentTile, true).Count).ToList();
         for (int i = 0; i < sortedMonsters.Count; i++)
         {
-            advanceTree.Then(new AdvanceMonster(sortedMonsters[i]));
+            if(!sortedMonsters[i].summoningSick)
+                advanceTree.Then(new AdvanceMonster(sortedMonsters[i]));
         }
         return advanceTree;
     }

@@ -136,9 +136,9 @@ public class LevelTransition : Scene<MainTransitionData> {
     List<Card> GenerateDungeonDeck()
     {
         List<Card> monsterCards = new List<Card>();
-        int numMonsters = Mathf.Min(
-            Mathf.FloorToInt((Services.MonsterConfig.MonstersPerLevel * data.levelNum)
-            + Services.MonsterConfig.BaseMonstersPerLevel), dungeonDeckSize);
+        //int numMonsters = Mathf.Min(
+        //    Mathf.FloorToInt((Services.MonsterConfig.MonstersPerLevel * data.levelNum)
+        //    + Services.MonsterConfig.BaseMonstersPerLevel), dungeonDeckSize);
         for (int i = 0; i < advanceCount; i++)
         {
             monsterCards.Add(Services.CardConfig.CreateCardOfType(Card.CardType.Advance));
@@ -152,35 +152,48 @@ public class LevelTransition : Scene<MainTransitionData> {
             monsterCards.Add(Services.CardConfig.CreateCardOfType(Card.CardType.SpreadSeeds));
         }
         monsterCards.Add(Services.CardConfig.CreateCardOfType(Card.CardType.GrowTheRanks));
-        int numBlanks = Mathf.Max(0, dungeonDeckSize - monsterCards.Count - numMonsters);
-        for (int i = 0; i < numBlanks; i++)
-        {
-            monsterCards.Add(Services.CardConfig.CreateCardOfType(Card.CardType.Blank));
-        }
-        int highestTier = Mathf.Min(data.levelNum / levelsPerMonsterTierIncrease, 
+        //int numBlanks = Mathf.Max(0, dungeonDeckSize - monsterCards.Count - numMonsters);
+        //for (int i = 0; i < numBlanks; i++)
+        //{
+        //    monsterCards.Add(Services.CardConfig.CreateCardOfType(Card.CardType.Blank));
+        //}
+        int highestTier = Mathf.Min((data.levelNum - 1) / levelsPerMonsterTierIncrease,
             Services.CardConfig.HighestTierOfCardsAvailable(true));
-        int lowestTier;
-        if (data.levelNum / levelsPerMonsterTierIncrease > highestTier)
+        for (int i = 0; i <= highestTier; i++)
         {
-            lowestTier = highestTier;
+            int numCardsOfTier = levelsPerMonsterTierIncrease;
+            if (i == highestTier)
+            {
+                numCardsOfTier = data.levelNum % levelsPerMonsterTierIncrease;
+                if (numCardsOfTier == 0) numCardsOfTier = levelsPerMonsterTierIncrease;
+            }
+            for (int j = 0; j < numCardsOfTier; j++)
+            {
+                monsterCards.Add(Services.CardConfig.GenerateCardOfTier(i, true));
+            }
         }
-        else lowestTier = Mathf.Max(highestTier - 1, 0);
-        float proportionOfLowTier =
-            ((levelsPerMonsterTierIncrease - (data.levelNum % levelsPerMonsterTierIncrease)) /
-            (float)(levelsPerMonsterTierIncrease + 1));
-        int numLowTierMonsters = Mathf.RoundToInt(proportionOfLowTier * numMonsters);
-        int numHighTierMonsters = numMonsters - numLowTierMonsters;
+        //int lowestTier;
+        //if (data.levelNum / levelsPerMonsterTierIncrease > highestTier)
+        //{
+        //    lowestTier = highestTier;
+        //}
+        //else lowestTier = Mathf.Max(highestTier - 1, 0);
+        //float proportionOfLowTier =
+        //    ((levelsPerMonsterTierIncrease - (data.levelNum % levelsPerMonsterTierIncrease)) /
+        //    (float)(levelsPerMonsterTierIncrease + 1));
+        //int numLowTierMonsters = Mathf.RoundToInt(proportionOfLowTier * numMonsters);
+        //int numHighTierMonsters = numMonsters - numLowTierMonsters;
 
-        for (int i = 0; i < numLowTierMonsters; i++)
-        {
-            monsterCards.Add(
-                Services.CardConfig.GenerateCardOfTier(lowestTier, true));
-        }
-        for (int j = 0; j < numHighTierMonsters; j++)
-        {
-            monsterCards.Add(
-                Services.CardConfig.GenerateCardOfTier(highestTier, true));
-        }
+        //for (int i = 0; i < numLowTierMonsters; i++)
+        //{
+        //    monsterCards.Add(
+        //        Services.CardConfig.GenerateCardOfTier(lowestTier, true));
+        //}
+        //for (int j = 0; j < numHighTierMonsters; j++)
+        //{
+        //    monsterCards.Add(
+        //        Services.CardConfig.GenerateCardOfTier(highestTier, true));
+        //}
 
         return monsterCards;
     }

@@ -22,6 +22,7 @@ public abstract class MonsterCard : DungeonCard
                 SpawnMonster(sprout.GetCurrentTile()), true));
             spawnMonsterTasks.AddChild(new FadeOutSprout(sprout));
         }
+        spawnMonsterTasks.Then(Services.Main.dungeonDeck.DrawCards(1));
         return spawnMonsterTasks;
     }
 
