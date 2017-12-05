@@ -41,5 +41,6 @@ public class MoveMapObject : Task
     protected override void OnSuccess()
     {
         mapObj.PlaceOnTile(targetTile);
+        Services.GameManager.player.ShowAvailableMoves();
     }
 }

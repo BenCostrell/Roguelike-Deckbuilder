@@ -128,13 +128,38 @@ public class DungeonDeck
     public MonsterCard GetNewMonsterCard()
     {
         List<Card.CardType> monsterTypes = new List<Card.CardType>();
+        Dictionary<Card.CardType, int> monsterTypeCounts = new Dictionary<Card.CardType, int>();
         foreach (Card card in fullDeck)
         {
-            if (card is MonsterCard && !monsterTypes.Contains(card.cardType)) 
-                monsterTypes.Add(card.cardType);
+            if (card is MonsterCard)
+            {
+                if (!monsterTypeCounts.ContainsKey(card.cardType))
+                {
+                    monsterTypeCounts[card.cardType] = 1;
+                }
+                else
+                {
+                    monsterTypeCounts[card.cardType] += 1;
+                }
+            }
+        }
+        List<Card.CardType> leastFrequentMonsterTypes = new List<Card.CardType>();
+        int leastFrequentMonsterCount = 999;
+        foreach(KeyValuePair<Card.CardType, int> entry in monsterTypeCounts)
+        {
+            if(entry.Value == leastFrequentMonsterCount)
+            {
+                leastFrequentMonsterTypes.Add(entry.Key);
+            }
+            else if (entry.Value < leastFrequentMonsterCount)
+            {
+                leastFrequentMonsterTypes = new List<Card.CardType>() { entry.Key };
+                leastFrequentMonsterCount = entry.Value;
+            }
         }
         MonsterCard newMonsterCard = Services.CardConfig.CreateCardOfType(
-            monsterTypes[Random.Range(0, monsterTypes.Count)]) as MonsterCard;
+            leastFrequentMonsterTypes[Random.Range(0, leastFrequentMonsterTypes.Count)]) 
+            as MonsterCard;
         return newMonsterCard;
     }
 

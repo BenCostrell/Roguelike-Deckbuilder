@@ -28,9 +28,10 @@ public class Telekinesis : TileTargetedCard
         }
         else
         {
-            return tile.containedMonster == null && tile.containedMapObject == null 
+            return tile.containedMonster == null && tile.containedMapObject == null
                 && tile != player.currentTile
-                && tile.coord.Distance(targets[0].coord) <= teleportDist;
+                //&& tile.coord.Distance(targets[0].coord) <= teleportDist;
+                && base.IsTargetValid(tile);
         }
     }
 
@@ -67,6 +68,7 @@ public class Telekinesis : TileTargetedCard
 
     List<Tile> TilesInRangeOfSecondPhase()
     {
-        return AStarSearch.FindAllAvailableGoals(targets[0], teleportDist, true);
+        //return AStarSearch.FindAllAvailableGoals(targets[0], teleportDist, true);
+        return AStarSearch.FindAllAvailableGoals(player.currentTile, range, true);
     }
 }

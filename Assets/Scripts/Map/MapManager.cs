@@ -433,24 +433,28 @@ public class MapManager : MonoBehaviour {
         TaskTree sproutTasks = new TaskTree(new EmptyTask());
         for (int i = 0; i < numSprouts; i++)
         {
-            Tile sproutTile = candidateTiles[Random.Range(0, candidateTiles.Count)];
-            candidateTiles.Remove(sproutTile);
-            List<Tile> sproutNeighbors = OpenNeighbors(sproutTile);
-            if (sproutNeighbors.Count > 0)
+            if (candidateTiles.Count > 0)
             {
-                Tile tileToGrowOn = sproutNeighbors[Random.Range(0, sproutNeighbors.Count)];
-                targetTiles.Add(tileToGrowOn);
-                Sprout sprout = Services.MapObjectConfig
-                        .CreateMapObjectOfType(MapObject.ObjectType.Sprout) as Sprout;
-                if (animate)
+                Tile sproutTile = candidateTiles[Random.Range(0, candidateTiles.Count)];
+                candidateTiles.Remove(sproutTile);
+                List<Tile> sproutNeighbors = OpenNeighbors(sproutTile);
+                if (sproutNeighbors.Count > 0)
                 {
-                    sproutTasks.Then(new GrowObject(tileToGrowOn, staggerTime, sprout, true));
-                }
-                else
-                {
-                    sprout.CreatePhysicalObject(tileToGrowOn);
+                    Tile tileToGrowOn = sproutNeighbors[Random.Range(0, sproutNeighbors.Count)];
+                    targetTiles.Add(tileToGrowOn);
+                    Sprout sprout = Services.MapObjectConfig
+                            .CreateMapObjectOfType(MapObject.ObjectType.Sprout) as Sprout;
+                    if (animate)
+                    {
+                        sproutTasks.Then(new GrowObject(tileToGrowOn, staggerTime, sprout, true));
+                    }
+                    else
+                    {
+                        sprout.CreatePhysicalObject(tileToGrowOn);
+                    }
                 }
             }
+            else break;
         }
         return sproutTasks;
     }

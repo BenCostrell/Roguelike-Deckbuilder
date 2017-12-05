@@ -216,4 +216,5 @@ public class LevelTransition : Scene<MainTransitionData> {
     {
         Services.SceneStackManager.Swap<DeckConstruction>(data);
     }
+
 }
