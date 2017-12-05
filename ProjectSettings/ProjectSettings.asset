@@ -141,7 +141,7 @@ PlayerSettings:
   targetPixelDensity: 0
   resolutionScalingMode: 0
   applicationIdentifier:
-    Standalone: Ben.RoguelikeDeckbuilder
+    Standalone: com.Ben.RoguelikeDeckbuilder
   buildNumber: {}
   AndroidBundleVersionCode: 1
   AndroidMinSdkVersion: 16
