@@ -73,20 +73,15 @@ public class DungeonDeck
     public TaskTree TakeDungeonTurn()
     {
         TaskTree turnTasks = new TaskTree(new EmptyTask());
-        float staggerTime = Services.CardConfig.DiscardAnimStaggerTime
-            * (playedCards.Count - 1);
-        for (int i = playedCards.Count - 1; i >= 0; i--)
-        {
-            turnTasks.AddChild(DiscardCard(playedCards[i], staggerTime));
-            staggerTime -= Services.CardConfig.DiscardAnimStaggerTime;
-        }
+
         turnTasks.Then(new ActionTask(Services.MonsterManager.RefreshMonsters));
         turnTasks.Then(DrawCards(cardsPerRound));
         turnTasks.Then(new PerformActions());
+        turnTasks.Then(new DiscardPlayedCards());
         return turnTasks;
     }
 
-    TaskTree DiscardCard(Card card, float timeOffset)
+    public TaskTree DiscardCard(Card card, float timeOffset)
     {
         discardPile.Add(card);
         playedCards.Remove(card);
@@ -324,6 +319,33 @@ public class PerformActions : Task
             subTaskManager.AddTask(nextAction);
         }
         else SetStatus(TaskStatus.Success);
+    }
+}
+
+public class DiscardPlayedCards : Task
+{
+    private TaskManager subtaskManager;
+
+    protected override void Init()
+    {
+        subtaskManager = new TaskManager();
+        DungeonDeck dungeonDeck = Services.Main.dungeonDeck;
+        TaskTree discardPlayedCards = new TaskTree(new EmptyTask());
+        float staggerTime = Services.CardConfig.DiscardAnimStaggerTime 
+            * (dungeonDeck.playedCards.Count - 1);
+        for (int i = dungeonDeck.playedCards.Count - 1; i >= 0; i--)
+        {
+            discardPlayedCards.AddChild(dungeonDeck
+                .DiscardCard(dungeonDeck.playedCards[i], staggerTime));
+            staggerTime -= Services.CardConfig.DiscardAnimStaggerTime;
+        }
+        subtaskManager.AddTask(discardPlayedCards);
+    }
+
+    internal override void Update()
+    {
+        subtaskManager.Update();
+        if (subtaskManager.tasksInProcessCount == 0) SetStatus(TaskStatus.Success);
     }
 }
 

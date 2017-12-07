@@ -87,6 +87,10 @@ public class Chest : MapObject {
         Services.GameManager.player.AcquireCard(card);
         Services.UIManager.ToggleChestArea(false);
         Services.GameManager.player.UnlockEverything(lockID);
-        if(currentTile != null) RemoveThis(false);
+        if (currentTile != null)
+        {
+            //RemoveThis(false);
+            sr.sprite = info.Sprites[1];
+        }
     }
 }

@@ -73,6 +73,10 @@ public class MonsterConfig : ScriptableObject
     public float SpawnAnimTime { get { return spawnAnimTime; } }
 
     [SerializeField]
+    private int spawnRadiusSearchStart;
+    public int SpawnRadiusSearchStart { get { return spawnRadiusSearchStart; } }
+
+    [SerializeField]
     private int maxSpawnRadius;
     public int MaxSpawnRadius { get { return maxSpawnRadius; } }
 

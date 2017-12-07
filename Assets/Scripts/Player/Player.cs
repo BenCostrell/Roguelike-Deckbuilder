@@ -180,9 +180,10 @@ public class Player : IDamageable {
         return DiscardCard(card, timeOffset);
     }
 
-    TaskTree DiscardCardFromPlay(Card card, float timeOffset)
+    public TaskTree DiscardCardFromPlay(Card card, float timeOffset)
     {
         Services.UIManager.SortInPlayZone(cardsInPlay);
+        cardsInPlay.Remove(card);
         return DiscardCard(card, timeOffset);
     }
 

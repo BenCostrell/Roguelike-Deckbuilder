@@ -9,7 +9,8 @@ public abstract class MonsterCard : DungeonCard
     {
         //return new TaskTree(new SpawnMonster(this));
         Sprout sprout = null;
-        for (int i = 1; i < Services.MonsterConfig.MaxSpawnRadius; i++)
+        for (int i = Services.MonsterConfig.SpawnRadiusSearchStart; 
+            i < Services.MonsterConfig.MaxSpawnRadius; i++)
         {
             sprout = Services.MapManager.GetLiveSprout(i);
             if (sprout != null) break;

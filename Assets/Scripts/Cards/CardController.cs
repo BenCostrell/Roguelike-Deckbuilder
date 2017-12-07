@@ -719,7 +719,11 @@ public class CardController : MonoBehaviour, IPointerDownHandler, IPointerEnterH
             transform.localScale = Context.baseScale;
             transform.localRotation = Quaternion.identity;
             baseRotation = Quaternion.identity;
-            if (!(card is DungeonCard)) player.OnCardFinishedPlaying(card);
+            if (!(card is DungeonCard))
+            {
+                player.OnCardFinishedPlaying(card);
+                Services.Main.taskManager.AddTask(player.DiscardCardFromPlay(card, 0));
+            }
         }
 
         protected override void AddOffset()

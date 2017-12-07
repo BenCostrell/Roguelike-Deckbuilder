@@ -1,0 +1,21 @@
+fileFormatVersion: 2
+guid: 19c4408bd240ad1479847c763dcaed1c
+timeCreated: 1512603400
+licenseType: Free
+TrueTypeFontImporter:
+  serializedVersion: 4
+  fontSize: 16
+  forceTextureCase: -2
+  characterSpacing: 0
+  characterPadding: 1
+  includeFontData: 1
+  fontName: New Flourina Font for 2014
+  fontNames:
+  - New Flourina Font for 2014
+  fallbackFontReferences: []
+  customCharacters: 
+  fontRenderingMode: 0
+  ascentCalculationMode: 1
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

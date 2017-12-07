@@ -12,10 +12,11 @@ MonoBehaviour:
   m_Name: Chest
   m_EditorClassIdentifier: 
   objectType: 4
-  name_: Chest
+  name_: Seed Cache
   sprites:
-  - {fileID: 21300000, guid: 88a2a91dcfbed764c889161617dd0027, type: 3}
-  description: Step here to open chest and get a new card.
+  - {fileID: 21300000, guid: 91ea59b57171bff46ac43a9e2a9cf4a2, type: 3}
+  - {fileID: 21300000, guid: f95bf62613eeb414faa70a8d8eae2f6f, type: 3}
+  description: Step here to open and get a new card.
   onStepAudio: {fileID: 0}
   lightColor: {r: 1, g: 0.8672414, b: 0.125, a: 1}
   numCards: 3

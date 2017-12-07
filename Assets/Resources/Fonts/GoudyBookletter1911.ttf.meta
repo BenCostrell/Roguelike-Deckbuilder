@@ -1,0 +1,21 @@
+fileFormatVersion: 2
+guid: 2165685792cc08840aa6c4c46a074f8b
+timeCreated: 1512603400
+licenseType: Free
+TrueTypeFontImporter:
+  serializedVersion: 4
+  fontSize: 16
+  forceTextureCase: -2
+  characterSpacing: 0
+  characterPadding: 1
+  includeFontData: 1
+  fontName: Goudy Bookletter 1911
+  fontNames:
+  - Goudy Bookletter 1911
+  fallbackFontReferences: []
+  customCharacters: 
+  fontRenderingMode: 0
+  ascentCalculationMode: 1
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
