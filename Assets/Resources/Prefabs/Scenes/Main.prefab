@@ -3788,7 +3788,7 @@ MonoBehaviour:
   rightSprite: {fileID: 21300136, guid: 3defd70a9f557674ab6dd3a4e7f36461, type: 3}
   centerSprites:
   - {fileID: 21300134, guid: 3defd70a9f557674ab6dd3a4e7f36461, type: 3}
-  exitDoorSprite: {fileID: 21300000, guid: ea502d819cfe1fd45a6efd54d383bd68, type: 3}
+  exitDoorSprite: {fileID: 21300000, guid: e4f05403d0980d74f9d9c4596a0c9b27, type: 3}
   levelsPerCardTierIncrease: 3
   chestsPerRoom: 0.6
   fountainsPerRoom: 0.21

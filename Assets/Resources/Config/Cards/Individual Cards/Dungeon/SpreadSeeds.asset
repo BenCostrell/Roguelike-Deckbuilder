@@ -14,7 +14,7 @@ MonoBehaviour:
   cardType: 25
   name_: Serotiny
   cardText: Grow sprouts nearby.
-  sprite: {fileID: 21300000, guid: aebb30653bea8d046b1521992dca4b49, type: 3}
+  sprite: {fileID: 21300000, guid: 40244cd47b8db864c8944537308ac532, type: 3}
   tier: 0
   isMonster: 0
   onPlayAudio: {fileID: 0}

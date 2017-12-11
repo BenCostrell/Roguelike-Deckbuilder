@@ -11,7 +11,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5322b3392390d1743a91238da8141729, type: 3}
   m_Name: Flamekin
   m_EditorClassIdentifier: 
-  sprite: {fileID: 21300000, guid: aed0b3f7e5d304642b3e2e7b5866c58c, type: 3}
+  sprite: {fileID: 21300000, guid: a1af6e30896d5594686a592ac201950c, type: 3}
   name_: Flamekin
   monsterType: 4
   startingHealth: 2

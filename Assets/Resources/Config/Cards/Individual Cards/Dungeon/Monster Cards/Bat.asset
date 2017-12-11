@@ -14,7 +14,7 @@ MonoBehaviour:
   cardType: 13
   name_: Bat
   cardText: Spawn a Bat.
-  sprite: {fileID: 21300000, guid: f50ad25c92d037e48b63eafa3da8f9fe, type: 3}
+  sprite: {fileID: 21300000, guid: af0f86eff21bfd24ab0c03522ef2a93e, type: 3}
   tier: 1
   isMonster: 1
   onPlayAudio: {fileID: 0}

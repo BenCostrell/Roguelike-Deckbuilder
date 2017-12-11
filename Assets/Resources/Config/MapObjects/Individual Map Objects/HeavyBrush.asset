@@ -12,8 +12,9 @@ MonoBehaviour:
   m_Name: HeavyBrush
   m_EditorClassIdentifier: 
   objectType: 3
-  name_: Heavy Brush
+  name_: Tree
   sprites:
-  - {fileID: 21300000, guid: 6a45dd1866975494fad2c2e7c80ed179, type: 3}
+  - {fileID: 21300000, guid: 474d96082e864764cbaaa40ac3dc820c, type: 3}
   description: Impassable terrain.
   onStepAudio: {fileID: 0}
+  lightColor: {r: 0, g: 0, b: 0, a: 0}

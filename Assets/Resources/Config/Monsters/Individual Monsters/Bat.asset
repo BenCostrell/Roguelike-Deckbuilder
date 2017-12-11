@@ -11,7 +11,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5322b3392390d1743a91238da8141729, type: 3}
   m_Name: Bat
   m_EditorClassIdentifier: 
-  sprite: {fileID: 21300000, guid: f50ad25c92d037e48b63eafa3da8f9fe, type: 3}
+  sprite: {fileID: 21300000, guid: af0f86eff21bfd24ab0c03522ef2a93e, type: 3}
   name_: Bat
   monsterType: 2
   startingHealth: 1

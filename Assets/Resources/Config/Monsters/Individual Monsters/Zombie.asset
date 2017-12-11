@@ -11,7 +11,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5322b3392390d1743a91238da8141729, type: 3}
   m_Name: Zombie
   m_EditorClassIdentifier: 
-  sprite: {fileID: 21300264, guid: 6a9c5f9589d3371428eba46bbb187e6e, type: 3}
+  sprite: {fileID: 21300000, guid: 38cf7a4998f91c441abaf58288552b0f, type: 3}
   name_: Zombie
   monsterType: 1
   startingHealth: 2
