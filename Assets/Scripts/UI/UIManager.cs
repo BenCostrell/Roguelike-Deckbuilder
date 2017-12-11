@@ -359,15 +359,13 @@ public class UIManager : MonoBehaviour {
             mapObjUIRemainingHealthBody.sizeDelta = new Vector2(
                 mapObjUIHealthBarBaseSize.x * (float)dmgableMapObj.currentHealth / dmgableMapObj.startingHealth,
                 mapObjUIHealthBarBaseSize.y);
-            mapObjUIDesc.gameObject.SetActive(false);
             mapObjHealthUIObj.SetActive(true);
         }
         else
         {
-            mapObjUIDesc.text = mapObj.info.Description;
-            mapObjUIDesc.gameObject.SetActive(true);
             mapObjHealthUIObj.SetActive(false);
         }
+        mapObjUIDesc.text = mapObj.info.Description;
         mapObjUIName.text = mapObj.info.Name;
         mapObjUISprite.sprite = mapObj.info.Sprites[0];
     }

@@ -24,6 +24,8 @@ public class LevelTransition : Scene<MainTransitionData> {
     [SerializeField]
     private Button startButton;
     [SerializeField]
+    private Button editDeckButton;
+    [SerializeField]
     private Text finalScore;
     [SerializeField]
     private int levelsPerMonsterTierIncrease;
@@ -123,11 +125,14 @@ public class LevelTransition : Scene<MainTransitionData> {
             {
                 deckCount.color = Color.green;
             }
+            if (data.levelNum == 1) editDeckButton.gameObject.SetActive(false);
         }
         else
         {
             levelTitle.text = "GAME OVER";
             finalScore.text = "YOU MADE IT TO LEVEL " + data.levelNum;
+            editDeckButton.gameObject.SetActive(false);
+            dungeonDeckArea.gameObject.SetActive(false);
         }
 
         SetPlayerUI();

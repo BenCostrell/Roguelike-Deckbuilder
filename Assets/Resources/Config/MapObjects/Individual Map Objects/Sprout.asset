@@ -15,6 +15,6 @@ MonoBehaviour:
   name_: Sprout
   sprites:
   - {fileID: 21300000, guid: aebb30653bea8d046b1521992dca4b49, type: 3}
-  description: A small sapling. It could grow into anything!
+  description: A small sapling. It could grow into anything! Can be walked on.
   onStepAudio: {fileID: 0}
   lightColor: {r: 0, g: 0, b: 0, a: 0}
