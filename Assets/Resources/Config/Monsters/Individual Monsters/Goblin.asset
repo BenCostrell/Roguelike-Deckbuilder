@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Name: Goblin
   m_EditorClassIdentifier: 
   sprite: {fileID: 21300000, guid: 1301506cab770a54dbee7f33ea1febee, type: 3}
-  name_: Goblin
+  name_: Vexed Vivo
   monsterType: 0
   startingHealth: 1
   attackRange: 1

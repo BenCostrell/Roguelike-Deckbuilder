@@ -32,7 +32,7 @@ public class Chest : MapObject {
     public override void CreatePhysicalObject(Tile tile)
     {
         base.CreatePhysicalObject(tile);
-        light.gameObject.SetActive(true);
+        //light.gameObject.SetActive(true);
         //ps.Play();
     }
 
@@ -89,8 +89,8 @@ public class Chest : MapObject {
         Services.GameManager.player.UnlockEverything(lockID);
         if (currentTile != null)
         {
-            //RemoveThis(false);
-            sr.sprite = info.Sprites[1];
+            RemoveThis(false);
+            //sr.sprite = info.Sprites[1];
         }
     }
 }

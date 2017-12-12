@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Name: Fountain
   m_EditorClassIdentifier: 
   objectType: 1
-  name_: Healing Frond
+  name_: Healing Plant
   sprites:
   - {fileID: 21300000, guid: 6f1a07bc5766f5844891d25448764b24, type: 3}
   - {fileID: 21300000, guid: e94979550d2fb7142bfcf74ed6747ff4, type: 3}

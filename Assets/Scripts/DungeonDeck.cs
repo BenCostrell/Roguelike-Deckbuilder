@@ -234,7 +234,9 @@ public class AlterDungeonTimerTask : Task
             newMonsterCard = dungeonDeck.GetNewMonsterCard();
             //initialPos = Services.UIManager.dungeonTimerPos;
             initialPos = card.controller.transform.position;
-            newMonsterCard.CreatePhysicalCard(Services.UIManager.bottomLeft);
+            newMonsterCard.CreatePhysicalCard(Services.UIManager.canvas.transform);
+            newMonsterCard.controller.GetComponent<RectTransform>().anchorMax = new Vector2(0, 0);
+            newMonsterCard.controller.GetComponent<RectTransform>().anchorMin = new Vector2(0, 0);
             newMonsterCard.Reposition(initialPos, true, true);
             midpointPos = initialPos + Services.MonsterConfig.AddMonsterCardMidpointOffset;
             targetPos = Services.UIManager.dungeonDeckPos;

@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Name: Chest
   m_EditorClassIdentifier: 
   objectType: 4
-  name_: Seed Cache
+  name_: Treasure Bulb
   sprites:
   - {fileID: 21300000, guid: 88a2a91dcfbed764c889161617dd0027, type: 3}
   - {fileID: 21300000, guid: f95bf62613eeb414faa70a8d8eae2f6f, type: 3}

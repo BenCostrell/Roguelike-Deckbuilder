@@ -41,6 +41,8 @@ public class MapObjectConfig : ScriptableObject
                 return new Chest();
             case MapObject.ObjectType.Sprout:
                 return new Sprout();
+            case MapObject.ObjectType.Door:
+                return new Door();
             default:
                 return null;
         }

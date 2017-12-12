@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Name: Flamekin
   m_EditorClassIdentifier: 
   cardType: 15
-  name_: Flamekin
-  cardText: Spawn a Flamekin.
+  name_: Sore Soleil
+  cardText: Spawn a Sore Soleil and draw a card.
   sprite: {fileID: 21300000, guid: a1af6e30896d5594686a592ac201950c, type: 3}
   tier: 3
   isMonster: 1

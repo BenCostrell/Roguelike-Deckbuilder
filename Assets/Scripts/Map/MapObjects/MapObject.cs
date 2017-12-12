@@ -10,7 +10,8 @@ public abstract class MapObject : IPlaceable
         LightBrush,
         HeavyBrush,
         Chest,
-        Sprout
+        Sprout,
+        Door
     }
     protected ObjectType objectType;
     public MapObjectInfo info { get; protected set; }

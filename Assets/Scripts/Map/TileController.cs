@@ -31,52 +31,68 @@ public class TileController : MonoBehaviour {
 
     private void OnMouseOver()
     {
-        if (Vector2.Distance(transform.position,
-            Services.GameManager.player.controller.transform.position) < detectionDistance)
+        if (!EventSystem.current.IsPointerOverGameObject() || CardController.targetedCardSelected)
         {
-            tile.OnHoverEnter();
+            if (Vector2.Distance(transform.position,
+            Services.GameManager.player.controller.transform.position) < detectionDistance)
+            {
+                tile.OnHoverEnter();
+            }
+            Services.EventManager.Fire(new TileHovered(tile));
         }
-        Services.EventManager.Fire(new TileHovered(tile));
     }
 
     private void OnMouseEnter()
     {
-        if (Vector2.Distance(transform.position,
-            Services.GameManager.player.controller.transform.position) < detectionDistance)
+        if (!EventSystem.current.IsPointerOverGameObject() || CardController.targetedCardSelected)
         {
-            sr.color = onHoverColor;
-            if (tile.containedMonster != null)
+            if (Vector2.Distance(transform.position,
+            Services.GameManager.player.controller.transform.position) < detectionDistance)
             {
-                Services.UIManager.ShowUnitUI(tile.containedMonster);
-            }
-            if (tile.containedMapObject != null)
-            {
-                Services.UIManager.ShowMapObjUI(tile.containedMapObject);
+                sr.color = onHoverColor;
+                if (tile.containedMonster != null)
+                {
+                    Services.UIManager.ShowUnitUI(tile.containedMonster);
+                }
+                if (tile.containedMapObject != null)
+                {
+                    Services.UIManager.ShowMapObjUI(tile.containedMapObject);
+                }
             }
         }
     }
 
     private void OnMouseExit()
     {
-        tile.OnHoverExit();
-        sr.color = defColor;
-        Services.UIManager.HideUnitUI();
-        Services.UIManager.HideMapObjUI();
+        if (!EventSystem.current.IsPointerOverGameObject() || CardController.targetedCardSelected)
+        {
+            tile.OnHoverExit();
+            sr.color = defColor;
+            Services.UIManager.HideUnitUI();
+            Services.UIManager.HideMapObjUI();
+        }
     }
 
     private void OnMouseDown()
     {
-        tile.OnSelect();
-        selectionLockoutFramesLeft = selectionLockOutPeriod;
-    }
-
-    private void OnMouseUp()
-    {
-        if (selectionLockoutFramesLeft == 0)
+        if (!EventSystem.current.IsPointerOverGameObject() || CardController.targetedCardSelected)
         {
             tile.OnSelect();
             selectionLockoutFramesLeft = selectionLockOutPeriod;
         }
+    }
+
+    private void OnMouseUp()
+    {
+        if (!EventSystem.current.IsPointerOverGameObject() || CardController.targetedCardSelected)
+        {
+            if (selectionLockoutFramesLeft == 0)
+            {
+                tile.OnSelect();
+                selectionLockoutFramesLeft = selectionLockOutPeriod;
+            }
+        }
+
     }
 
     public void ShowAsAvailable()

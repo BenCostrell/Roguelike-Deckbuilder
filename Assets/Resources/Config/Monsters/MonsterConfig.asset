@@ -34,4 +34,4 @@ MonoBehaviour:
   deathAnimTime: 0.25
   spawnAnimTime: 0.3
   spawnRadiusSearchStart: 3
-  maxSpawnRadius: 8
+  maxSpawnRadius: 7

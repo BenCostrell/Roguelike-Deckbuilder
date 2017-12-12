@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Name: Zombie
   m_EditorClassIdentifier: 
   sprite: {fileID: 21300000, guid: 38cf7a4998f91c441abaf58288552b0f, type: 3}
-  name_: Zombie
+  name_: Peeved Pepo
   monsterType: 1
   startingHealth: 2
   attackRange: 1

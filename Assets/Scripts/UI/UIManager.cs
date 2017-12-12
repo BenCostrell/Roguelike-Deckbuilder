@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 public class UIManager : MonoBehaviour {
 
@@ -11,7 +12,7 @@ public class UIManager : MonoBehaviour {
     [SerializeField]
     private Vector2 pileCardSpacing;
     [SerializeField]
-    private Text deckCounter;
+    private TextMeshProUGUI deckCounter;
     public GameObject deckZone;
     public GameObject inPlayZone;
     public GameObject handZone;
@@ -20,13 +21,13 @@ public class UIManager : MonoBehaviour {
     private Image chestAreaImage;
     public Transform bottomLeft;
     [SerializeField]
-    private Text discardCounter;
+    private TextMeshProUGUI discardCounter;
     public GameObject discardZone;
     [SerializeField]
-    private Text dungeonDeckCounter;
+    private TextMeshProUGUI dungeonDeckCounter;
     public GameObject dungeonDeckZone;
     [SerializeField]
-    private Text dungeonDiscardCounter;
+    private TextMeshProUGUI dungeonDiscardCounter;
     public GameObject dungeonHandZone;
     public GameObject dungeonDiscardZone;
     public GameObject dungeonPlayZone;
@@ -34,7 +35,7 @@ public class UIManager : MonoBehaviour {
     private Button endTurnButton;
     [SerializeField]
     private Button queueButton;
-    private Text queueButtonText;
+    private TextMeshProUGUI queueButtonText;
     [SerializeField]
     private Button discardQueuedButton;
     [SerializeField]
@@ -55,12 +56,12 @@ public class UIManager : MonoBehaviour {
     [SerializeField]
     private Image mapObjUISprite;
     [SerializeField]
-    private Text mapObjUIName;
+    private TextMeshProUGUI mapObjUIName;
     [SerializeField]
-    private Text mapObjUIHealthCounter;
+    private TextMeshProUGUI mapObjUIHealthCounter;
     private Vector2 mapObjUIHealthBarBaseSize;
     [SerializeField]
-    private Text mapObjUIDesc;
+    private TextMeshProUGUI mapObjUIDesc;
     [SerializeField]
     private GameObject unitUI;
     [SerializeField]
@@ -70,12 +71,12 @@ public class UIManager : MonoBehaviour {
     [SerializeField]
     private Image unitUISprite;
     [SerializeField]
-    private Text unitUIName;
+    private TextMeshProUGUI unitUIName;
     [SerializeField]
-    private Text unitUIHealthCounter;
+    private TextMeshProUGUI unitUIHealthCounter;
     private Vector2 unitUIHealthBarBaseSize;
     [SerializeField]
-    private Text unitUIStats;
+    private TextMeshProUGUI unitUIStats;
     [SerializeField]
     private GameObject playerUI;
     [SerializeField]
@@ -87,13 +88,13 @@ public class UIManager : MonoBehaviour {
     [SerializeField]
     private GameObject playerUIHealthContainer;
     [SerializeField]
-    private Text playerUIHealthCounter;
+    private TextMeshProUGUI playerUIHealthCounter;
     [SerializeField]
     private Image playerUIKeyIcon;
     [SerializeField]
     private GameObject shieldIcon;
     [SerializeField]
-    private Text shieldCounter;
+    private TextMeshProUGUI shieldCounter;
     [SerializeField]
     private GameObject levelCompleteUI;
     [SerializeField]
@@ -101,13 +102,13 @@ public class UIManager : MonoBehaviour {
     [SerializeField]
     private Image messageBanner;
     [SerializeField]
-    private Text messageBannerText;
+    private TextMeshProUGUI messageBannerText;
     [SerializeField]
     private GameObject optionUI;
     [SerializeField]
     private Button[] optionButtons;
     [SerializeField]
-    private Text[] optionTexts;
+    private TextMeshProUGUI[] optionTexts;
     private Vector2 playerUIHealthBarBaseSize;
     private int nextLockID_;
     public int nextLockID
@@ -148,7 +149,7 @@ public class UIManager : MonoBehaviour {
         playerUIHealthBarBaseSize = playerUIRemainingHealthBody.sizeDelta;
         mapObjUIHealthBarBaseSize = mapObjUIRemainingHealthBody.sizeDelta;
         playerUIKeyIcon.color = new Color(1, 1, 1, 0.125f);
-        queueButtonText = queueButton.GetComponentInChildren<Text>();
+        queueButtonText = queueButton.GetComponentInChildren<TextMeshProUGUI>();
 
         endTurnLockIDs = new List<int>();
         playAllLockIDs = new List<int>();
@@ -491,11 +492,11 @@ public class UIManager : MonoBehaviour {
 
     public void SetQueueButtonStatus(bool queue)
     {
-        if (queue)
-        {
-            queueButtonText.text = "QUEUE ALL MOVEMENT";
-        }
-        else queueButtonText.text = "UNQUEUE ALL MOVEMENT";
+        //if (queue)
+        //{
+        //    queueButtonText.text = "QUEUE ALL MOVEMENT";
+        //}
+        //else queueButtonText.text = "UNQUEUE ALL MOVEMENT";
     }
 
     public void SetEndTurnButtonStatus(bool done)

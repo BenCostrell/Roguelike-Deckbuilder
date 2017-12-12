@@ -24,7 +24,9 @@ public class Telekinesis : TileTargetedCard
         {
             return base.IsTargetValid(tile) &&
                 (tile.containedMonster != null || 
-                (tile.containedMapObject != null && !(tile.containedMapObject is HeavyBrush)));
+                (tile.containedMapObject != null 
+                && !(tile.containedMapObject is HeavyBrush)
+                && !(tile.containedMapObject is Door)));
         }
         else
         {

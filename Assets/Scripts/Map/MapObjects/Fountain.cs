@@ -13,7 +13,7 @@ public class Fountain : MapObject
     public override void CreatePhysicalObject(Tile tile)
     {
         base.CreatePhysicalObject(tile);
-        light.gameObject.SetActive(true);
+        //light.gameObject.SetActive(true);
         //ps.Play();
     }
 

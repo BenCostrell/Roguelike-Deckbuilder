@@ -43,6 +43,7 @@ public class CardController : MonoBehaviour, IPointerDownHandler, IPointerEnterH
     public Quaternion targetRotation { get; private set; }
     [SerializeField]
     private float discardDetectionRadius;
+    public static bool targetedCardSelected;
 
     // Use this for initialization
     public void Init(Card card_)
@@ -59,17 +60,17 @@ public class CardController : MonoBehaviour, IPointerDownHandler, IPointerEnterH
         art = imageElements[2];
         nameText.text = card.info.Name;
         effectText.text = card.info.CardText;
-        if(card is MonsterCard)
-        {
-            MonsterCard monsterCard = card as MonsterCard;
-            MonsterInfo monsterInfo = 
-                Services.MonsterConfig.GetMonsterOfType(monsterCard.monsterToSpawn);
-            effectText.text +=
-                "\nHP: " + monsterInfo.StartingHealth +
-                "\nATTACK: " + monsterInfo.AttackDamage +
-                "\nMOVE: " + monsterInfo.MovementSpeed +
-                "\nRANGE: " + monsterInfo.AttackRange;
-        }
+        //if(card is MonsterCard)
+        //{
+        //    MonsterCard monsterCard = card as MonsterCard;
+        //    MonsterInfo monsterInfo = 
+        //        Services.MonsterConfig.GetMonsterOfType(monsterCard.monsterToSpawn);
+        //    effectText.text +=
+        //        "\nHP: " + monsterInfo.StartingHealth +
+        //        "\nATTACK: " + monsterInfo.AttackDamage +
+        //        "\nMOVE: " + monsterInfo.MovementSpeed +
+        //        "\nRANGE: " + monsterInfo.AttackRange;
+        //}
         art.sprite = card.sprite;
         artBaseLocalPos = art.transform.localPosition;
         baseScale = transform.localScale;
@@ -625,6 +626,7 @@ public class CardController : MonoBehaviour, IPointerDownHandler, IPointerEnterH
             base.OnEnter();
             TileTargetedCard targetedCard = card as TileTargetedCard;
             targetedCard.ClearTargets();
+            CardController.targetedCardSelected = true;
         }
 
         public override void Update()
@@ -692,6 +694,7 @@ public class CardController : MonoBehaviour, IPointerDownHandler, IPointerEnterH
             base.OnExit();
             Services.EventManager.Unregister<TileHovered>(OnTileHovered);
             //Debug.Log("unregistering at time " + Time.time);
+            CardController.targetedCardSelected = false;
         }
     }
 

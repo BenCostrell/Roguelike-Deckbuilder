@@ -23,6 +23,11 @@ public class Lignify : TileTargetedCard
         {
             Monster monster = tile.containedMonster;
             monster.Die();
+            if(tile.containedMapObject != null && tile.containedMapObject is DamageableObject)
+            {
+                DamageableObject dmgableObj = tile.containedMapObject as DamageableObject;
+                dmgableObj.Die();
+            }
         }
         else
         {
