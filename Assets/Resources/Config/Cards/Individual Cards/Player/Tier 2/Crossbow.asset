@@ -14,7 +14,7 @@ MonoBehaviour:
   cardType: 7
   name_: Crossbow
   cardText: Deal 1 damage to a target within 3 range.
-  sprite: {fileID: 21300000, guid: a2d2fbb8b0d788c4f8e83bda5da37f6d, type: 3}
+  sprite: {fileID: 21300000, guid: dc40ebe56d96fc34099dec475c9b94ab, type: 3}
   tier: 1
   isMonster: 0
   onPlayAudio: {fileID: 0}

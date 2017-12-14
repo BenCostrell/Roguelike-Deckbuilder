@@ -14,7 +14,7 @@ MonoBehaviour:
   cardType: 5
   name_: Run
   cardText: Move 2 spaces.
-  sprite: {fileID: 21300000, guid: 3453196295587ee4e9946af4d069c726, type: 3}
+  sprite: {fileID: 21300000, guid: 0505ffcdf6df39b4b9dce42bb0c0080f, type: 3}
   tier: 1
   isMonster: 0
   onPlayAudio: {fileID: 0}

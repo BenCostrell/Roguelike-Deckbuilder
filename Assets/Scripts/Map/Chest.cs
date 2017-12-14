@@ -12,6 +12,7 @@ public class Chest : MapObject {
     public bool opened { get; private set; }
     private int lockID;
     private float scaleFactor;
+    private ParticleSystem ps;
 
     public Chest()
     {
@@ -34,6 +35,9 @@ public class Chest : MapObject {
         base.CreatePhysicalObject(tile);
         //light.gameObject.SetActive(true);
         //ps.Play();
+        ps = GameObject.Instantiate(Services.Prefabs.SporeParticles, physicalObject.transform)
+            .GetComponent<ParticleSystem>();
+        ps.transform.localPosition = 0.1f * Vector3.back;
     }
 
     public override void RemoveThis(bool animate)

@@ -14,7 +14,7 @@ MonoBehaviour:
   objectType: 6
   name_: Door
   sprites:
-  - {fileID: 21300000, guid: e4f05403d0980d74f9d9c4596a0c9b27, type: 3}
+  - {fileID: 21300000, guid: dffc86a510b562f418142fc2928fb5a1, type: 3}
   description: The exit! Step here to complete the level.
   onStepAudio: {fileID: 0}
   lightColor: {r: 0, g: 0, b: 0, a: 0}

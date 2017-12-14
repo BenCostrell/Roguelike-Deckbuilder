@@ -14,7 +14,7 @@ MonoBehaviour:
   cardType: 21
   name_: Scream
   cardText: Cause all monsters to flee up to X spaces, where X is their movement speed.
-  sprite: {fileID: 21300000, guid: 601af7eb65bbc4d4387b4cbc17c79f3f, type: 3}
+  sprite: {fileID: 21300000, guid: 1e03c9debe4de044ba9212121cfc6480, type: 3}
   tier: 1
   isMonster: 0
   onPlayAudio: {fileID: 0}

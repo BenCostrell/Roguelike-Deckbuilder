@@ -11,7 +11,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5322b3392390d1743a91238da8141729, type: 3}
   m_Name: Flamekin
   m_EditorClassIdentifier: 
-  sprite: {fileID: 21300000, guid: a1af6e30896d5594686a592ac201950c, type: 3}
+  sprite: {fileID: 21300000, guid: c0992de8e43e0e644b2834ecb12f8045, type: 3}
   name_: Sore Soleil
   monsterType: 4
   startingHealth: 2

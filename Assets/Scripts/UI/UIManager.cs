@@ -128,17 +128,34 @@ public class UIManager : MonoBehaviour {
     public string playerTurnMessage;
     public string dungeonTurnMessage;
     private int optionLockID;
+    [SerializeField]
+    private Color endTurnNormalColor;
+    [SerializeField]
+    private Color endTurnNoActionsColor;
+    private bool damageAnim;
+    private int targetHealth;
+    private float timeElapsed;
+    private int startHealth;
+    [SerializeField]
+    private float hpAnimDuration;
 
     // Use this for initialization
     void Awake() {
-        InitUI();
 	}
 	
 	// Update is called once per frame
 	void Update () {
+        if (damageAnim)
+        {
+            timeElapsed += Time.deltaTime;
+            float hp = Mathf.Lerp(startHealth, targetHealth,
+                Easing.QuadEaseOut(timeElapsed / hpAnimDuration));
+            AdjustPlayerHPBar(hp, Services.GameManager.player.maxHealth);
+            if (timeElapsed >= hpAnimDuration) damageAnim = false;
+        }
 	}
     
-    void InitUI()
+    public void InitUI()
     {
         unitUI.SetActive(false);
         ToggleChestArea(false);
@@ -157,6 +174,10 @@ public class UIManager : MonoBehaviour {
 
         playerUIKeyIcon.gameObject.SetActive(false);
         levelCompleteUI.gameObject.SetActive(false);
+
+        startHealth = Services.GameManager.player.maxHealth;
+        Debug.Log(startHealth);
+        AdjustPlayerHPBar(Services.GameManager.player.maxHealth, Services.GameManager.player.maxHealth);
     }
 
     public void SetMessageBanner(string bannerText)
@@ -339,13 +360,19 @@ public class UIManager : MonoBehaviour {
     public void UpdatePlayerUI(int curHP, int maxHP)
     {
         playerUIHealthCounter.text = curHP + "/" + maxHP;
+        timeElapsed = 0;
+        startHealth = targetHealth;
+        targetHealth = curHP;
+        damageAnim = true;
+    }
+
+    void AdjustPlayerHPBar(float curHP, int maxHP)
+    {
         playerUIRemainingHealthBody.sizeDelta = new Vector2(
-            playerUIHealthBarBaseSize.x * (float)curHP / maxHP,
+            playerUIHealthBarBaseSize.x * curHP / maxHP,
             playerUIHealthBarBaseSize.y);
         if (curHP == 0) playerUIRemainingHealthObj.SetActive(false);
         else playerUIRemainingHealthObj.SetActive(true);
-        if (Services.GameManager.player.hasKey)
-            playerUIKeyIcon.color = Color.white;
     }
 
     public void ShowMapObjUI(MapObject mapObj)
@@ -504,13 +531,13 @@ public class UIManager : MonoBehaviour {
         if (done)
         {
             ColorBlock buttonColors = endTurnButton.colors;
-            buttonColors.normalColor = Color.green;
+            buttonColors.normalColor = endTurnNoActionsColor;
             endTurnButton.colors = buttonColors;
         }
         else
         {
             ColorBlock buttonColors = endTurnButton.colors;
-            buttonColors.normalColor = Color.yellow;
+            buttonColors.normalColor = endTurnNormalColor;
             endTurnButton.colors = buttonColors;
         }
     }

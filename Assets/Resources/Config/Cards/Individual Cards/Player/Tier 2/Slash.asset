@@ -12,9 +12,9 @@ MonoBehaviour:
   m_Name: Slash
   m_EditorClassIdentifier: 
   cardType: 9
-  name_: Slash
+  name_: Clip
   cardText: Deal 2 damage to a target within 1 range.
-  sprite: {fileID: 21300000, guid: 3404612c750922b4fb807203c3d8b0b7, type: 3}
+  sprite: {fileID: 21300000, guid: fbe271de6697e624c99b037fbf399cb2, type: 3}
   tier: 1
   isMonster: 0
   onPlayAudio: {fileID: 0}

@@ -95,12 +95,17 @@ public class MapManager : MonoBehaviour {
     public Tile playerSpawnTile { get; private set; }
     public Tile exitTile { get; private set; }
     private List<MapObject> litObjects;
+    private List<Fountain> fountains;
 
     private void Update()
     {
         for (int i = 0; i < litObjects.Count; i++)
         {
             litObjects[i].AdjustLighting();
+        }
+        for (int i = 0; i < fountains.Count; i++)
+        {
+            fountains[i].Update();
         }
     }
 
@@ -1122,6 +1127,7 @@ public class MapManager : MonoBehaviour {
     {
         //int numFountains = Mathf.CeilToInt(fountainsPerRoom * rooms.Count);
         int numFountains = Mathf.CeilToInt(fountainsPerLevel * levelNum);
+        fountains = new List<Fountain>();
         //List<Room> roomsWithoutFountains = new List<Room>(rooms);
         for (int i = 0; i < numFountains; i++)
         {
@@ -1145,6 +1151,7 @@ public class MapManager : MonoBehaviour {
                 litObjects.Add(fountain);
                 emptyTiles.Remove(fountainTile);
                 tilesWithSpecialStuff.Add(fountainTile);
+                fountains.Add(fountain as Fountain);
             }
             else break;
         }
@@ -1263,5 +1270,10 @@ public class MapManager : MonoBehaviour {
     public void RemoveLitMapObject(MapObject obj)
     {
         litObjects.Remove(obj);
+    }
+
+    public void RemoveFountain(Fountain fountain)
+    {
+        fountains.Remove(fountain);
     }
 }

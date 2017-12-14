@@ -14,7 +14,7 @@ MonoBehaviour:
   cardType: 8
   name_: Peeved Pepo
   cardText: Spawn a Peeved Pepo and draw a card.
-  sprite: {fileID: 21300000, guid: 38cf7a4998f91c441abaf58288552b0f, type: 3}
+  sprite: {fileID: 21300000, guid: 3233fd8d61ab7eb41b953652381d81fd, type: 3}
   tier: 2
   isMonster: 1
   onPlayAudio: {fileID: 0}

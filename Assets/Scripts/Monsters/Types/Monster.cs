@@ -132,7 +132,8 @@ public abstract class Monster : IDamageable, IPlaceable
             if (dist < closestDistance && tile.containedMapObject != null && 
                 tile.containedMapObject is DamageableObject && 
                 tile.IsImpassable() &&
-                possiblePathToPlayer.Contains(tile))
+                possiblePathToPlayer.Contains(tile) &&
+                tile.containedMonster == null)
             {
                 targetObj = tile.containedMapObject as DamageableObject;
                 closestDistance = dist;

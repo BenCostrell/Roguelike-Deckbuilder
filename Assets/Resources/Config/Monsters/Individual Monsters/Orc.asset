@@ -11,7 +11,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5322b3392390d1743a91238da8141729, type: 3}
   m_Name: Orc
   m_EditorClassIdentifier: 
-  sprite: {fileID: 21300000, guid: 65dc056b968f2124d979bdfa227c9432, type: 3}
+  sprite: {fileID: 21300000, guid: a9076d35d2cd762448a0c3a694b2cc0a, type: 3}
   name_: Wrathful Wood
   monsterType: 3
   startingHealth: 3

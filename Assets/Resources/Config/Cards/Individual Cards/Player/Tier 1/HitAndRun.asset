@@ -12,9 +12,9 @@ MonoBehaviour:
   m_Name: HitAndRun
   m_EditorClassIdentifier: 
   cardType: 11
-  name_: Hit and Run
+  name_: Snip n Step
   cardText: Deal 1 damage to a target within 1 range, then move 1 space.
-  sprite: {fileID: 21300000, guid: ebe6e66c9e7b5c94fa29aced8fbd34df, type: 3}
+  sprite: {fileID: 21300000, guid: 969ca11be310667438496b7aec4c43fe, type: 3}
   tier: 1
   isMonster: 0
   onPlayAudio: {fileID: 0}

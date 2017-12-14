@@ -14,7 +14,7 @@ MonoBehaviour:
   objectType: 2
   name_: Brush
   sprites:
-  - {fileID: 21300000, guid: 7054d0f39c0219f4c9982ebaad5746a7, type: 3}
+  - {fileID: 21300000, guid: b810fba3468f46141aae34abaddcca33, type: 3}
   description: Impassable brush, can be destroyed.
   onStepAudio: {fileID: 0}
   lightColor: {r: 0, g: 0, b: 0, a: 0}

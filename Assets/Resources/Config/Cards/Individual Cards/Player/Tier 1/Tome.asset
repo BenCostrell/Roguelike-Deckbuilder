@@ -12,9 +12,9 @@ MonoBehaviour:
   m_Name: Tome
   m_EditorClassIdentifier: 
   cardType: 3
-  name_: Tome
+  name_: Toolbox
   cardText: Draw 2 cards, then discard a card.
-  sprite: {fileID: 21300000, guid: e802401dad3dfcc43b374d6ed2dc3e04, type: 3}
+  sprite: {fileID: 21300000, guid: 968c0cec51c25f946acc2f89ca255e66, type: 3}
   tier: 1
   isMonster: 0
   onPlayAudio: {fileID: 0}

@@ -1,12 +1,13 @@
 ﻿using UnityEngine;
 using System.Collections;
 using UnityEngine.UI;
+using TMPro;
 
 public class CardCount
 {
     public int count { get; private set; }
     private bool infinite;
-    private Text counter;
+    private TextMeshProUGUI counter;
     private readonly Vector3 offset = new Vector3(0, -200f, 0);
     public readonly Card card;
 
@@ -20,7 +21,7 @@ public class CardCount
     public void CreateCounter(Transform cardTransform)
     {
         counter = GameObject.Instantiate(Services.Prefabs.CardCounter, cardTransform.position,
-            Quaternion.identity, cardTransform).GetComponent<Text>();
+            Quaternion.identity, cardTransform).GetComponent<TextMeshProUGUI>();
         counter.GetComponent<RectTransform>().anchoredPosition = offset;
         if (infinite) counter.text = "infinite";
         else counter.text = "x " + count;

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
 using UnityEngine.UI;
+using TMPro;
 
 public class DeckConstruction : Scene<MainTransitionData> {
 
@@ -37,9 +38,9 @@ public class DeckConstruction : Scene<MainTransitionData> {
     [SerializeField]
     private GameObject prevPageButton;
     [SerializeField]
-    private Text pageCounter;
+    private TextMeshProUGUI pageCounter;
     [SerializeField]
-    private Text deckCounter;
+    private TextMeshProUGUI deckCounter;
     [SerializeField]
     private Button submitDeckButton;
 

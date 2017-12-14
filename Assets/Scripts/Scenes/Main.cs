@@ -36,6 +36,7 @@ public class Main : Scene<MainTransitionData> {
         collection = data.collection;
         Services.SoundManager.SetMusicVolume(0.1f);
         player.Initialize(Services.MapManager.playerSpawnTile, data);
+        Services.UIManager.InitUI();
         GetComponentInChildren<CameraController>().InitCamera();
         TaskTree startTasks = new TaskTree(
             new ScrollMessageBanner(Services.UIManager.startBannerMessage));

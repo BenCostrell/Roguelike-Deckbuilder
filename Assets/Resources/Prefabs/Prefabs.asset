@@ -27,3 +27,7 @@ MonoBehaviour:
     type: 2}
   mapObject: {fileID: 1256261409588616, guid: 787fa0702f02c48459113ab8d6901711, type: 2}
   leafBurst: {fileID: 1117018082177400, guid: 87cc31643940a3d40a8bd095ee254382, type: 2}
+  sporeParticles: {fileID: 1657884742887836, guid: 812609dbf332a8d4db98203d864574a1,
+    type: 2}
+  healingPlantParticles: {fileID: 1020301545236500, guid: b3b1107e00c544c46972a1bb78a59cf0,
+    type: 2}

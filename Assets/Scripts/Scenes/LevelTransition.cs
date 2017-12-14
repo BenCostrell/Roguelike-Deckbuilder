@@ -2,21 +2,22 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 public class LevelTransition : Scene<MainTransitionData> {
 
     [SerializeField]
-    private Text levelTitle;
+    private TextMeshProUGUI levelTitle;
     [SerializeField]
     private Transform deckArea;
     [SerializeField]
-    private Text deckCount;
+    private TextMeshProUGUI deckCount;
     [SerializeField]
     private Transform dungeonDeckArea;
     [SerializeField]
-    private Text forestDeckCount;
+    private TextMeshProUGUI forestDeckCount;
     [SerializeField]
-    private Text playerUIHPCounter;
+    private TextMeshProUGUI playerUIHPCounter;
     [SerializeField]
     private RectTransform playerUIRemainingHealthBody;
     [SerializeField]
@@ -26,7 +27,7 @@ public class LevelTransition : Scene<MainTransitionData> {
     [SerializeField]
     private Button editDeckButton;
     [SerializeField]
-    private Text finalScore;
+    private TextMeshProUGUI finalScore;
     [SerializeField]
     private int levelsPerMonsterTierIncrease;
     [SerializeField]
@@ -84,7 +85,7 @@ public class LevelTransition : Scene<MainTransitionData> {
         }
         else
         {
-            startButton.GetComponentInChildren<Text>().text = "RESTART";
+            startButton.GetComponentInChildren<TextMeshProUGUI>().text = "RESTART";
         }
     }
 
@@ -110,15 +111,15 @@ public class LevelTransition : Scene<MainTransitionData> {
             SetDeckCount();
             if (data.deck.Count > data.maxDeckSize) {
                 startButton.interactable = false;
-                startButton.GetComponentInChildren<Text>().text = "DECK TOO BIG";
-                startButton.GetComponentInChildren<Text>().fontSize = 40;
+                startButton.GetComponentInChildren<TextMeshProUGUI>().text = "DECK\n TOO BIG";
+                startButton.GetComponentInChildren<TextMeshProUGUI>().fontSize = 40;
                 deckCount.color = Color.red;
             }
             else if(data.deck.Count < data.minDeckSize)
             {
                 startButton.interactable = false;
-                startButton.GetComponentInChildren<Text>().text = "DECK TOO SMALL";
-                startButton.GetComponentInChildren<Text>().fontSize = 40;
+                startButton.GetComponentInChildren<TextMeshProUGUI>().text = "DECK\n TOO SMALL";
+                startButton.GetComponentInChildren<TextMeshProUGUI>().fontSize = 40;
                 deckCount.color = Color.yellow;
             }
             else

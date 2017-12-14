@@ -11,7 +11,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5322b3392390d1743a91238da8141729, type: 3}
   m_Name: Zombie
   m_EditorClassIdentifier: 
-  sprite: {fileID: 21300000, guid: 38cf7a4998f91c441abaf58288552b0f, type: 3}
+  sprite: {fileID: 21300000, guid: 3233fd8d61ab7eb41b953652381d81fd, type: 3}
   name_: Peeved Pepo
   monsterType: 1
   startingHealth: 2

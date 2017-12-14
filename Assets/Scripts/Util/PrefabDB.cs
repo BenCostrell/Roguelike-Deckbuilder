@@ -43,4 +43,12 @@ public class PrefabDB : ScriptableObject {
     [SerializeField]
     private GameObject leafBurst;
     public GameObject LeafBurst { get { return leafBurst; } }
+
+    [SerializeField]
+    private GameObject sporeParticles;
+    public GameObject SporeParticles { get { return sporeParticles; } }
+
+    [SerializeField]
+    private GameObject healingPlantParticles;
+    public GameObject HealingPlantParticles { get { return healingPlantParticles; } }
 }

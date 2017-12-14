@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
+using TMPro;
 
 public class CardController : MonoBehaviour, IPointerDownHandler, IPointerEnterHandler, 
     IPointerExitHandler, IPointerUpHandler, IPointerClickHandler, IBeginDragHandler, IEndDragHandler, IDragHandler
@@ -28,8 +29,8 @@ public class CardController : MonoBehaviour, IPointerDownHandler, IPointerEnterH
     }
     private Image art;
     private Vector3 artBaseLocalPos;
-    private Text nameText;
-    private Text effectText;
+    private TextMeshProUGUI nameText;
+    private TextMeshProUGUI effectText;
     private Vector3 mouseRelativePos;
     public bool selected;
     public static List<Card> currentlySelectedCards = new List<Card>();
@@ -51,7 +52,7 @@ public class CardController : MonoBehaviour, IPointerDownHandler, IPointerEnterH
         card = card_;
         baseParent = transform.parent;
         rect = GetComponent<RectTransform>();
-        Text[] textElements = GetComponentsInChildren<Text>();
+        TextMeshProUGUI[] textElements = GetComponentsInChildren<TextMeshProUGUI>();
         Image[] imageElements = GetComponentsInChildren<Image>();
         nameText = textElements[0];
         effectText = textElements[1];

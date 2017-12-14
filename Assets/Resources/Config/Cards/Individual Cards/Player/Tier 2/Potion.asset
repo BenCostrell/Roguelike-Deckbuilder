@@ -12,9 +12,9 @@ MonoBehaviour:
   m_Name: Potion
   m_EditorClassIdentifier: 
   cardType: 12
-  name_: Potion
+  name_: Apple
   cardText: Heal 1 health.
-  sprite: {fileID: 21300000, guid: 90bf951a6bb6a9d48a0f185415076714, type: 3}
+  sprite: {fileID: 21300000, guid: 44d6c3b054a687f48a9215015a62a7d6, type: 3}
   tier: 1
   isMonster: 0
   onPlayAudio: {fileID: 0}

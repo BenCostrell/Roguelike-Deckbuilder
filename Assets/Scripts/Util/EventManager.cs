@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public abstract class Event {}
+public abstract class GameEvent {}
 
 // EVENTS
-public class OptionChosen : Event
+public class OptionChosen : GameEvent
 {
     public int optionChosen;
 
@@ -15,11 +15,11 @@ public class OptionChosen : Event
     }
 }
 
-public class AcquisitionComplete : Event { }
+public class AcquisitionComplete : GameEvent { }
 
-public class MovementInitiated : Event { }
+public class MovementInitiated : GameEvent { }
 
-public class ButtonPressed : Event {
+public class ButtonPressed : GameEvent {
     public string button;
     public int playerNum;
     public ButtonPressed(string _button, int _playerNum)
@@ -29,9 +29,9 @@ public class ButtonPressed : Event {
     }
 }
 
-public class Reset : Event { }
+public class Reset : GameEvent { }
 
-public class TileSelected : Event
+public class TileSelected : GameEvent
 {
     public Tile tile;
     public TileSelected(Tile tile_)
@@ -40,7 +40,7 @@ public class TileSelected : Event
     }
 }
 
-public class TileHovered : Event {
+public class TileHovered : GameEvent {
     public Tile tile;
     public TileHovered(Tile tile_)
     {
@@ -49,7 +49,7 @@ public class TileHovered : Event {
 }
 
 
-public class CardSelected : Event
+public class CardSelected : GameEvent
 {
     public Card card;
     public CardSelected(Card card_)
@@ -61,15 +61,15 @@ public class CardSelected : Event
 
 public class EventManager {
 
-	public delegate void EventDelegate<T>(T e) where T: Event;
-	private delegate void EventDelegate(Event e);
+	public delegate void EventDelegate<T>(T e) where T: GameEvent;
+	private delegate void EventDelegate(GameEvent e);
 
 	private Dictionary <System.Type, EventDelegate> delegates = new Dictionary<System.Type, EventDelegate>();
 	private Dictionary<System.Delegate, EventDelegate> delegateLookup = new Dictionary<System.Delegate, EventDelegate>();
-	private List<Event> queuedEvents = new List<Event> ();
+	private List<GameEvent> queuedEvents = new List<GameEvent> ();
 	private object queueLock = new object();
 
-	public void Register<T> (EventDelegate<T> del) where T: Event {
+	public void Register<T> (EventDelegate<T> del) where T: GameEvent {
 		if (delegateLookup.ContainsKey (del)) {
 			return;
 		}
@@ -85,7 +85,7 @@ public class EventManager {
 		}
 	}
 
-	public void Unregister<T> (EventDelegate<T> del) where T: Event {
+	public void Unregister<T> (EventDelegate<T> del) where T: GameEvent {
 		EventDelegate internalDelegate;
 		if (delegateLookup.TryGetValue (del, out internalDelegate)) {
 			EventDelegate tempDel;
@@ -115,7 +115,7 @@ public class EventManager {
 		}
 	}
 
-	public void Fire(Event e){
+	public void Fire(GameEvent e){
 		EventDelegate del;
 		if (delegates.TryGetValue (e.GetType (), out del)) {
 			del.Invoke (e);
@@ -123,22 +123,22 @@ public class EventManager {
 	}
 
 	public void ProcessQueuedEvents(){
-		List<Event> events;
+		List<GameEvent> events;
 		lock (queueLock) {
 			if (queuedEvents.Count > 0) {
-				events = new List<Event> (queuedEvents);
+				events = new List<GameEvent> (queuedEvents);
 				queuedEvents.Clear ();
 			} else {
 				return;
 			}
 		}
 
-		foreach (Event e in events) {
+		foreach (GameEvent e in events) {
 			Fire (e);
 		}
 	}
 
-	public void Queue(Event e){
+	public void Queue(GameEvent e){
 		lock (queueLock) {
 			queuedEvents.Add (e);
 		}

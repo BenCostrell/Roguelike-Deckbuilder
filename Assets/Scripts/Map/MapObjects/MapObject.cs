@@ -23,7 +23,7 @@ public abstract class MapObject : IPlaceable
     public SpriteRenderer maskSprite { get; private set; }
     public SpriteRenderer sr { get; private set; }
     protected Light light;
-    protected ParticleSystem ps;
+    //protected ParticleSystem ps;
     private float baseIntensity;
     private static int nextID_;
     private static int nextID
