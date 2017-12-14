@@ -14,7 +14,7 @@ MonoBehaviour:
   cardType: 18
   name_: Shield
   cardText: Gain 2 shield until your next turn.
-  sprite: {fileID: 21300000, guid: 7b8dd5c5ef9cc2244bebe4276ea8f20c, type: 3}
+  sprite: {fileID: 21300000, guid: e158b22c5a4900f4ab9faaa3f04b1a25, type: 3}
   tier: 1
   isMonster: 0
   onPlayAudio: {fileID: 0}

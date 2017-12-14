@@ -15,7 +15,7 @@ MonoBehaviour:
   name_: Telekinesis
   cardText: Teleport a Monster or Object within 4 range to an open space within 4
     range.
-  sprite: {fileID: 21300000, guid: 92d9efc512724ee469b8b06d5610bb9c, type: 3}
+  sprite: {fileID: 21300000, guid: ee3a5e78d6fc7a143a445f0176a8fd0f, type: 3}
   tier: 1
   isMonster: 0
   onPlayAudio: {fileID: 0}

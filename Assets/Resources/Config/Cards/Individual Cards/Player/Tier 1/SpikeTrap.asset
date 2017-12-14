@@ -14,7 +14,7 @@ MonoBehaviour:
   cardType: 17
   name_: Spike Trap
   cardText: Place a spike trap within 3 range that does 1 damage and stops movement.
-  sprite: {fileID: 21300000, guid: 5643126b74f5feb43858cc104226c536, type: 3}
+  sprite: {fileID: 21300000, guid: 780aa48685a8d23459324c6798bc5351, type: 3}
   tier: 1
   isMonster: 0
   onPlayAudio: {fileID: 0}

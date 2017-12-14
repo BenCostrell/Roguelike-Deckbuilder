@@ -14,7 +14,7 @@ MonoBehaviour:
   cardType: 26
   name_: Leapfrog
   cardText: Jump over a monster or object if there's an open space behind it.
-  sprite: {fileID: 21300000, guid: 297c57d59d4b5b2438c677417c056576, type: 3}
+  sprite: {fileID: 21300000, guid: 26430199240184841a2d25a48e9debe7, type: 3}
   tier: 1
   isMonster: 0
   onPlayAudio: {fileID: 0}

@@ -20,6 +20,6 @@ MonoBehaviour:
   onStepAudio: {fileID: 0}
   lightColor: {r: 1, g: 0.8672414, b: 0.125, a: 1}
   numCards: 3
-  leftmostCardPosition: {x: -200, y: 0, z: 0}
+  leftmostCardPosition: {x: -200, y: 50, z: 0}
   cardSpacing: {x: 200, y: 0, z: 0}
   scaleFactor: 1.5

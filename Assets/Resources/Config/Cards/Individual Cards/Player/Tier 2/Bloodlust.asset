@@ -14,7 +14,7 @@ MonoBehaviour:
   cardType: 10
   name_: Bloodlust
   cardText: Move 1 space for each attack card in your hand +1.
-  sprite: {fileID: 21300000, guid: 6653aea189d461046a6d1fbd4921882f, type: 3}
+  sprite: {fileID: 21300000, guid: 9d9c8203af248d642a98da9653beb380, type: 3}
   tier: 1
   isMonster: 0
   onPlayAudio: {fileID: 0}
