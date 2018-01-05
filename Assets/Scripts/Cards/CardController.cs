@@ -345,8 +345,8 @@ public class CardController : MonoBehaviour, IPointerDownHandler, IPointerEnterH
         {
             if (tempLockFramesLeft == 0)
             {
-                if (card is MovementCard) TransitionTo<MovementCardSelected>();
-                else if (card is TileTargetedCard) TransitionTo<TargetedCardSelected>();
+                /*if (card is MovementCard) TransitionTo<MovementCardSelected>();
+                else */if (card is TileTargetedCard) TransitionTo<TargetedCardSelected>();
                 else TransitionTo<Selected>();
             }
         }
@@ -354,13 +354,15 @@ public class CardController : MonoBehaviour, IPointerDownHandler, IPointerEnterH
         public override void OnInputEnter()
         {
             base.OnInputEnter();
-            if (!(card is MovementCard)) card.OnSelect();
+            if (!(card is MovementCard))
+                card.OnSelect();
         }
 
         public override void OnInputExit()
         {
             base.OnInputExit();
-            if (!(card is MovementCard)) card.OnUnselect();
+            if (!(card is MovementCard))
+                card.OnUnselect();
         }
 
         protected override void AddOffset()
@@ -531,12 +533,16 @@ public class CardController : MonoBehaviour, IPointerDownHandler, IPointerEnterH
 
         protected virtual void OnPlayed()
         {
-            player.hand.Remove(card);
-            player.ShowAvailableMoves();
-            player.cardsInFlux.Add(card);
-            Services.UIManager.SortHand(player.hand);
-            Context.RotateTo(Quaternion.identity);
-            TransitionTo<Playing>();
+            //if (card is MovementCard) TransitionTo<MovementCardSelected>();
+            //else
+            //{
+                player.hand.Remove(card);
+                if(!(card is MovementCard)) player.ShowAvailableMoves();
+                player.cardsInFlux.Add(card);
+                Services.UIManager.SortHand(player.hand);
+                Context.RotateTo(Quaternion.identity);
+                TransitionTo<Playing>();
+            //}
         }
 
         public override void OnEndDrag()
@@ -578,6 +584,8 @@ public class CardController : MonoBehaviour, IPointerDownHandler, IPointerEnterH
 
     private class MovementCardSelected : CardState
     {
+        private MovementCard moveCard;
+
         public override void OnEnter()
         {
             Services.EventManager.Register<MovementInitiated>(OnMovementIntiated);
@@ -590,13 +598,14 @@ public class CardController : MonoBehaviour, IPointerDownHandler, IPointerEnterH
                 0);
             Context.Reposition(newPos, false, true);
             player.cardsSelected.Add(card);
-            player.SelectMovementCard(card as MovementCard);
-            card.OnSelect();
+            moveCard = card as MovementCard;
+            player.SelectMovementCard(moveCard as MovementCard);
+            moveCard.OnQueue();
         }
 
         public override void OnInputClick()
         {
-            card.OnUnselect();
+            moveCard.OnUnqueue();
             TransitionTo<Playable>();
         }
 

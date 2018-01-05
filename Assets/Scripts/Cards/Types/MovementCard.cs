@@ -7,23 +7,36 @@ public abstract class MovementCard : Card
     public int range { get { return GetRange(); } }
     protected int baseRange;
     protected int lockId;
+    private bool queued;
 
     public override bool CanPlay()
     {
         return AStarSearch.FindAllAvailableGoals(player.currentTile, range).Count > 0;
     }
 
-    public override void OnSelect()
+    public void OnQueue()
     {
         player.movesAvailable += range;
         lockId = Services.UIManager.nextLockID;
         player.DisableNonMovementCards(lockId);
+        queued = true;
+    }
+
+    public void OnUnqueue()
+    {
+        player.movesAvailable -= range;
+        player.EnableNonMovementCards(lockId);
+        queued = false;
+    }
+
+    public override void OnSelect()
+    {
+
     }
 
     public override void OnUnselect()
     {
-        player.movesAvailable -= range;
-        player.EnableNonMovementCards(lockId);
+
     }
 
     public void OnMovementAct()
@@ -34,5 +47,17 @@ public abstract class MovementCard : Card
     protected virtual int GetRange()
     {
         return baseRange;
+    }
+
+    public override void OnPlay()
+    {
+        base.OnPlay();
+        if(!queued) player.movesAvailable += range;
+    }
+
+    public override TaskTree OnDraw()
+    {
+        queued = false;
+        return base.OnDraw();
     }
 }
