@@ -66,7 +66,10 @@ MonoBehaviour:
   drawAnimScale: 2
   drawAnimMidpointOffset: {x: 300, y: 250, z: 0}
   dungeonDrawAnimMidpointOffset: {x: 300, y: -250, z: 0}
+  dungeonPlayAnimMidpointOffset: {x: 300, y: -300, z: 0}
+  dungeonPlayAnimScale: 3.5
   playAnimDur: 0.3
+  dungeonPlayAnimDur: 0.8
   acquireAnimDur: 0.5
   reshuffleAnimDur: 0.2
   reshuffleAnimStagger: 0.0625

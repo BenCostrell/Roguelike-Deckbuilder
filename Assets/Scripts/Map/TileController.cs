@@ -64,13 +64,13 @@ public class TileController : MonoBehaviour {
 
     private void OnMouseExit()
     {
-        if (!EventSystem.current.IsPointerOverGameObject() || CardController.targetedCardSelected)
-        {
+        //if (!EventSystem.current.IsPointerOverGameObject() || CardController.targetedCardSelected)
+        //{
             tile.OnHoverExit();
             sr.color = defColor;
             Services.UIManager.HideUnitUI();
             Services.UIManager.HideMapObjUI();
-        }
+        //}
     }
 
     private void OnMouseDown()

@@ -218,7 +218,11 @@ public class Player : IDamageable {
         {
             List<Tile> shortestPath = GetShortestPath(e.tile);
             if (CanMoveAlongPath(shortestPath, false))
+            {
+                //UnqueueAll();
+                //QueueAppropriateMovementCards(shortestPath);
                 MoveToTile(shortestPath);
+            }
             else if (CanMoveAlongPath(shortestPath, true))
                 QueueAppropriateMovementCards(shortestPath);
         }

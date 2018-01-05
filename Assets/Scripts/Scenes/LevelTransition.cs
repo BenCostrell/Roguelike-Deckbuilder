@@ -126,7 +126,7 @@ public class LevelTransition : Scene<MainTransitionData> {
             {
                 deckCount.color = Color.green;
             }
-            if (data.levelNum == 1) editDeckButton.gameObject.SetActive(false);
+            //if (data.levelNum == 1) editDeckButton.gameObject.SetActive(false);
         }
         else
         {

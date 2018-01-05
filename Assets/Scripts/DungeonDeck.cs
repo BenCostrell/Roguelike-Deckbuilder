@@ -260,10 +260,10 @@ public class AlterDungeonTimerTask : Task
 
         if (timeElapsed <= midpointDuration)
         {
-            newMonsterCard.Reposition(Vector3.Lerp(
+            newMonsterCard.controller.transform.position = Vector3.Lerp(
                 initialPos,
                 midpointPos,
-                Easing.QuartEaseOut(timeElapsed / midpointDuration)), false, true);
+                Easing.QuartEaseOut(timeElapsed / midpointDuration));
             newMonsterCard.controller.transform.localScale = Vector3.Lerp(
                 initialScale,
                 midpointScale,
@@ -271,12 +271,11 @@ public class AlterDungeonTimerTask : Task
         }
         else
         {
-            newMonsterCard.Reposition(Vector3.Lerp(
+            newMonsterCard.controller.transform.position = Vector3.Lerp(
                 midpointPos,
                 targetPos,
                 Easing.QuartEaseIn(
-                    (timeElapsed - midpointDuration) / (duration - midpointDuration))),
-                false, true);
+                    (timeElapsed - midpointDuration) / (duration - midpointDuration)));
             newMonsterCard.controller.transform.localScale = Vector3.Lerp(
                 midpointScale,
                 Vector3.zero,

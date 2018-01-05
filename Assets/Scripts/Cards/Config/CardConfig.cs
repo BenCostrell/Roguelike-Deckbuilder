@@ -78,8 +78,20 @@ public class CardConfig : ScriptableObject
     public Vector3 DungeonDrawAnimMidpointOffset { get { return dungeonDrawAnimMidpointOffset; } }
 
     [SerializeField]
+    private Vector3 dungeonPlayAnimMidpointOffset;
+    public Vector3 DungeonPlayAnimMidpointOffset { get { return dungeonPlayAnimMidpointOffset; } }
+
+    [SerializeField]
+    private float dungeonPlayAnimScale;
+    public float DungeonPlayAnimScale { get { return dungeonPlayAnimScale; } }
+
+    [SerializeField]
     private float playAnimDur;
     public float PlayAnimDur { get { return playAnimDur; } }
+
+    [SerializeField]
+    private float dungeonPlayAnimDur;
+    public float DungeonPlayAnimDur { get { return dungeonPlayAnimDur; } }
 
     [SerializeField]
     private float acquireAnimDur;

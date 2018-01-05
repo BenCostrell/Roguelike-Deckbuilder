@@ -5849,9 +5849,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ca0d85cdf5204904cb7404a378c70c85, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  baseLevelDimension: 9
+  baseLevelDimension: 11
   heightToWidthRatio: 1
-  dimensionIncreasePerLevel: 3
+  dimensionIncreasePerLevel: 1
   initialHeavyProb: 0.35
   spawnThresh: 2
   growthThresh: 5

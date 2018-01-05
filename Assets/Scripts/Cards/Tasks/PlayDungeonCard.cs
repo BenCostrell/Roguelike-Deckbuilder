@@ -9,8 +9,12 @@ public class PlayDungeonCard : Task
     private DungeonCard card;
     private Vector3 initialPos;
     private Vector3 targetPos;
+    private Vector3 midpointPos;
+    private Vector3 baseScale;
+    private Vector3 midpointScale;
     private RectTransform rect;
     private TaskManager subTaskManager;
+    private bool effectStarted;
 
     public PlayDungeonCard(DungeonCard card_)
     {
@@ -20,16 +24,18 @@ public class PlayDungeonCard : Task
     protected override void Init()
     {
         timeElapsed = 0;
-        duration = Services.CardConfig.PlayAnimDur;
+        duration = Services.CardConfig.DungeonPlayAnimDur;
         rect = card.controller.GetComponent<RectTransform>();
         card.controller.transform.SetParent(Services.UIManager.dungeonPlayZone.transform);
         card.controller.EnterDungeonPlayingMode();
         initialPos = rect.anchoredPosition;
+        midpointPos = Services.CardConfig.DungeonPlayAnimMidpointOffset;
         targetPos = Services.UIManager
             .GetInPlayCardPosition(Services.Main.dungeonDeck.playedCards.Count + 1);
+        baseScale = card.controller.transform.localScale;
+        midpointScale = baseScale * Services.CardConfig.DungeonPlayAnimScale;
         Services.SoundManager.CreateAndPlayAudio(Services.AudioConfig.CardPlayAudio, 0.3f);
         subTaskManager = new TaskManager();
-        subTaskManager.AddTask(card.DungeonOnPlay());
         //Debug.Log("playing card " + card.GetType() + " at time " + Time.time);
     }
 
@@ -39,13 +45,30 @@ public class PlayDungeonCard : Task
         {
             timeElapsed += Time.deltaTime;
 
-            card.Reposition(Vector3.Lerp(initialPos, targetPos,
-                Easing.QuadEaseOut(timeElapsed / duration)), false, true);
+            if(timeElapsed < duration / 2)
+            {
+                card.Reposition(Vector3.Lerp(initialPos, midpointPos,
+                Easing.ExpoEaseOut(timeElapsed / (duration/2))), false, true);
+                card.controller.transform.localScale = Vector3.Lerp(baseScale, midpointScale,
+                    Easing.ExpoEaseOut(timeElapsed / (duration / 2)));
+            }
+            else
+            {
+                card.Reposition(Vector3.Lerp(midpointPos, targetPos,
+                Easing.ExpoEaseIn((timeElapsed - (duration / 2)) / (duration / 2))), false, true);
+                card.controller.transform.localScale = Vector3.Lerp(midpointScale, baseScale,
+                    Easing.ExpoEaseIn((timeElapsed - (duration / 2)) / (duration / 2)));
+            }
+        }
+        else if (!effectStarted)
+        {
+            subTaskManager.AddTask(card.DungeonOnPlay());
+            effectStarted = true;
         }
 
         subTaskManager.Update();
 
-        if (timeElapsed >= duration && subTaskManager.tasksInProcessCount == 0)
+        if (timeElapsed >= duration && subTaskManager.tasksInProcessCount == 0 && effectStarted)
             SetStatus(TaskStatus.Success);
     }
 
