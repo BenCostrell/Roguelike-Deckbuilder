@@ -2463,8 +2463,8 @@ MonoBehaviour:
   maxCardsPerRow: 10
   dungeonDeckSize: 20
   advanceCount: 4
-  growthCount: 3
-  spreadSeedsCount: 7
+  growthCount: 2
+  spreadSeedsCount: 6
 --- !u!114 &114981976861345532
 MonoBehaviour:
   m_ObjectHideFlags: 1

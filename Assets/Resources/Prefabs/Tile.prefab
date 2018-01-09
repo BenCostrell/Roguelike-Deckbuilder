@@ -79,7 +79,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   onHoverColor: {r: 0.9537525, g: 1, b: 0.16176468, a: 1}
-  detectionDistance: 7
+  detectionDistance: 6
   selectionLockOutPeriod: 20
 --- !u!212 &212161934936208942
 SpriteRenderer:
