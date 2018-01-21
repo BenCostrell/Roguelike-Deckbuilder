@@ -217,13 +217,13 @@ public class Player : IDamageable {
         if (!e.tile.IsImpassable() && !movementLocked)
         {
             List<Tile> shortestPath = GetShortestPath(e.tile);
-            if (CanMoveAlongPath(shortestPath, false))
+            if (CanMoveAlongPath(shortestPath, false) && e.tile == shortestPath[0])
             {
                 //UnqueueAll();
                 //QueueAppropriateMovementCards(shortestPath);
                 MoveToTile(shortestPath);
             }
-            else if (CanMoveAlongPath(shortestPath, true))
+            else if (CanMoveAlongPath(shortestPath, true) && e.tile == shortestPath[0])
                 QueueAppropriateMovementCards(shortestPath);
         }
     }
@@ -277,13 +277,14 @@ public class Player : IDamageable {
                             {
                                 value += newSubset[l].range;
                             }
-                            if (value >= targetValue && targetValue - value < bestSubsetValue)
+                            if (value >= targetValue &&
+                                (value < bestSubsetValue || 
+                                (value == bestSubsetValue && 
+                                newSubset.Count < bestSubset.Count)))
                             {
-                                if (bestSubsetValue != targetValue || newSubset.Count < bestSubset.Count)
-                                {
-                                    bestSubset = newSubset;
-                                    bestSubsetValue = value;
-                                }
+
+                                bestSubset = newSubset;
+                                bestSubsetValue = value;
                             }
                         }
                     }
@@ -366,11 +367,11 @@ public class Player : IDamageable {
         if ((!targeting || movementCardsSelected.Count > 0) && !moving && !hoveredTile.IsImpassable())
         {
             List<Tile> pathToTile = GetShortestPath(hoveredTile);
-            if (CanMoveAlongPath(pathToTile, false))
+            if (CanMoveAlongPath(pathToTile, false) && hoveredTile == pathToTile[0])
             {
                 controller.ShowPathArrow(pathToTile, false);
             }
-            else if (CanMoveAlongPath(pathToTile, true))
+            else if (CanMoveAlongPath(pathToTile, true) && hoveredTile == pathToTile[0])
             {
                 controller.ShowPathArrow(pathToTile, true);
             }

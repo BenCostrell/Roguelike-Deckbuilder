@@ -1,6 +1,5 @@
-﻿using UnityEngine;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using UnityEngine;
 
 [CreateAssetMenu(menuName = "Card Config")]
 public class CardConfig : ScriptableObject
@@ -50,8 +49,8 @@ public class CardConfig : ScriptableObject
     public Vector3 OnHoverOffsetChestMode { get { return onHoverOffsetChestMode; } }
 
     [SerializeField]
-    private float cardPlayThresholdYPos;
-    public float CardPlayThresholdYPos { get { return cardPlayThresholdYPos; } }
+    private Vector2 cardPlayThreshold;
+    public Vector2 CardPlayThreshold { get { return cardPlayThreshold; } }
 
     [SerializeField]
     private Color playableColor;

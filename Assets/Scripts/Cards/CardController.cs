@@ -562,7 +562,8 @@ public class CardController : MonoBehaviour, IPointerDownHandler, IPointerEnterH
                 if (buttonDown)
                     Services.Main.taskManager.AddTask(player.DiscardCardFromHand(card, 0));
             }
-            else if (Context.rect.anchoredPosition.y >= Services.CardConfig.CardPlayThresholdYPos &&
+            else if ((Context.rect.anchoredPosition.y >= Services.CardConfig.CardPlayThreshold.y ||
+                Context.rect.anchoredPosition.x >= Services.CardConfig.CardPlayThreshold.x) &&
                 card.CanPlay())
             {
                 OnPlayableEffect();

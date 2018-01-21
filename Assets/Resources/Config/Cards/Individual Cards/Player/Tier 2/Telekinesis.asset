@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Name: Telekinesis
   m_EditorClassIdentifier: 
   cardType: 28
-  name_: Telekinesis
+  name_: Transplant
   cardText: Teleport a Monster or Object within 4 range to an open space within 4
     range.
   sprite: {fileID: 21300000, guid: ee3a5e78d6fc7a143a445f0176a8fd0f, type: 3}

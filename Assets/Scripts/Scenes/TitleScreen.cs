@@ -32,9 +32,11 @@ public class TitleScreen : Scene<MainTransitionData> {
             Card card = Services.CardConfig.CreateCardOfType(cardInfo.CardType);
             startingDeck.Add(card);
         }
-        startingCollection.Add(Services.CardConfig.CreateCardOfType(Card.CardType.Leapfrog));
-        startingCollection.Add(Services.CardConfig.CreateCardOfType(Card.CardType.Leapfrog));
-        startingCollection.Add(Services.CardConfig.CreateCardOfType(Card.CardType.Leapfrog));
+        for (int i = 0; i < 4; i++)
+        {
+            //startingCollection.Add(Services.CardConfig.CreateCardOfType(Card.CardType.Run));
+        }
+
 
         Services.SceneStackManager.Swap<LevelTransition>(
             new MainTransitionData(startingDeck, new List<Card>(), startingCollection,
