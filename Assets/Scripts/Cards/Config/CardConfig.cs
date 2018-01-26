@@ -212,6 +212,8 @@ public class CardConfig : ScriptableObject
                 return new Lignify();
             case Card.CardType.Telekinesis:
                 return new Telekinesis();
+            case Card.CardType.MortalCoil:
+                return new MortalCoil();
             default:
                 return null;
         }

@@ -36,7 +36,8 @@ public abstract class Card {
         SpreadSeeds,
         Leapfrog,
         Lignify,
-        Telekinesis
+        Telekinesis,
+        MortalCoil
     }
     public int tier { get; protected set; }
     public Sprite sprite { get; protected set; }
