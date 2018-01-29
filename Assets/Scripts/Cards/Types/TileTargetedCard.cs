@@ -17,13 +17,15 @@ public abstract class TileTargetedCard : Card
 
     public override bool CanPlay()
     {
+        int validTargets = 0;
         List<Tile> tilesWithinRange = TilesInRange();
         for (int i = 0; i < tilesWithinRange.Count; i++)
         {
             Tile tile = tilesWithinRange[i];
-            if (IsTargetValid(tile)) return true;
+            if (IsTargetValid(tile)) validTargets += 1;
         }
-        return false;
+        if (validTargets + targets.Count >= numRequiredTargets) return true;
+        else return false;
     }
 
     public bool SelectionComplete()
@@ -51,11 +53,17 @@ public abstract class TileTargetedCard : Card
         base.InitValues();
         TargetedCardInfo targetedCardInfo = info as TargetedCardInfo;
         range = targetedCardInfo.Range;
+        ClearTargets();
     }
 
     public override void OnSelect()
     {
         ClearTargets();
+        ShowRange();
+    }
+
+    protected void ShowRange()
+    {
         currentTileRange = TilesInRange();
         foreach (Tile tile in currentTileRange)
         {

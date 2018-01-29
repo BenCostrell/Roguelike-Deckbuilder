@@ -11,7 +11,9 @@ public abstract class MapObject : IPlaceable
         HeavyBrush,
         Chest,
         Sprout,
-        Door
+        Door,
+        Apple,
+        AppleTree
     }
     protected ObjectType objectType;
     public MapObjectInfo info { get; protected set; }
@@ -136,5 +138,11 @@ public abstract class MapObject : IPlaceable
             Vector2.Distance(currentTile.controller.transform.position,
             player.controller.transform.position), 1f)) 
             * (0.5f + (1 + Mathf.Sin(Time.time * 2)) / 4);
+    }
+
+    protected void SetSprite(int spriteIndex)
+    {
+        sr.sprite = info.Sprites[spriteIndex];
+        mask.sprite = info.Sprites[spriteIndex];
     }
 }

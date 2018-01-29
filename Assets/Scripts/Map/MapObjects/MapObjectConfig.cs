@@ -43,6 +43,10 @@ public class MapObjectConfig : ScriptableObject
                 return new Sprout();
             case MapObject.ObjectType.Door:
                 return new Door();
+            case MapObject.ObjectType.Apple:
+                return new Apple();
+            case MapObject.ObjectType.AppleTree:
+                return new AppleTree();
             default:
                 return null;
         }

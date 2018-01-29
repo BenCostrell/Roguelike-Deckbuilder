@@ -12,7 +12,7 @@ public class Bloodlust : MovementCard
 
     protected override int GetRange()
     {
-        int movementRange = 1;
+        int movementRange = 0;
         foreach (Card card in player.hand)
         {
             if (card is AttackCard) movementRange += 1;

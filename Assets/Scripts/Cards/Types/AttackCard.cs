@@ -25,11 +25,24 @@ public abstract class AttackCard : TileTargetedCard
     public override void OnTargetSelected(Tile tile)
     {
         base.OnTargetSelected(tile);
-        if (tile.containedMonster != null)
-            OnHit(tile.containedMonster);
-        else if (tile.containedMapObject != null && tile.containedMapObject is DamageableObject)
-            OnHit(tile.containedMapObject as DamageableObject);
+        if (SelectionComplete())
+        {
+            foreach (Tile target in targets)
+            {
+                AttackTarget(target);
+            }
+        }
+        else ShowRange();
     }  
+
+    protected void AttackTarget(Tile target)
+    {
+        if (target.containedMonster != null)
+            OnHit(target.containedMonster);
+        else if (target.containedMapObject != null && 
+            target.containedMapObject is DamageableObject)
+            OnHit(target.containedMapObject as DamageableObject);
+    }
 
     protected override void InitValues()
     {

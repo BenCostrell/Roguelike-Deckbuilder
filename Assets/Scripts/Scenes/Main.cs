@@ -67,6 +67,7 @@ public class Main : Scene<MainTransitionData> {
             //.Then(Services.MonsterManager.MonstersAttack())
             .Then(dungeonDeck.TakeDungeonTurn())
             .Then(new ScrollMessageBanner(Services.UIManager.playerTurnMessage))
+            .Then(Services.MapManager.GrowPlants())
             .Then(player.OnTurnStart())
             .Then(new ParameterizedActionTask<int>(player.UnlockEverything, lockID));
 

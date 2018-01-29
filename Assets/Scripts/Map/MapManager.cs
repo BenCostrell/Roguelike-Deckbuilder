@@ -96,6 +96,7 @@ public class MapManager : MonoBehaviour {
     public Tile exitTile { get; private set; }
     private List<MapObject> litObjects;
     private List<Fountain> fountains;
+    private List<GrowingPlant> growingPlants;
 
     private void Update()
     {
@@ -294,6 +295,7 @@ public class MapManager : MonoBehaviour {
         emptyTiles = openTiles;
         tilesWithSpecialStuff = new List<Tile>() { playerSpawnTile, exitTile };
         litObjects = new List<MapObject>();
+        growingPlants = new List<GrowingPlant>();
         GenerateChests(levelNum);
         GenerateFountains(levelNum);
 
@@ -1275,5 +1277,26 @@ public class MapManager : MonoBehaviour {
     public void RemoveFountain(Fountain fountain)
     {
         fountains.Remove(fountain);
+    }
+
+    public void AddGrowingPlant(GrowingPlant plant)
+    {
+        growingPlants.Add(plant);
+    }
+
+    public void RemoveGrowingPlant(GrowingPlant plant)
+    {
+        growingPlants.Remove(plant);
+    }
+
+    public TaskTree GrowPlants()
+    {
+        TaskTree plantGrowthTree = new TaskTree(new WaitTask(0.2f));
+        for (int i = 0; i < growingPlants.Count; i++)
+        {
+            plantGrowthTree.AddChild(new ActionTask(growingPlants[i].Grow));
+        }
+        plantGrowthTree.Then(new WaitTask(0.2f));
+        return plantGrowthTree;
     }
 }

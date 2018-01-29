@@ -37,7 +37,10 @@ public abstract class Card {
         Leapfrog,
         Lignify,
         Telekinesis,
-        MortalCoil
+        MortalCoil,
+        Swap,
+        DoubleSnip,
+        AppleTree
     }
     public int tier { get; protected set; }
     public Sprite sprite { get; protected set; }

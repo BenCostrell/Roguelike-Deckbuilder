@@ -1,14 +1,15 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class DamageableObject : MapObject, IDamageable
+public abstract class DamageableObject : MapObject, IDamageable
 {
     public int currentHealth { get; protected set; }
-    public readonly int startingHealth = 1;
+    public int startingHealth { get; protected set; }
 
     protected override void InitValues()
     {
         base.InitValues();
+        startingHealth = info.Health;
         currentHealth = startingHealth;
     }
 

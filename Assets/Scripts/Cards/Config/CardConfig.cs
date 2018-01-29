@@ -214,6 +214,12 @@ public class CardConfig : ScriptableObject
                 return new Telekinesis();
             case Card.CardType.MortalCoil:
                 return new MortalCoil();
+            case Card.CardType.Swap:
+                return new Swap();
+            case Card.CardType.DoubleSnip:
+                return new DoubleSnip();
+            case Card.CardType.AppleTree:
+                return new AppleTreeCard();
             default:
                 return null;
         }

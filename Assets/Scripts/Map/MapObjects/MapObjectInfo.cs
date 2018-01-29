@@ -27,4 +27,8 @@ public class MapObjectInfo : ScriptableObject
     [SerializeField]
     private Color lightColor;
     public Color LightColor { get { return lightColor; } }
+
+    [SerializeField]
+    private int health;
+    public int Health { get { return health; } }
 }
