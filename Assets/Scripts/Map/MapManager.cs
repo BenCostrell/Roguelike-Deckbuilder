@@ -96,7 +96,7 @@ public class MapManager : MonoBehaviour {
     public Tile exitTile { get; private set; }
     private List<MapObject> litObjects;
     private List<Fountain> fountains;
-    private List<GrowingPlant> growingPlants;
+    public List<GrowingPlant> growingPlants { get; private set; }
 
     private void Update()
     {
@@ -1292,10 +1292,7 @@ public class MapManager : MonoBehaviour {
     public TaskTree GrowPlants()
     {
         TaskTree plantGrowthTree = new TaskTree(new WaitTask(0.2f));
-        for (int i = 0; i < growingPlants.Count; i++)
-        {
-            plantGrowthTree.AddChild(new ActionTask(growingPlants[i].Grow));
-        }
+        plantGrowthTree.Then(new GrowPlants());
         plantGrowthTree.Then(new WaitTask(0.2f));
         return plantGrowthTree;
     }
