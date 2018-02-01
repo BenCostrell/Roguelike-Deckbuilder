@@ -736,7 +736,9 @@ public class CardController : MonoBehaviour, IPointerDownHandler, IPointerEnterH
             if (!(card is DungeonCard))
             {
                 player.OnCardFinishedPlaying(card);
-                Services.Main.taskManager.AddTask(player.DiscardCardFromPlay(card, 0));
+                TaskTree resolutionTasks = card.PostResolutionEffects();
+                resolutionTasks.Then(player.DiscardCardFromPlay(card, 0));
+                Services.Main.taskManager.AddTask(resolutionTasks);
             }
         }
 

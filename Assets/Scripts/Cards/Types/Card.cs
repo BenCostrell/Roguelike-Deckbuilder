@@ -70,6 +70,11 @@ public abstract class Card {
         controller.DisplayInPlay();
     }
 
+    public virtual TaskTree PostResolutionEffects()
+    {
+        return new TaskTree(new EmptyTask());
+    }
+
     public virtual void OnDiscard()
     {
         controller.EnterDiscardMode();

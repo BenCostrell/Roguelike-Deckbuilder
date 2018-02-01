@@ -189,7 +189,7 @@ public class Player : IDamageable {
 
     TaskTree DiscardCard(Card card, float timeOffset)
     {
-        discardPile.Add(card);
+        cardsInFlux.Add(card);
         CheckAvailableActions();
         TaskTree discardCardTasks = new TaskTree(new WaitTask(timeOffset));
         discardCardTasks.Then(new ActionTask(card.OnDiscard));

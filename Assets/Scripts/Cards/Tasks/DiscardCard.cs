@@ -43,6 +43,11 @@ public class DiscardCard : Task
 
     protected override void OnSuccess()
     {
+        if (!(card is DungeonCard))
+        {
+            Services.GameManager.player.cardsInFlux.Remove(card);
+            Services.GameManager.player.discardPile.Add(card);
+        }
         card.DestroyPhysicalCard();
     }
 }
