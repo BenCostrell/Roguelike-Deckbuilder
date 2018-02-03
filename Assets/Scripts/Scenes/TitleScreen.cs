@@ -32,11 +32,11 @@ public class TitleScreen : Scene<MainTransitionData> {
             Card card = Services.CardConfig.CreateCardOfType(cardInfo.CardType);
             startingDeck.Add(card);
         }
-        for (int i = 0; i < 4; i++)
-        {
-            startingCollection.Add(Services.CardConfig.CreateCardOfType(
-                Card.CardType.MortalCoil));
-        }
+        //for (int i = 0; i < 4; i++)
+        //{
+        //    startingCollection.Add(Services.CardConfig.CreateCardOfType(
+        //        Card.CardType.MortalCoil));
+        //}
 
 
         Services.SceneStackManager.Swap<LevelTransition>(

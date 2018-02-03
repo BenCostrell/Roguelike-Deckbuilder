@@ -71,11 +71,11 @@ MonoBehaviour:
   dungeonPlayAnimMidpointOffset: {x: 300, y: -220, z: 0}
   dungeonPlayAnimScale: 3.5
   playAnimDur: 0.3
-  dungeonPlayAnimDur: 0.8
+  dungeonPlayAnimDur: 0.7
   acquireAnimDur: 0.5
   reshuffleAnimDur: 0.2
   reshuffleAnimStagger: 0.0625
-  discardAnimDur: 0.4
+  discardAnimDur: 0.3
   discardAnimStaggerTime: 0.1
   minSpawnDistFromMonsters: 1
   minSpawnDistFromItems: 8

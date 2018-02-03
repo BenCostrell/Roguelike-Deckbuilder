@@ -12,10 +12,23 @@ public class DungeonDeck
     public List<Card> discardPile { get; private set; }
     public int discardCount { get { return discardPile.Count; } }
     public List<Card> cardsInFlux;
-    private const int baseCardsPerRound = 4;
-    private int cardsPerRound;
+    private const int baseCardsPerRound = 3;
+    private int queuedExtraCards_;
+    private int queuedExtraCards
+    {
+        get { return queuedExtraCards_; }
+        set
+        {
+            queuedExtraCards_ = value;
+            Services.UIManager.UpdateCardsNextRound(cardsPerRound);
+        }
+    }
+    private int cardsPerRound { get { return baseCardsPerRound + queuedExtraCards; } }
     private int dungeonTimerCount;
     private int dungeonTimerThreshold;
+    public bool spedUp { get; private set; }
+    private float forestTimeScale;
+    private bool forestTurn;
 
     public DungeonDeck(List<Card> baseDeck)
     {
@@ -25,8 +38,8 @@ public class DungeonDeck
         discardPile = new List<Card>();
         cardsInFlux = new List<Card>();
         hand = new List<DungeonCard>();
-        cardsPerRound = baseCardsPerRound;
         dungeonTimerCount = 0;
+        forestTimeScale = 1;
         dungeonTimerThreshold = Services.MonsterConfig.DungeonTimerThreshold;
         //UpdateDungeonTimer();
     }
@@ -70,15 +83,39 @@ public class DungeonDeck
         }
     }
 
+    public void QueueExtraCard()
+    {
+        queuedExtraCards += 1;
+    }
+
+    void ResetQueuedCards()
+    {
+        queuedExtraCards = 0;
+    }
+
     public TaskTree TakeDungeonTurn()
     {
         TaskTree turnTasks = new TaskTree(new EmptyTask());
-
+        turnTasks.Then(new ActionTask(OnForestTurnStart));
         turnTasks.Then(new ActionTask(Services.MonsterManager.RefreshMonsters));
         turnTasks.Then(DrawCards(cardsPerRound));
+        turnTasks.Then(new ActionTask(ResetQueuedCards));
         turnTasks.Then(new PerformActions());
         turnTasks.Then(new DiscardPlayedCards());
+        turnTasks.Then(new ActionTask(OnForestTurnEnd));
         return turnTasks;
+    }
+
+    void OnForestTurnStart()
+    {
+        Time.timeScale = forestTimeScale;
+        forestTurn = true;
+    }
+
+    void OnForestTurnEnd()
+    {
+        Time.timeScale = 1;
+        forestTurn = false;
     }
 
     public TaskTree DiscardCard(Card card, float timeOffset)
@@ -189,6 +226,14 @@ public class DungeonDeck
             }
         }
         return cardToPlay;
+    }
+
+
+    public void SetSpeed(float timeScale)
+    {
+        forestTimeScale = timeScale;
+        if (forestTurn) Time.timeScale = forestTimeScale;
+        spedUp = !spedUp;
     }
 }
 
@@ -348,5 +393,6 @@ public class DiscardPlayedCards : Task
         subtaskManager.Update();
         if (subtaskManager.tasksInProcessCount == 0) SetStatus(TaskStatus.Success);
     }
+
 }
 

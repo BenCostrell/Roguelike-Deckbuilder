@@ -18,3 +18,4 @@ MonoBehaviour:
   description: A small sapling. It could grow into anything! Can be walked on.
   onStepAudio: {fileID: 0}
   lightColor: {r: 0, g: 0, b: 0, a: 0}
+  health: 1

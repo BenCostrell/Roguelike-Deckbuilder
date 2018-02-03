@@ -2464,7 +2464,7 @@ MonoBehaviour:
   dungeonDeckSize: 20
   advanceCount: 4
   growthCount: 2
-  spreadSeedsCount: 6
+  spreadSeedsCount: 5
 --- !u!114 &114981976861345532
 MonoBehaviour:
   m_ObjectHideFlags: 1

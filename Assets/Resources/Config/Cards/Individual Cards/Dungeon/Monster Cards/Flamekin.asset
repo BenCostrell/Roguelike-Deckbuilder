@@ -13,7 +13,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cardType: 15
   name_: Sore Soleil
-  cardText: Spawn a Sore Soleil and draw a card.
+  cardText: Spawn a Sore Soleil. Draw an extra card next round.
   sprite: {fileID: 21300000, guid: c0992de8e43e0e644b2834ecb12f8045, type: 3}
   tier: 3
   isMonster: 1

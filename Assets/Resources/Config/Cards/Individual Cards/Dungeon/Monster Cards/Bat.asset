@@ -13,7 +13,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cardType: 13
   name_: Furious Foliage
-  cardText: Spawn a Furious Foliage and draw a card.
+  cardText: Spawn a Furious Foliage. Draw an extra card next round.
   sprite: {fileID: 21300000, guid: 267e688ed740992488940bf15a725b99, type: 3}
   tier: 1
   isMonster: 1

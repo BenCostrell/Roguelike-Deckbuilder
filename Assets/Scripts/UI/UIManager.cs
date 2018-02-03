@@ -109,6 +109,12 @@ public class UIManager : MonoBehaviour {
     private Button[] optionButtons;
     [SerializeField]
     private TextMeshProUGUI[] optionTexts;
+    [SerializeField]
+    private TextMeshProUGUI cardsNextRoundUI;
+    [SerializeField]
+    private Image speedUpForestTurnButtonImage;
+    [SerializeField]
+    private TextMeshProUGUI speedUpForestTurnButtonText;
     private Vector2 playerUIHealthBarBaseSize;
     private int nextLockID_;
     public int nextLockID
@@ -132,6 +138,12 @@ public class UIManager : MonoBehaviour {
     private Color endTurnNormalColor;
     [SerializeField]
     private Color endTurnNoActionsColor;
+    [SerializeField]
+    private Color speedUpNormalColor;
+    [SerializeField]
+    private Color speedUpOffColor;
+    [SerializeField]
+    private float speedUpTimescale;
     private bool damageAnim;
     private int targetHealth;
     private float timeElapsed;
@@ -381,7 +393,10 @@ public class UIManager : MonoBehaviour {
         if (mapObj is DamageableObject)
         {
             DamageableObject dmgableMapObj = mapObj as DamageableObject;
-            if (dmgableMapObj.currentHealth == 0) HideMapObjUI();
+            if (dmgableMapObj.currentHealth == 0)
+            {
+                HideMapObjUI();
+            }
             mapObjUIHealthCounter.text = dmgableMapObj.currentHealth + "/" 
                 + dmgableMapObj.startingHealth;
             mapObjUIRemainingHealthBody.sizeDelta = new Vector2(
@@ -559,5 +574,26 @@ public class UIManager : MonoBehaviour {
         }
         optionLockID = nextLockID;
         Services.GameManager.player.LockEverything(optionLockID);
+    }
+
+    public void UpdateCardsNextRound(int cardsNextRound)
+    {
+        cardsNextRoundUI.text = "Cards Next Round: " + cardsNextRound;
+    }
+
+    public void SpeedUpButtonPressed()
+    {
+        if (!Services.Main.dungeonDeck.spedUp)
+        {
+            speedUpForestTurnButtonImage.color = speedUpOffColor;
+            speedUpForestTurnButtonText.text = "Slow Down Forest Turn";
+            Services.Main.dungeonDeck.SetSpeed(speedUpTimescale);
+        }
+        else
+        {
+            speedUpForestTurnButtonImage.color = speedUpNormalColor;
+            speedUpForestTurnButtonText.text = "Speed Up Forest Turn";
+            Services.Main.dungeonDeck.SetSpeed(1);
+        }
     }
 }

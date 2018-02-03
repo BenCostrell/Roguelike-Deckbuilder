@@ -13,7 +13,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cardType: 8
   name_: Peeved Pepo
-  cardText: Spawn a Peeved Pepo and draw a card.
+  cardText: Spawn a Peeved Pepo. Draw an extra card next round.
   sprite: {fileID: 21300000, guid: 3233fd8d61ab7eb41b953652381d81fd, type: 3}
   tier: 2
   isMonster: 1

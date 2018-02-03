@@ -160,9 +160,10 @@ public class LevelTransition : Scene<MainTransitionData> {
         //int numMonsters = Mathf.FloorToInt(
         //    (Services.MonsterConfig.MonstersPerLevel * data.levelNum)
         //    + Services.MonsterConfig.BaseMonstersPerLevel);
+        forestDeck.Add(Services.CardConfig.GenerateCardOfTier(0, true));
         for (int i = 0; i < data.levelNum; i++)
         {
-            int tier = i % (Services.CardConfig.HighestTierOfCardsAvailable(true)+1);
+            int tier = i % (Services.CardConfig.HighestTierOfCardsAvailable(true) + 1);
             forestDeck.Add(Services.CardConfig.GenerateCardOfTier(tier, true));
         }
 
