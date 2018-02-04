@@ -20,5 +20,7 @@ public abstract class DungeonCard : Card
         return new TaskTree(new EmptyTask());
     }
 
-    public override void OnPlay() { }
+    public override TaskTree OnPlay() {
+        return new TaskTree(new EmptyTask());
+    }
 }

@@ -45,6 +45,7 @@ public class CardController : MonoBehaviour, IPointerDownHandler, IPointerEnterH
     [SerializeField]
     private float discardDetectionRadius;
     public static bool targetedCardSelected;
+    public Image discardingTextUI { get; private set; }
 
     // Use this for initialization
     public void Init(Card card_)
@@ -59,6 +60,8 @@ public class CardController : MonoBehaviour, IPointerDownHandler, IPointerEnterH
         frame = imageElements[1];
         baseColor = card.GetCardFrameColor();
         art = imageElements[2];
+        discardingTextUI = imageElements[3];
+        discardingTextUI.gameObject.SetActive(false);
         nameText.text = card.info.Name;
         effectText.text = card.info.CardText;
         //if(card is MonsterCard)
@@ -439,10 +442,11 @@ public class CardController : MonoBehaviour, IPointerDownHandler, IPointerEnterH
         }
     }
 
-    private class SelectableForCardEffect : CardState
+    private class SelectableForCardEffect : Hoverable
     {
         public override void OnEnter()
         {
+            base.OnEnter();
             Context.color = Color.magenta;
             transform.SetParent(Context.baseParent);
             transform.localScale = baseScale;
@@ -456,12 +460,22 @@ public class CardController : MonoBehaviour, IPointerDownHandler, IPointerEnterH
 
         public override void OnInputEnter()
         {
+            base.OnInputEnter();
             Context.color = Color.red;
+            Context.discardingTextUI.gameObject.SetActive(true);
         }
 
         public override void OnInputExit()
         {
+            base.OnInputExit();
             Context.color = Color.magenta;
+            Context.discardingTextUI.gameObject.SetActive(false);
+        }
+
+        public override void OnExit()
+        {
+            base.OnExit();
+            Context.discardingTextUI.gameObject.SetActive(false);
         }
     }
 
@@ -723,7 +737,7 @@ public class CardController : MonoBehaviour, IPointerDownHandler, IPointerEnterH
     }
 
 
-    private class Played : Hoverable
+    private class Played : CardState
     {
         public override void OnEnter()
         {
@@ -732,30 +746,31 @@ public class CardController : MonoBehaviour, IPointerDownHandler, IPointerEnterH
             Context.SetCardFrameStatus(true);
             transform.localScale = Context.baseScale;
             transform.localRotation = Quaternion.identity;
-            baseRotation = Quaternion.identity;
+            //baseRotation = Quaternion.identity;
+            TaskTree resolutionTasks = card.OnPlay();
             if (!(card is DungeonCard))
             {
                 player.OnCardFinishedPlaying(card);
-                TaskTree resolutionTasks = card.PostResolutionEffects();
+                resolutionTasks.Then(card.PostResolutionEffects());
                 resolutionTasks.Then(player.DiscardCardFromPlay(card, 0));
-                Services.Main.taskManager.AddTask(resolutionTasks);
             }
+            Services.Main.taskManager.AddTask(resolutionTasks);
         }
 
-        protected override void AddOffset()
-        {
-            //if (!(card is DungeonCard))
-            //{
-                Context.Reposition(Context.basePos, false, true);
-            //}
-            //else
-            //{
-            //    Vector3 newPos = new Vector3(
-            //        Context.basePos.x,
-            //        -Services.CardConfig.OnHoverOffset.y + 100, 0);
-            //    Context.Reposition(newPos, false, true);
-            //}
-        }
+        //protected override void AddOffset()
+        //{
+        //    //if (!(card is DungeonCard))
+        //    //{
+        //        Context.Reposition(Context.basePos, false, true);
+        //    //}
+        //    //else
+        //    //{
+        //    //    Vector3 newPos = new Vector3(
+        //    //        Context.basePos.x,
+        //    //        -Services.CardConfig.OnHoverOffset.y + 100, 0);
+        //    //    Context.Reposition(newPos, false, true);
+        //    //}
+        //}
     }
 
     private class Playing : CardState
@@ -802,7 +817,7 @@ public class CardController : MonoBehaviour, IPointerDownHandler, IPointerEnterH
         {
             player.cardsInFlux.Remove(card);
             player.cardsInPlay.Add(card);
-            card.OnPlay();
+            //card.OnPlay();
             card.Reposition(targetPos, true);
             Context.baseParent = transform.parent;
             player.UnlockEverything(lockID);

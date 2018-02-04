@@ -9,9 +9,4 @@ public class Run : MovementCard
         InitValues();
         baseRange = 2;
     }
-
-    public override void OnPlay()
-    {
-        base.OnPlay();
-    }
 }

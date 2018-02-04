@@ -1,17 +1,12 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class Sprint : Card
+public class Sprint : MovementCard
 {
     public Sprint()
     {
         cardType = CardType.Sprint;
         InitValues();
-    }
-
-    public override void OnPlay()
-    {
-        base.OnPlay();
-        player.movesAvailable += 3;
+        baseRange = 3;
     }
 }

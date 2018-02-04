@@ -11,12 +11,11 @@ public class Scream : Card
         InitValues();
     }
 
-    public override void OnPlay()
+    public override TaskTree OnPlay()
     {
-        base.OnPlay();
         int lockid = Services.UIManager.nextLockID;
         player.LockEverything(lockid);
-        TaskTree moveTree = new TaskTree(new EmptyTask());
+        TaskTree moveTree = base.OnPlay();
         moveTree.AddChild(new WaitTask(Services.MonsterConfig.MaxMoveAnimDur));
         List<Monster> sortedMonsters = 
             Services.MonsterManager.monsters.OrderByDescending(monster =>
@@ -29,6 +28,6 @@ public class Scream : Card
         }
         moveTree.Then(new ParameterizedActionTask<int>(player.UnlockEverything, lockid));
         moveTree.Then(new ActionTask(player.ShowAvailableMoves));
-        Services.Main.taskManager.AddTask(moveTree);
+        return moveTree;
     }
 }

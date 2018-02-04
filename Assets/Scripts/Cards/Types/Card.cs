@@ -66,8 +66,9 @@ public abstract class Card {
         return onDrawTasks;
     }
 
-    public virtual void OnPlay() {
+    public virtual TaskTree OnPlay() {
         controller.DisplayInPlay();
+        return new TaskTree(new EmptyTask());
     }
 
     public virtual TaskTree PostResolutionEffects()

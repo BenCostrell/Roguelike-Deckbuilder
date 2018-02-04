@@ -9,9 +9,9 @@ public class Shield : Card
         InitValues();
     }
 
-    public override void OnPlay()
+    public override TaskTree OnPlay()
     {
-        base.OnPlay();
         player.GainShield(2);
+        return base.OnPlay();
     }
 }

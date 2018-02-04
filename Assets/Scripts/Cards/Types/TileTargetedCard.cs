@@ -33,9 +33,9 @@ public abstract class TileTargetedCard : Card
         return targets.Count == numRequiredTargets;
     }
 
-    public override void OnPlay()
+    public override TaskTree OnPlay()
     {
-        base.OnPlay();
+        return base.OnPlay();
     }
 
     public virtual bool IsTargetValid(Tile tile)

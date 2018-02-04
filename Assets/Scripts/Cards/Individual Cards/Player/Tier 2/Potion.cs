@@ -9,9 +9,9 @@ public class Potion : Card
         InitValues();
     }
 
-    public override void OnPlay()
+    public override TaskTree OnPlay()
     {
-        base.OnPlay();
         player.Heal(1);
+        return base.OnPlay();
     }
 }

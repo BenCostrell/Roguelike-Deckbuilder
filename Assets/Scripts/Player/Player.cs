@@ -386,11 +386,11 @@ public class Player : IDamageable {
         if (controller != null) controller.HideArrow();
     }
 
-    public Task PlayCard(Card card)
-    {
-        Debug.Assert(hand.Contains(card));
-        return new PlayCardTask(card);
-    }
+    //public Task PlayCard(Card card)
+    //{
+    //    Debug.Assert(hand.Contains(card));
+    //    return new PlayCardTask(card);
+    //}
 
     public void OnCardFinishedPlaying(Card card)
     {

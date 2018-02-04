@@ -15,12 +15,13 @@ public abstract class CardSelectionCard : Card
         return new TaskTree(new EmptyTask());
     }
 
-    public override void OnPlay()
+    public override TaskTree OnPlay()
     {
-        base.OnPlay();
-        TaskTree actions = PreCardSelectionActions();
+        TaskTree actions =
+                    base.OnPlay();
+        actions.Then(PreCardSelectionActions());
         actions.Then(new CardSelection(this));
-        Services.Main.taskManager.AddTask(actions);
+        return actions;
     }
 
 }

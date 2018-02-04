@@ -49,10 +49,10 @@ public abstract class MovementCard : Card
         return baseRange;
     }
 
-    public override void OnPlay()
+    public override TaskTree OnPlay()
     {
-        base.OnPlay();
         if(!queued) player.movesAvailable += range;
+        return base.OnPlay();
     }
 
     public override TaskTree OnDraw()
