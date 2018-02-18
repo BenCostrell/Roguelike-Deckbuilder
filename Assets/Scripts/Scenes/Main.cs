@@ -30,7 +30,8 @@ public class Main : Scene<MainTransitionData> {
         data = data_;
         levelNum = data.levelNum;
         //Services.MapManager.GenerateLevel(levelNum);
-        Services.MapManager.GenerateLevelTest(levelNum);
+        //Services.MapManager.GenerateLevelTest(levelNum);
+        Services.MapManager.GenerateMapOneScreen();
         dungeonDeck = new DungeonDeck(data.dungeonDeck);
         dungeonDeck.Init();
         collection = data.collection;
@@ -40,6 +41,7 @@ public class Main : Scene<MainTransitionData> {
         GetComponentInChildren<CameraController>().InitCamera();
         TaskTree startTasks = new TaskTree(
             new ScrollMessageBanner(Services.UIManager.startBannerMessage));
+        //        new EmptyTask());
         startTasks.Then(player.DrawCards(5));
         taskManager.AddTask(startTasks);
     }

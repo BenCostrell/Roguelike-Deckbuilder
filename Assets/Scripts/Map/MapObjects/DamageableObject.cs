@@ -20,13 +20,13 @@ public abstract class DamageableObject : MapObject, IDamageable
         Services.UIManager.ShowMapObjUI(this);
         if (currentHealth == 0)
         {
-            RemoveThis(true);
+            Die();
             return true;
         }
         return false;
     }
 
-    public void Die()
+    public virtual void Die()
     {
         RemoveThis(true);
     }

@@ -5,6 +5,7 @@ public abstract class GrowingPlant : DamageableObject
 {
     protected int growthTime;
     protected int growthStage;
+    protected bool fullyGrown { get { return growthStage == growthTime; } }
 
     protected override void InitValues()
     {
@@ -25,7 +26,7 @@ public abstract class GrowingPlant : DamageableObject
         {
             growthStage += 1;
             SetSprite(growthStage);
-            if(growthStage == growthTime)
+            if(fullyGrown)
             {
                 OnFullyGrown();
             }
@@ -41,5 +42,22 @@ public abstract class GrowingPlant : DamageableObject
     {
         Services.MapManager.RemoveGrowingPlant(this);
         base.RemoveThis(animate);
+    }
+
+    public override void Die()
+    {
+        OnDeath();
+        base.Die();
+    }
+
+    protected virtual void OnDeath()
+    {
+    }
+
+    protected void BearFruit(ObjectType fruitType)
+    {
+        Services.Main.taskManager.AddTask(new GrowObject(currentTile,
+                Services.MapObjectConfig.PlantGrowthTime,
+                Services.MapObjectConfig.CreateMapObjectOfType(fruitType)));
     }
 }

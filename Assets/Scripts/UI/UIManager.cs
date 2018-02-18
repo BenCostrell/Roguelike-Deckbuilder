@@ -188,7 +188,6 @@ public class UIManager : MonoBehaviour {
         levelCompleteUI.gameObject.SetActive(false);
 
         startHealth = Services.GameManager.player.maxHealth;
-        Debug.Log(startHealth);
         AdjustPlayerHPBar(Services.GameManager.player.maxHealth, Services.GameManager.player.maxHealth);
     }
 

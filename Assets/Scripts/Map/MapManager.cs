@@ -38,10 +38,10 @@ public class MapManager : MonoBehaviour {
     private float initSaplingProportion;
     [SerializeField]
     private int initSaplingRadius;
-    private int width;
-    private int height;
+    public int width { get; private set; }
+    public int height { get; private set; }
     public Tile[,] mapGrid { get; private set; }
-    public enum SpaceType { Empty, LightGrowth, HeavyGrowth }
+    public enum SpaceType { Empty, LightGrowth, HeavyGrowth, Weed }
     private List<Tile> emptyTiles;
     private List<Tile> tilesWithSpecialStuff;
     private List<Tile> bufferTiles;
@@ -97,17 +97,27 @@ public class MapManager : MonoBehaviour {
     private List<MapObject> litObjects;
     private List<Fountain> fountains;
     public List<GrowingPlant> growingPlants { get; private set; }
+    [SerializeField]
+    private float weedProportion;
+    [SerializeField]
+    private float brushProportion;
+    [SerializeField]
+    private float treeProportion;
+    [SerializeField]
+    private int baseWidth;
+    [SerializeField]
+    private int baseHeight;
 
     private void Update()
     {
-        for (int i = 0; i < litObjects.Count; i++)
-        {
-            litObjects[i].AdjustLighting();
-        }
-        for (int i = 0; i < fountains.Count; i++)
-        {
-            fountains[i].Update();
-        }
+        //for (int i = 0; i < litObjects.Count; i++)
+        //{
+        //    litObjects[i].AdjustLighting();
+        //}
+        //for (int i = 0; i < fountains.Count; i++)
+        //{
+        //    fountains[i].Update();
+        //}
     }
 
     public void GenerateLevel(int levelNum)
@@ -319,6 +329,82 @@ public class MapManager : MonoBehaviour {
                 }
             }
         }
+    }
+
+    public void GenerateMapOneScreen()
+    {
+        SpaceType[,] spaceTypeMap = new SpaceType[baseWidth, baseHeight];
+        for (int x = 0; x < baseWidth; x++)
+        {
+            for (int y = 0; y < baseHeight; y++)
+            {
+                float roll = Random.value;
+                if(roll < weedProportion)
+                {
+                    spaceTypeMap[x, y] = SpaceType.Weed;
+                }
+                else if(roll < weedProportion + brushProportion)
+                {
+                    spaceTypeMap[x, y] = SpaceType.LightGrowth;
+                }
+                else if (roll < weedProportion + brushProportion + treeProportion)
+                {
+                    spaceTypeMap[x, y] = SpaceType.HeavyGrowth;
+                }
+                else
+                {
+                    spaceTypeMap[x, y] = SpaceType.Empty;
+                }
+            }
+        }
+        width = baseWidth;
+        height = baseHeight;
+        mapGrid = new Tile[width, height];
+        List<Tile> emptyTiles = new List<Tile>();
+        currentLiveSprouts = new List<Sprout>();
+        for (int i = 0; i < width; i++)
+        {
+            for (int j = 0; j < height; j++)
+            {
+                mapGrid[i, j] = new Tile(new Coord(i, j), false);
+                switch (spaceTypeMap[i, j])
+                {
+                    case SpaceType.Empty:
+                        emptyTiles.Add(mapGrid[i, j]);
+                        break;
+                    case SpaceType.LightGrowth:
+                        LightBrush lightBrush = Services.MapObjectConfig
+                            .CreateMapObjectOfType(MapObject.ObjectType.LightBrush)
+                            as LightBrush;
+                        lightBrush.CreatePhysicalObject(mapGrid[i, j]);
+                        break;
+                    case SpaceType.HeavyGrowth:
+                        HeavyBrush heavyBrush = Services.MapObjectConfig
+                            .CreateMapObjectOfType(MapObject.ObjectType.HeavyBrush)
+                            as HeavyBrush;
+                        heavyBrush.CreatePhysicalObject(mapGrid[i, j]);
+                        break;
+                    case SpaceType.Weed:
+                        Sprout sprout = Services.MapObjectConfig.
+                            CreateMapObjectOfType(MapObject.ObjectType.Sprout) as Sprout;
+                        sprout.CreatePhysicalObject(mapGrid[i, j]);
+                        break;
+                    default:
+                        break;
+                }
+            }
+        }
+        for (int i = 0; i < width; i++)
+        {
+            for (int j = 0; j < height; j++)
+            {
+                FindNeighborsInGrid(mapGrid[i, j]);
+            }
+        }
+
+        growingPlants = new List<GrowingPlant>();
+        playerSpawnTile = emptyTiles[Random.Range(0, emptyTiles.Count)];
+
     }
 
     SpaceType[,] GenerateSpaceTypeMap(int levelNum)

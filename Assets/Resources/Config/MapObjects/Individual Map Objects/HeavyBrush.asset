@@ -15,6 +15,7 @@ MonoBehaviour:
   name_: Tree
   sprites:
   - {fileID: 21300000, guid: 8a0a15e2057f78e438f201c7b6f5e99b, type: 3}
-  description: Impassable terrain.
+  description: Impassable tree, can be destroyed.
   onStepAudio: {fileID: 0}
   lightColor: {r: 0, g: 0, b: 0, a: 0}
+  health: 2
