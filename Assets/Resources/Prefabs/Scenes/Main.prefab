@@ -6132,6 +6132,11 @@ MonoBehaviour:
   levelsPerCardTierIncrease: 3
   chestsPerRoom: 0.6
   fountainsPerRoom: 0.21
+  weedProportion: 0.2
+  brushProportion: 0.1
+  treeProportion: 0.05
+  baseWidth: 12
+  baseHeight: 9
 --- !u!114 &114730600203672224
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -6700,6 +6705,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5ef486cab0af0142a4951504c511951, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  offset: {x: -0.5, y: -0.5, z: 0}
 --- !u!114 &114824560871936760
 MonoBehaviour:
   m_ObjectHideFlags: 1

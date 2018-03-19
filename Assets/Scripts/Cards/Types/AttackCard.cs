@@ -12,7 +12,7 @@ public abstract class AttackCard : TileTargetedCard
         AttackCardInfo attackInfo = info as AttackCardInfo;
         if (attackInfo.OnHitAudio != null)
             Services.SoundManager.CreateAndPlayAudio(attackInfo.OnHitAudio, 0.5f);
-        damageTarget.TakeDamage(damage);
+        damageTarget.TakeDamage(damage, true);
     }
 
     public override bool IsTargetValid(Tile tile)

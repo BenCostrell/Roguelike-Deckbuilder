@@ -545,7 +545,7 @@ public class Player : IDamageable {
         return currentTile;
     }
 
-    public bool TakeDamage(int incomingDamage)
+    public bool TakeDamage(int incomingDamage, bool fromPlayer)
     {
         int damage = incomingDamage;
         if (shield > 0)
@@ -558,13 +558,13 @@ public class Player : IDamageable {
         controller.UpdateHealthUI();
         if (currentHealth == 0)
         {
-            Die();
+            Die(fromPlayer);
             return true;
         }
         return false;
     }
 
-    public void Die()
+    public void Die(bool killedByPlayer)
     {
         Services.SceneStackManager.Swap<LevelTransition>(new MainTransitionData(
             fullDeck,
@@ -580,15 +580,6 @@ public class Player : IDamageable {
     {
         discardPile.Add(card);
         Services.UIManager.UpdateDiscardCounter();
-    }
-
-    void PickUpKey(Tile tile)
-    {
-        DoorKey key = tile.containedKey;
-        tile.containedKey = null;
-        hasKey = true;
-        GameObject.Destroy(key.gameObject);
-        Services.UIManager.UpdatePlayerUI(currentHealth, maxHealth);
     }
 
     public void LockMovement(int lockID)

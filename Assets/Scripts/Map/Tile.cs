@@ -10,10 +10,8 @@ public class Tile
     public int movementCost { get; private set; }
     public bool hovered { get; private set; }
     public Monster containedMonster { get; private set; }
-    public DoorKey containedKey;
     public MapObject containedMapObject;
     public bool isExit;
-    public bool locked;
     public bool monsterMovementTarget;
     private Player player { get { return Services.GameManager.player; } }
 
@@ -26,7 +24,6 @@ public class Tile
         controller.Init(this);
         movementCost = 1;
         isExit = isExit_;
-        if (isExit) locked = true;
     }
 
     public void SetSprite(Sprite sprite, Quaternion rot)

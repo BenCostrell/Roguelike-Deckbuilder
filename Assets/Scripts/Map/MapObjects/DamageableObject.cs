@@ -13,20 +13,20 @@ public abstract class DamageableObject : MapObject, IDamageable
         currentHealth = startingHealth;
     }
 
-    public virtual bool TakeDamage (int incomingDamage)
+    public virtual bool TakeDamage (int incomingDamage, bool fromPlayer)
     {
         currentHealth = Mathf.Max(0, currentHealth - incomingDamage);
         //controller.UpdateHealthUI();
         Services.UIManager.ShowMapObjUI(this);
         if (currentHealth == 0)
         {
-            Die();
+            Die(fromPlayer);
             return true;
         }
         return false;
     }
 
-    public virtual void Die()
+    public virtual void Die(bool killedByPlayer)
     {
         RemoveThis(true);
     }

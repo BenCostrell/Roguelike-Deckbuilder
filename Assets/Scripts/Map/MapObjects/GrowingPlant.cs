@@ -44,13 +44,13 @@ public abstract class GrowingPlant : DamageableObject
         base.RemoveThis(animate);
     }
 
-    public override void Die()
+    public override void Die(bool killedByPlayer)
     {
-        OnDeath();
-        base.Die();
+        OnDeath(killedByPlayer);
+        base.Die(killedByPlayer);
     }
 
-    protected virtual void OnDeath()
+    protected virtual void OnDeath(bool killedByPlayer)
     {
     }
 

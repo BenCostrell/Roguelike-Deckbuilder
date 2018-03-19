@@ -275,6 +275,14 @@ public class CardController : MonoBehaviour, IPointerDownHandler, IPointerEnterH
         return false;
     }
 
+    public void SetTotalColor(Color color_)
+    {
+        color = color_;
+        art.color = color_;
+        effectText.color = color_;
+        nameText.color = color_;
+    }
+
     private abstract class CardState : FSM<CardController>.State
     {
         protected Player player { get { return Context.player; } }
@@ -296,10 +304,13 @@ public class CardController : MonoBehaviour, IPointerDownHandler, IPointerEnterH
 
         public override void OnInputEnter()
         {
-            transform.localScale = Services.CardConfig.OnHoverScaleUp * baseScale;
-            transform.localRotation = Quaternion.identity;
-            AddOffset();
-            hovered = true;
+            if (player.cardsSelected.Count == 0)
+            {
+                transform.localScale = Services.CardConfig.OnHoverScaleUp * baseScale;
+                transform.localRotation = Quaternion.identity;
+                AddOffset();
+                hovered = true;
+            }
         }
 
         protected virtual void AddOffset()
@@ -309,12 +320,15 @@ public class CardController : MonoBehaviour, IPointerDownHandler, IPointerEnterH
 
         public override void OnInputExit()
         {
-            Context.color = Context.baseColor;
-            transform.localScale = baseScale;
-            transform.localRotation = baseRotation;
-            transform.SetParent(Context.baseParent);
-            Context.Reposition(Context.basePos, false);
-            hovered = false;
+            if (hovered)
+            {
+                Context.color = Context.baseColor;
+                transform.localScale = baseScale;
+                transform.localRotation = baseRotation;
+                transform.SetParent(Context.baseParent);
+                Context.Reposition(Context.basePos, false);
+                hovered = false;
+            }
         }
     }
 
@@ -792,7 +806,7 @@ public class CardController : MonoBehaviour, IPointerDownHandler, IPointerEnterH
             Context.color = Context.baseColor;
             transform.SetParent(Services.UIManager.inPlayZone.transform);
             initialPos = rect.anchoredPosition;
-            targetPos = Services.UIManager.GetInPlayCardPosition(player.cardsInPlay.Count + 1);
+            targetPos = Services.UIManager.GetInPlayCardPosition(player.cardsInPlay.Count);
             initialScale = transform.localScale;
             targetScale = baseScale;
             lockID = Services.UIManager.nextLockID;

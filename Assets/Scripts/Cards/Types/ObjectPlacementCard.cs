@@ -2,7 +2,7 @@
 using System.Collections;
 using System;
 
-public class ObjectPlacementCard : TileTargetedCard
+public abstract class ObjectPlacementCard : TileTargetedCard
 {
     protected MapObject.ObjectType objectTypeToPlace;
     protected override void InitValues()
@@ -16,8 +16,8 @@ public class ObjectPlacementCard : TileTargetedCard
     {
         return base.IsTargetValid(tile) &&
             tile.containedMapObject == null &&
-            tile.containedKey == null &&
-            tile.containedMonster == null;
+            tile.containedMonster == null &&
+            tile != player.currentTile;
     }
 
     public override void OnTargetSelected(Tile tile)

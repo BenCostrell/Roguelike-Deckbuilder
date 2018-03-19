@@ -72,14 +72,14 @@ public abstract class Monster : IDamageable, IPlaceable
         movementSpeed = info.MovementSpeed;
     }
 
-    public bool TakeDamage(int incomingDamage)
+    public bool TakeDamage(int incomingDamage, bool fromPlayer)
     {
         currentHealth = Mathf.Max(0, currentHealth - incomingDamage);
         controller.UpdateHealthUI();
         Services.UIManager.ShowUnitUI(this);
         if (currentHealth == 0)
         {
-            Die();
+            Die(fromPlayer);
             return true;
         }
         return false;
@@ -90,7 +90,7 @@ public abstract class Monster : IDamageable, IPlaceable
         return currentTile;
     }
 
-    public void Die()
+    public void Die(bool killedByPlayer)
     {
         Services.MonsterManager.KillMonster(this);
         currentTile.RemoveMonsterFromTile();
@@ -168,7 +168,7 @@ public abstract class Monster : IDamageable, IPlaceable
 
     public virtual bool OnAttackHit(IDamageable target)
     {
-        return target.TakeDamage(attackDamage);
+        return target.TakeDamage(attackDamage, false);
     }
 
     public virtual TaskTree Move()

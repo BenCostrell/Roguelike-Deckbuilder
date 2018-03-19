@@ -31,7 +31,7 @@ public class Swipe : AttackCard
         List<IDamageable> adjTargets = FindAdjacentTargets(target);
         for (int i = 0; i < adjTargets.Count; i++)
         {
-            adjTargets[i].TakeDamage(damage);
+            adjTargets[i].TakeDamage(damage, true);
         }
         base.OnHit(target);
     }
